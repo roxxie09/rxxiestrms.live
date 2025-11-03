@@ -2,6 +2,9 @@ name: Sync roxiestreams.live to roxiestreams.cc
 
 permissions:
   contents: write
+  issues: write
+  pull-requests: write
+  # Add other scopes if needed
 
 on:
   push:
