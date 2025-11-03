@@ -4,7 +4,6 @@ permissions:
   contents: write
   issues: write
   pull-requests: write
-  # Add other scopes if needed
 
 on:
   push:
@@ -19,9 +18,29 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Show Git config and remotes for diagnostics
+        run: |
+          git config --list
+          git remote -v
+
+      - name: Show GitHub PAT Token presence
+        run: echo "TOKEN is set"
+        env:
+          TOKEN: ${{ secrets.PAT }}
+
       - name: Replace roxiestreams.live with roxiestreams.cc
         run: |
           find . -type f -name '*.html' -exec sed -i 's/roxiestreams.live/roxiestreams.cc/g' {} +
+
+      - name: Configure Git user info for commit
+        run: |
+          git config user.name "roxxie09"
+          git config user.email "your-email@example.com"  # use email tied to PAT owner
+
+      - name: Commit changes for debug (optional)
+        run: |
+          git add -A
+          git commit -m "Debug commit for workflow push" || echo "No changes to commit"
 
       - name: Push changes to roxiestreams.cc
         env:
