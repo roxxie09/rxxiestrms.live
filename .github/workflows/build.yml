@@ -1,4 +1,25 @@
-roxxie09/roxxiestrms:
-  - index.html
-  - soccer.html
-  # List other files or directories you want to sync
+name: Sync files to roxiestreams.cc
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Replace roxiestreams.live with roxiestreams.cc in files
+        run: |
+          find . -type f -name '*.html' -exec sed -i 's/roxiestreams.live/roxiestreams.cc/g' {} +
+
+      - name: Sync files to roxiestreams.cc repo
+        uses: BetaHuhn/repo-file-sync-action@v1
+        with:
+          destination_repo: roxxie09/roxxiestrms
+          destination_branch: main
+          github_token: ${{ secrets.PAT }}
+          folder_to_sync: '.'
+          commit_message: 'Sync roxiestreams.live to roxiestreams.cc with domain replace'
