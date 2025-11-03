@@ -1,5 +1,8 @@
 name: Sync roxiestreams.live to roxiestreams.cc
 
+permissions:
+  contents: write
+
 on:
   push:
     branches:
