@@ -20,6 +20,8 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no root@185.132.53.186 << 'EOF'
             cd ~/roxxiestrms
+            git reset --hard
+            git clean -fd
             git pull origin main
             rsync -avz --delete ./ /var/www/html/roxxiestrms/
             sudo systemctl restart nginx
