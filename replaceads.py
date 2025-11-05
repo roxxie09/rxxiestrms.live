@@ -1,11 +1,6 @@
 import os
 import re
 
-replacement_script_tag = '<script src="https://richinfo.co/richpartners/pops/js/richads-pu-ob.js" data-pubid="991686" data-siteid="376319" async data-cfasync="false"></script>'
-
-head_close_pattern = re.compile(r"</head>", re.IGNORECASE)
-
-for filename in os.listdir(folder_path):
 # Define the exact malicious script tag
 malicious_script = (
     r'<script\s+src="https://richinfo\.co/richpartners/pops/js/richads-pu-ob\.js"'
