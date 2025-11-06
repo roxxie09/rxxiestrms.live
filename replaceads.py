@@ -1,36 +1,51 @@
+#!/usr/bin/env python3
 import os
 import re
+import shutil
+from pathlib import Path
 
-# Define the exact malicious script tag
-malicious_script = (
-    r'<script\s+src="https://richinfo\.co/richpartners/pops/js/richads-pu-ob\.js"'
-    r'\s+data-pubid="991686"\s+data-siteid="376319"\s+async\s+data-cfasync="false">'
-    r'</script>'
+# Regex pattern to match the old atOptions script block
+old_atoptions_pattern = re.compile(
+    r'<script\s+type=["\']text/javascript["\']>\s*'
+    r'atOptions\s*=\s*\{\s*'
+    r"['\"]key['\"]\s*:\s*['\"]003d52b3a131567a085c68d8775f52a2['\"],\s*"
+    r"['\"]format['\"]\s*:\s*['\"]iframe['\"],\s*"
+    r"['\"]height['\"]\s*:\s*60,\s*"
+    r"['\"]width['\"]\s*:\s*468,\s*"
+    r"['\"]params['\"]\s*:\s*\{\}\s*"
+    r'\};\s*</script\s*>',
+    re.IGNORECASE | re.DOTALL
 )
 
-# Regex to find <head>...</head> content and remove malicious script inside
-head_pattern = re.compile(
-    rf'(<head[^>]*>)(.*?)({malicious_script})(.*?)(</head>)',
-    re.DOTALL | re.IGNORECASE
-)
+# Replacement text (new atOptions + script include)
+new_atoptions_block = """<script type="text/javascript">
+\tatOptions = {
+\t\t'key' : '4fb9813602118af6e6ec2974670023c9',
+\t\t'format' : 'iframe',
+\t\t'height' : 60,
+\t\t'width' : 468,
+\t\t'params' : {}
+\t};
+</script>
+<script type="text/javascript" src="//monthspathsmug.com/4fb9813602118af6e6ec2974670023c9/invoke.js"></script>"""
 
-def clean_html_files():
-    for filename in os.listdir('.'):
-        if filename.endswith('.html'):
-            with open(filename, 'r', encoding='utf-8') as f:
-                content = f.read()
+def replace_in_file(path: Path):
+    """Replace the old atOptions block with the new one."""
+    text = path.read_text(encoding='utf-8', errors='replace')
+    new_text, count = old_atoptions_pattern.subn(new_atoptions_block, text)
+    if count > 0:
+        backup = path.with_suffix(path.suffix + '.bak')
+        shutil.copy2(path, backup)
+        path.write_text(new_text, encoding='utf-8')
+        print(f"✅ Updated {path.name} (backup -> {backup.name}, {count} replacements)")
+    else:
+        print(f"✔ No changes in {path.name}")
 
-            # Remove the malicious script if found inside <head>
-            new_content = re.sub(
-                malicious_script, '', content, flags=re.IGNORECASE
-            )
-
-            if new_content != content:
-                with open(filename, 'w', encoding='utf-8') as f:
-                    f.write(new_content)
-                print(f"✅ Cleaned: {filename}")
-            else:
-                print(f"✔ No changes: {filename}")
+def main():
+    for file in os.listdir('.'):
+        if file.endswith('.html'):
+            replace_in_file(Path(file))
+    print("\nAll done!")
 
 if __name__ == "__main__":
-    clean_html_files()
+    main()
