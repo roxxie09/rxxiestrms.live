@@ -90,6 +90,7 @@
             <div class="streamchanger">
                 <button class="streambutton" onclick="randomStream1()">Stream 1</button>
                 <button class="streambutton" onclick="randomStream2()">Stream 2</button>
+                <button class="streambutton" onclick="showPlayer('clappr', 'https://600.wnion.co.in/ufc3.m3u8')">Stream 3</button>
             </div>
             <div class="embedchat">
                 <iframe src="https://www.youtube.com/live_chat?v=ZS9KXyH7Qjc&amp;embed_domain=roxiestreams.live"></iframe>
@@ -123,7 +124,7 @@
             }
         }
 
-        // Randomizes Stream 1 (ufc.m3u8 set)
+        // Stream 1 Randomizer
         function randomStream1() {
             var links = [
                 "https://600.qiyarmedia.com/ufc.m3u8",
@@ -134,7 +135,7 @@
             showPlayer('clappr', randomLink);
         }
 
-        // Randomizes Stream 2 (ufc2.m3u8 set)
+        // Stream 2 Randomizer
         function randomStream2() {
             var links = [
                 "https://600.qiyarmedia.com/ufc2.m3u8",
@@ -145,9 +146,15 @@
             showPlayer('clappr', randomLink);
         }
 
+        // On load: randomize default stream from Stream 1 sources
         window.onload = function() {
-            // On load, can display a default stream (optional)
-            showPlayer('clappr', 'https://600.qiyarmedia.com/ufc.m3u8');
+            var stream1Links = [
+                "https://600.qiyarmedia.com/ufc.m3u8",
+                "https://600.pixelcraft.qzz.io/ufc.m3u8",
+                "https://600.wnion.co.in/ufc.m3u8"
+            ];
+            var randomDefault = stream1Links[Math.floor(Math.random() * stream1Links.length)];
+            showPlayer('clappr', randomDefault);
         };
     </script>
     <script>
