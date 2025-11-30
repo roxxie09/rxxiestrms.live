@@ -283,7 +283,7 @@ const normalizedCache = roxieStreamsCached.map(item => ({{
       console.log(`Opening modal for gameId ${{gameId}}`);
       button.dispatchEvent(new MouseEvent('click', {{ bubbles: true, cancelable: true }}));
 
-      await new Promise(res => setTimeout(res, 400)); // Wait for autofill
+      await new Promise(res => setTimeout(res, 300)); // Wait for autofill
 
       const form = document.querySelector(`#form-${{gameId}}`);
       if (!form) {{
@@ -304,7 +304,7 @@ const normalizedCache = roxieStreamsCached.map(item => ({{
         // If you want to close, uncomment below:
         // const closeBtn = document.querySelector(`#submit-${{gameId}}`);
         // if (closeBtn) closeBtn.click();
-        await new Promise(res => setTimeout(res, 400));
+        await new Promise(res => setTimeout(res, 300));
         continue;
       }}
 
@@ -318,7 +318,7 @@ const normalizedCache = roxieStreamsCached.map(item => ({{
         form.submit();
         console.log(`Fallback: submitted form element for ${{gameId}}`);
       }}
-      await new Promise(res => setTimeout(res, 400));
+      await new Promise(res => setTimeout(res, 300));
     }}
   }}
 
