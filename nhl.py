@@ -55,8 +55,8 @@ def get_nhl_games(date_ymd):
                 dt_utc = datetime.fromisoformat(start_str.replace('Z', '+00:00'))
             else:
                 dt_utc = datetime.fromisoformat(start_str)
-            
             dt_pacific = dt_utc.astimezone(PACIFIC_TZ)
+
             start_display = dt_pacific.strftime("%B %d, %Y %I:%M %p")
             start_pst_formatted = dt_pacific.strftime("%Y-%m-%d %H:%M:%S")
             end_pst = dt_pacific + timedelta(days=1)
@@ -80,19 +80,13 @@ def update_nhl_date_section(html_content, games, target_date_str):
 
     pretty_date = datetime.strptime(target_date_str, "%Y%m%d").strftime("%A, %B %d, %Y")
     date_header_text = pretty_date.replace(",", r"\,").replace(" ", r"\s+")
-    
-    # Check if date header already exists
-    if re.search(rf'<td colspan="3"><strong>{date_header_text}</strong></td>', html_content, re.IGNORECASE):
-        print(f"⚠️  Date '{pretty_date}' already exists - updating games with correct links...")
-        updated = True
-    else:
-        print(f"✓ Adding new date: {pretty_date}")
-        updated = True
 
-    # Remove existing games for this date (anything after date header until next date header or tbody end)
-    # First find all date headers
-    date_headers = re.findall(r'<tr style="background-color:\s*#333[^>]*>\s*<td colspan="3"><strong>([^<]+)</strong></td>\s*</tr>', html_content, re.IGNORECASE | re.DOTALL)
-    
+    # If this date already exists, skip any changes
+    if re.search(rf'<td colspan="3"><strong>{date_header_text}</strong></td>', html_content, re.IGNORECASE):
+        print(f"⚠️  Date '{pretty_date}' already exists - skipping NHL changes.")
+        return html_content, False
+
+    # Find tbody
     tbody_match = re.search(r'(<tbody[^>]*>)(.*?)(</tbody>)', html_content, re.DOTALL | re.IGNORECASE)
     if not tbody_match:
         return html_content, False
@@ -101,12 +95,12 @@ def update_nhl_date_section(html_content, games, target_date_str):
     tbody_content = tbody_match.group(2)
     after = html_content[tbody_match.end(2):]
 
-    # Create new section for this date
+    # Build new section for this date
     date_header = f'''
         <tr style="background-color: #333; color: white;">
             <td colspan="3"><strong>{pretty_date}</strong></td>
         </tr>'''
-    
+
     new_rows = ""
     for i, game in enumerate(games, 1):
         new_rows += f'''
@@ -116,40 +110,30 @@ def update_nhl_date_section(html_content, games, target_date_str):
             <td><span class="countdown-timer" data-end="{game["end_pst"]}" data-start="{game["start_pst"]}"></span></td>
         </tr>'''
 
-    # Replace or append the section
+    # Append to end of tbody
     new_section = date_header + new_rows
-    if re.search(rf'<strong>{date_header_text}</strong>', tbody_content, re.IGNORECASE):
-        # Replace existing section for this date
-        tbody_content = re.sub(
-            rf'<tr style="background-color:?\s*#333[^>]*>.*?<strong>{date_header_text}</strong>.*?(?=<tr style="background-color:?\s*#333|<tr|<tbody|$)',
-            new_section,
-            tbody_content,
-            flags=re.DOTALL | re.IGNORECASE
-        )
-    else:
-        # Append to end
-        tbody_content += new_section
+    tbody_content = tbody_content + new_section
 
     html_content = before + tbody_content + after
-    return html_content, updated
+    return html_content, True
 
 if __name__ == "__main__":
     date_input = sys.argv[1] if len(sys.argv) > 1 else None
     api_date = parse_date_arg(date_input)
     pretty_date = datetime.strptime(api_date, "%Y%m%d").strftime("%m-%d-%Y")
-    
+
     print(f"Fetching NHL games for {pretty_date}...")
     games = get_nhl_games(api_date)
-    
+
     if not os.path.exists(HTML_PATH):
         print(f"Error: {HTML_PATH} not found!")
         sys.exit(1)
-    
+
     with open(HTML_PATH, "r", encoding="utf-8") as f:
         content = f.read()
-    
+
     updated_content, changed = update_nhl_date_section(content, games, api_date)
-    
+
     if changed and games:
         with open(HTML_PATH, "w", encoding="utf-8") as f:
             f.write(updated_content)
@@ -158,7 +142,6 @@ if __name__ == "__main__":
     else:
         print("No NHL changes needed")
 
-    # ---- ALSO RUN nba.py WITH SAME DATE ARG ----
     try:
         script_dir = os.path.dirname(os.path.abspath(__file__))
         nba_script = os.path.join(script_dir, "nba.py")
