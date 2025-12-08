@@ -210,16 +210,3 @@ if __name__ == '__main__':
         append_or_replace_schedule(nba_html_path, new_schedule, input_date)
     else:
         print(f"No NBA games found for {input_date.strftime('%B %d, %Y')}.")
-
-    # ---- ALSO RUN nhl.py WITH SAME DATE ARG ----
-    try:
-        script_dir = os.path.dirname(os.path.abspath(__file__))
-        nhl_script = os.path.join(script_dir, "nhl.py")
-        nhl_args = ["python", nhl_script]
-        # Reuse original date arg if given
-        if len(sys.argv) > 1:
-            nhl_args.append(sys.argv[1])
-        print("\nRunning NHL script...")
-        subprocess.run(nhl_args, check=False)
-    except Exception as e:
-        print(f"Could not run nhl.py: {e}")
