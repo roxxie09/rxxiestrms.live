@@ -35,12 +35,13 @@ with open(output_file, 'w', encoding='utf-8') as output:
     # Write the date at the top of the file
     output.write(f'Date: {today_date} Events\n\n')
 
-# Extract events for each category (Soccer, NBA, Motorsports, Fighting, NFL)
+# Extract events for each category (Soccer, NBA, Motorsports, Fighting, NFL, NHL)
 extract_events_from_file('soccer.html', 'Soccer', output_file)
 extract_events_from_file('mlb.html', 'MLB', output_file)
 extract_events_from_file('nba.html', 'NBA', output_file)
 extract_events_from_file('motorsports.html', 'Motorsports', output_file)
 extract_events_from_file('fighting.html', 'Fighting', output_file)
 extract_events_from_file('nfl.html', 'NFL', output_file)
+extract_events_from_file('nhl.html', 'NHL', output_file)
 
 print(f'Events have been extracted and saved to {output_file}')

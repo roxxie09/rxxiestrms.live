@@ -10,22 +10,19 @@
   }
 
   const teamNameMap = {
-  "alabama": "alabama",
   "angers": "angers",
   "arizona cardinals": "arizona cardinals",
   "atlanta falcons": "atlanta falcons",
-  "atlanta hawks": "atlanta hawks",
   "bahia": "bahia",
   "baltimore ravens": "baltimore ravens",
   "boca juniors": "boca juniors",
   "bologna": "bologna",
   "boston celtics": "boston celtics",
-  "botafogo": "botafogo",
   "brighton": "brighton",
-  "brooklyn nets": "brooklyn nets",
   "buffalo bills": "buffalo bills",
-  "byu": "byu",
+  "buffalo sabres": "buffalo sabres",
   "cagliari": "cagliari",
+  "calgary flames": "calgary flames",
   "ceará": "ceará",
   "celta vigo": "celta vigo",
   "celtic": "celtic",
@@ -34,139 +31,95 @@
   "chicago bulls": "chicago bulls",
   "cincinnati bengals": "cincinnati bengals",
   "cleveland browns": "cleveland browns",
-  "cleveland cavaliers": "cleveland cavaliers",
-  "corinthians": "corinthians",
   "cruz": "cruz",
-  "cruz azul": "cruz azul",
-  "cruzeiro": "cruzeiro",
   "crystal palace": "crystal palace",
-  "dallas mavericks": "dallas mavericks",
   "denver broncos": "denver broncos",
   "denver nuggets": "denver nuggets",
-  "detroit pistons": "detroit pistons",
+  "detroit red wings": "detroit red wings",
   "dortmund": "dortmund",
-  "duke": "duke",
   "elche": "elche",
   "espanyol": "espanyol",
-  "fim supercross championship": "fim supercross championship",
-  "flamengo": "flamengo",
   "fluminense": "fluminense",
   "formula 1 - abu dhabi grand prix": "formula 1 - abu dhabi grand prix",
-  "formula 1 - free practice": "formula 1 - free practice",
-  "formula 1 - free practice 2": "formula 1 - free practice 2",
-  "formula 1 - free practice 3": "formula 1 - free practice 3",
-  "formula 1 - qualifying": "formula 1 - qualifying",
-  "formula e - sao paulo race": "formula e - sao paulo race",
-  "fortaleza": "fortaleza",
   "fulham": "fulham",
-  "georgia": "georgia",
   "girona": "girona",
   "golden state warriors": "golden state warriors",
   "green bay packers": "green bay packers",
   "hamburger sv": "hamburger sv",
   "hearts": "hearts",
   "hoffenheim": "hoffenheim",
-  "houston rockets": "houston rockets",
   "houston texans": "houston texans",
-  "indiana": "indiana",
   "indianapolis colts": "indianapolis colts",
-  "jackson state": "jackson state",
   "jacksonville jaguars": "jacksonville jaguars",
-  "juventude": "juventude",
   "juventus": "juventus",
   "kansas city chiefs": "kansas city chiefs",
-  "kilmarnock": "kilmarnock",
   "las vegas raiders": "las vegas raiders",
   "lazio": "lazio",
   "le havre": "le havre",
   "lorient": "lorient",
-  "los angeles clippers": "los angeles clippers",
   "los angeles dodgers": "los angeles dodgers",
+  "los angeles kings": "los angeles kings",
   "los angeles lakers": "los angeles lakers",
   "los angeles rams": "los angeles rams",
   "lyon": "lyon",
   "memphis grizzlies": "memphis grizzlies",
-  "miami (ohio)": "miami (ohio)",
   "miami dolphins": "miami dolphins",
-  "miami heat": "miami heat",
-  "milwaukee bucks": "milwaukee bucks",
-  "minnesota timberwolves": "minnesota timberwolves",
   "minnesota vikings": "minnesota vikings",
-  "mirassol": "mirassol",
-  "monterrey": "monterrey",
+  "minnesota wild": "minnesota wild",
   "napoli": "napoli",
-  "new orleans pelicans": "new orleans pelicans",
   "new orleans saints": "new orleans saints",
-  "new york": "new york",
+  "new york jets": "new york jets",
   "new york knicks": "new york knicks",
+  "nfl redzone": "nfl redzone",
   "nice": "nice",
-  "ohio state": "ohio state",
   "oklahoma city thunder": "oklahoma city thunder",
   "orlando magic": "orlando magic",
   "palmeiras": "palmeiras",
   "paris": "paris",
   "philadelphia 76ers": "philadelphia 76ers",
+  "philadelphia eagles": "philadelphia eagles",
   "pittsburgh steelers": "pittsburgh steelers",
   "portland trail blazers": "portland trail blazers",
-  "prairie view a&m": "prairie view a&m",
-  "psg": "psg",
   "racing club": "racing club",
-  "rangers": "rangers",
   "rayo vallecano": "rayo vallecano",
   "real madrid": "real madrid",
-  "rennes": "rennes",
   "roach": "roach",
   "roma": "roma",
-  "sacramento kings": "sacramento kings",
-  "santos": "santos",
+  "seattle kraken": "seattle kraken",
   "seattle seahawks": "seattle seahawks",
   "sevilla": "sevilla",
   "são paulo": "são paulo",
   "tampa bay buccaneers": "tampa bay buccaneers",
+  "tampa bay lightning": "tampa bay lightning",
   "tennessee titans": "tennessee titans",
-  "texas tech": "texas tech",
-  "tigres uanl": "tigres uanl",
-  "toluca": "toluca",
   "toronto blue jays": "toronto blue jays",
+  "toronto maple leafs": "toronto maple leafs",
   "toronto raptors": "toronto raptors",
   "ufc 323: dvalishvili": "ufc 323: dvalishvili",
   "utah jazz": "utah jazz",
+  "utah mammoth": "utah mammoth",
   "valencia": "valencia",
-  "virginia": "virginia",
+  "vancouver canucks": "vancouver canucks",
   "vitória": "vitória",
   "washington commanders": "washington commanders",
-  "washington wizards": "washington wizards",
   "werder bremen": "werder bremen",
   "west ham": "west ham",
-  "western michigan": "western michigan",
   "wwe nxt deadline": "wwe nxt deadline",
   "yan 2": "yan 2",
-  "hawks": "atlanta hawks",
   "celtics": "boston celtics",
   "hornets": "charlotte hornets",
   "bulls": "chicago bulls",
-  "cavaliers": "cleveland cavaliers",
-  "mavericks": "dallas mavericks",
   "nuggets": "denver nuggets",
-  "pistons": "detroit pistons",
   "warriors": "golden state warriors",
-  "rockets": "houston rockets",
-  "clippers": "los angeles clippers",
   "lakers": "los angeles lakers",
   "grizzlies": "memphis grizzlies",
-  "heat": "miami heat",
-  "bucks": "milwaukee bucks",
-  "timberwolves": "minnesota timberwolves",
-  "pelicans": "new orleans pelicans",
   "knicks": "new york knicks",
   "thunder": "oklahoma city thunder",
   "magic": "orlando magic",
   "sixers": "philadelphia 76ers",
   "blazers": "portland trail blazers",
-  "kings": "sacramento kings",
   "raptors": "toronto raptors",
-  "jazz": "utah jazz",
-  "wizards": "washington wizards"
+  "jazz": "utah jazz"
 };
 
   const roxieStreamsCached = [
@@ -182,29 +135,14 @@
   {title: "crystal palace vs fulham", url: "https://roxiestreams.live/soccer-streams-2"},
   {title: "bologna vs lazio", url: "https://roxiestreams.live/soccer-streams-4"},
   {title: "espanyol vs rayo vallecano", url: "https://roxiestreams.live/soccer-streams-1"},
-  {title: "botafogo vs fortaleza", url: "https://roxiestreams.live/soccer-streams-7"},
-  {title: "corinthians vs juventude", url: "https://roxiestreams.live/soccer-streams-8"},
   {title: "ceará vs palmeiras", url: "https://roxiestreams.live/soccer-streams-9"},
   {title: "bahia vs fluminense", url: "https://roxiestreams.live/soccer-streams-10"},
   {title: "são paulo vs vitória", url: "https://roxiestreams.live/soccer-streams-11"},
-  {title: "cruzeiro vs santos", url: "https://roxiestreams.live/soccer-streams-12"},
   {title: "juventus vs napoli", url: "https://roxiestreams.live/soccer-streams-13"},
   {title: "lorient vs lyon", url: "https://roxiestreams.live/soccer-streams-3"},
   {title: "celta vigo vs real madrid", url: "https://roxiestreams.live/soccer-streams-1"},
   {title: "boca juniors vs racing club", url: "https://roxiestreams.live/soccer-streams-14"},
-  {title: "kilmarnock vs rangers", url: "https://roxiestreams.live/soccer-streams-12"},
-  {title: "psg vs rennes", url: "https://roxiestreams.live/soccer-streams-10"},
-  {title: "flamengo vs mirassol", url: "https://roxiestreams.live/soccer-streams-13"},
-  {title: "monterrey vs toluca", url: "https://roxiestreams.live/soccer-streams-14"},
-  {title: "cruz azul vs tigres uanl", url: "https://roxiestreams.live/soccer-streams-15"},
   {title: "los angeles dodgers vs toronto blue jays", url: "https://roxiestreams.live/mlb-streams-1"},
-  {title: "brooklyn nets vs new orleans pelicans", url: "https://roxiestreams.live/nba-streams-1"},
-  {title: "atlanta hawks vs washington wizards", url: "https://roxiestreams.live/nba-streams-2"},
-  {title: "cleveland cavaliers vs golden state warriors", url: "https://roxiestreams.live/nba-streams-3"},
-  {title: "detroit pistons vs milwaukee bucks", url: "https://roxiestreams.live/nba-streams-4"},
-  {title: "miami heat vs sacramento kings", url: "https://roxiestreams.live/nba-streams-5"},
-  {title: "los angeles clippers vs minnesota timberwolves", url: "https://roxiestreams.live/nba-streams-6"},
-  {title: "dallas mavericks vs houston rockets", url: "https://roxiestreams.live/nba-streams-7"},
   {title: "new york knicks vs orlando magic", url: "https://roxiestreams.live/nba-streams-1"},
   {title: "boston celtics vs toronto raptors", url: "https://roxiestreams.live/nba-streams-2"},
   {title: "charlotte hornets vs denver nuggets", url: "https://roxiestreams.live/nba-streams-3"},
@@ -212,37 +150,32 @@
   {title: "chicago bulls vs golden state warriors", url: "https://roxiestreams.live/nba-streams-5"},
   {title: "los angeles lakers vs philadelphia 76ers", url: "https://roxiestreams.live/nba-streams-6"},
   {title: "oklahoma city thunder vs utah jazz", url: "https://roxiestreams.live/nba-streams-7"},
-  {title: "formula 1 - free practice", url: "https://roxiestreams.live/f1-streams"},
-  {title: "formula 1 - free practice 2", url: "https://roxiestreams.live/f1-streams"},
-  {title: "formula 1 - free practice 3", url: "https://roxiestreams.live/f1-streams"},
-  {title: "formula 1 - qualifying", url: "https://roxiestreams.live/f1-streams"},
-  {title: "formula e - sao paulo race", url: "https://roxiestreams.live/wec"},
-  {title: "fim supercross championship", url: "https://roxiestreams.live/supercross"},
   {title: "formula 1 - abu dhabi grand prix", url: "https://roxiestreams.live/f1-streams"},
   {title: "cruz vs roach", url: "https://roxiestreams.live/ppv-streams-1"},
   {title: "wwe nxt deadline", url: "https://roxiestreams.live/wwe-streams"},
   {title: "ufc 323: dvalishvili vs yan 2", url: "https://roxiestreams.live/ufc"},
-  {title: "byu vs texas tech", url: "https://roxiestreams.live/ncaa-streams-1"},
-  {title: "miami (ohio) vs western michigan", url: "https://roxiestreams.live/ncaa-streams-2"},
-  {title: "jackson state vs prairie view a&m", url: "https://roxiestreams.live/ncaa-streams-3"},
-  {title: "alabama vs georgia", url: "https://roxiestreams.live/ncaa-streams-1"},
-  {title: "indiana vs ohio state", url: "https://roxiestreams.live/ncaa-streams-5"},
-  {title: "duke vs virginia", url: "https://roxiestreams.live/ncaa-streams-1"},
+  {title: "nfl redzone", url: "https://roxiestreams.live/redzone"},
   {title: "atlanta falcons vs seattle seahawks", url: "https://roxiestreams.live/nfl-streams-1"},
   {title: "buffalo bills vs cincinnati bengals", url: "https://roxiestreams.live/nfl-streams-2"},
   {title: "cleveland browns vs tennessee titans", url: "https://roxiestreams.live/nfl-streams-3"},
   {title: "minnesota vikings vs washington commanders", url: "https://roxiestreams.live/nfl-streams-4"},
-  {title: "miami dolphins vs new york", url: "https://roxiestreams.live/nfl-streams-5"},
+  {title: "miami dolphins vs new york jets", url: "https://roxiestreams.live/nfl-streams-5"},
   {title: "new orleans saints vs tampa bay buccaneers", url: "https://roxiestreams.live/nfl-streams-6"},
   {title: "indianapolis colts vs jacksonville jaguars", url: "https://roxiestreams.live/nfl-streams-7"},
   {title: "baltimore ravens vs pittsburgh steelers", url: "https://roxiestreams.live/nfl-streams-8"},
   {title: "denver broncos vs las vegas raiders", url: "https://roxiestreams.live/nfl-streams-9"},
   {title: "chicago bears vs green bay packers", url: "https://roxiestreams.live/nfl-streams-10"},
   {title: "arizona cardinals vs los angeles rams", url: "https://roxiestreams.live/nfl-streams-11"},
-  {title: "houston texans vs kansas city chiefs", url: "https://roxiestreams.live/nfl-streams-12"}
+  {title: "houston texans vs kansas city chiefs", url: "https://roxiestreams.live/nfl-streams-12"},
+  {title: "los angeles rams vs philadelphia eagles", url: "https://roxiestreams.live/nfl-streams-1"},
+  {title: "tampa bay lightning vs toronto maple leafs", url: "https://roxiestreams.live/nhl-streams-1"},
+  {title: "los angeles kings vs utah mammoth", url: "https://roxiestreams.live/nhl-streams-2"},
+  {title: "buffalo sabres vs calgary flames", url: "https://roxiestreams.live/nhl-streams-3"},
+  {title: "detroit red wings vs vancouver canucks", url: "https://roxiestreams.live/nhl-streams-4"},
+  {title: "minnesota wild vs seattle kraken", url: "https://roxiestreams.live/nhl-streams-5"}
 ];
 
-  const nbaTeams = new Set(["chicago bulls","oklahoma city thunder","memphis grizzlies","minnesota timberwolves","indiana pacers","milwaukee bucks","cleveland cavaliers","houston rockets","utah jazz","sacramento kings","atlanta hawks","los angeles clippers","philadelphia 76ers","portland trail blazers","washington wizards","los angeles lakers","toronto raptors","san antonio spurs","denver nuggets","new york knicks","dallas mavericks","golden state warriors","boston celtics","detroit pistons","orlando magic","miami heat","phoenix suns","charlotte hornets","new orleans pelicans"]);
+  const nbaTeams = new Set(["los angeles clippers","sacramento kings","new orleans pelicans","denver nuggets","cleveland cavaliers","washington wizards","new york knicks","miami heat","san antonio spurs","portland trail blazers","indiana pacers","charlotte hornets","orlando magic","chicago bulls","toronto raptors","boston celtics","memphis grizzlies","minnesota timberwolves","oklahoma city thunder","golden state warriors","milwaukee bucks","phoenix suns","dallas mavericks","houston rockets","detroit pistons","los angeles lakers","philadelphia 76ers","atlanta hawks","utah jazz"]);
   const premierLeagueTeams = new Set(["leeds","west ham","c palace","nottm forest","man united","man city","newcastle","brighton","brentford","liverpool","spurs"]);
   const laLigaTeams = new Set(["alaves","athletic bilbao","atm","atletico madrid","barcelona","celta vigo","elche","espanyol","getafe","girona","mallorca","osasuna","rayo vallecano","real betis","real madrid","real sociedad","real valladolid","sevilla","valencia","villarreal"]);
   const mlsTeams = new Set(["miami","atlanta","chicago","cincinnati","columbus","dallas","dc","houston","los angeles","minnesota","nashville","new england","new york","orlando","philadelphia","portland","real salt lake","seattle","sporting kansas city","san jose","toronto","vancouver"]);
@@ -276,9 +209,9 @@ const normalizedCache = roxieStreamsCached.map(item => ({
 
   function findBestMatch(eventTitle) {
     const lowerTitle = eventTitle.toLowerCase();
-    if (lowerTitle.includes("ufc")) return "https://roxiestreams.cc/ufc";
-    if (lowerTitle.includes("grand prix")) return "https://roxiestreams.cc/f1-streams";
-    if (lowerTitle.includes("wwe")) return "https://roxiestreams.cc/wwe-streams";
+    if (lowerTitle.includes("ufc")) return "https://roxiestreams.live/ufc";
+    if (lowerTitle.includes("grand prix")) return "https://roxiestreams.live/f1-streams";
+    if (lowerTitle.includes("wwe")) return "https://roxiestreams.live/wwe-streams";
 
     let teams = [];
     if (lowerTitle.includes("@")) {
@@ -289,14 +222,14 @@ const normalizedCache = roxieStreamsCached.map(item => ({
       teams = [normalizeTeamName(lowerTitle.trim())];
     }
 
-    if (teams.length === 0) return 'https://roxiestreams.cc/missing';
+    if (teams.length === 0) return 'https://roxiestreams.live/missing';
 
     for (const entry of normalizedCache) {
       for (const team of teams) {
         if (entry.title.includes(team)) return entry.url;
       }
     }
-    return 'https://roxiestreams.cc/missing';
+    return 'https://roxiestreams.live/missing';
   }
 
   function getEventTitleFromListDiv(listDiv) {
@@ -415,7 +348,7 @@ const normalizedCache = roxieStreamsCached.map(item => ({
       const urlValue = urlInput.value.trim();
 
       // SKIP modals/events whose URL is "missing"
-      if (urlValue === 'https://roxiestreams.cc/missing') {
+      if (urlValue === 'https://roxiestreams.live/missing') {
         console.log(`Skipping ${gameId}: URL is missing!`);
         // Optionally: You may wish to close the modal here so it doesn't remain open, OR ignore and let user close after
         // If you want to close, uncomment below:
