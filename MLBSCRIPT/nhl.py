@@ -82,6 +82,7 @@ def update_nhl_date_section(html_content, games, target_date_str):
     
     # Check if date header already exists
     if re.search(rf'<td colspan="3"><strong>{date_header_text}</strong></td>', html_content, re.IGNORECASE):
+        print(f"⚠️  Date '{pretty_date}' already exists - updating games with correct links...")
         updated = True
     else:
         print(f"✓ Adding new date: {pretty_date}")
