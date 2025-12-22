@@ -20,7 +20,7 @@ jobs:
 
       - name: Deploy to VPS
         run: |
-          ssh -o StrictHostKeyChecking=no root@185.132.53.186 << 'EOF'
+          ssh -o StrictHostKeyChecking=no root@62.60.176.215 << 'EOF'
             cd /var/www/html/rxxiestrms.live
             git reset --hard
             git clean -fd
