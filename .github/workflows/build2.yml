@@ -1,3 +1,5 @@
+name: Deploy to VPS
+
 on:
   push:
     branches:
@@ -14,15 +16,14 @@ jobs:
       - name: Set up SSH
         uses: webfactory/ssh-agent@v0.5.3
         with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEYR }}
 
       - name: Deploy to VPS
         run: |
           ssh -o StrictHostKeyChecking=no root@185.132.53.186 << 'EOF'
-            cd ~/roxxiestrms
+            cd /var/www/html/rxxiestrms.live
             git reset --hard
             git clean -fd
             git pull origin main
-            rsync -avz --delete ./ /var/www/html/roxxiestrms/
-            sudo systemctl restart nginx
+            systemctl restart nginx
           EOF
