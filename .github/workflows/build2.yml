@@ -16,14 +16,15 @@ jobs:
       - name: Set up SSH
         uses: webfactory/ssh-agent@v0.5.3
         with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEYR }}
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: Deploy to VPS
         run: |
-          ssh -o StrictHostKeyChecking=no root@62.60.176.215 << 'EOF'
-            cd /var/www/html/rxxiestrms.live
+          ssh -o StrictHostKeyChecking=no root@185.132.53.186 << 'EOF'
+            cd ~/roxxiestrms
             git reset --hard
             git clean -fd
             git pull origin main
+            rsync -avz --delete ./ /var/www/html/roxxiestrms/
             systemctl restart nginx
           EOF
