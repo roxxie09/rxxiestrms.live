@@ -1,48 +1,53 @@
 from bs4 import BeautifulSoup
 from datetime import datetime, timedelta
 
-# Load the nfl.html file
-with open('nfl.html', 'r', encoding='utf-8') as file:
-    soup = BeautifulSoup(file, 'html.parser')
+INPUT_FILE = "nfl.html"
+OUTPUT_FILE = "nfl.html"
 
-# Find all the <tr> rows in the table
-rows = soup.find_all('tr')
+def parse_event_time(event_time_str: str):
+    # Expected: January 01, 2026 09:00 AM
+    formats = [
+        '%B %d, %Y %I:%M %p',   # 12-hour with AM/PM
+        '%B %d, %Y %H:%M',      # 24-hour without AM/PM (fallback)
+    ]
+    for fmt in formats:
+        try:
+            return datetime.strptime(event_time_str, fmt)
+        except ValueError:
+            continue
+    print(f"Could not parse date: {event_time_str!r}")
+    return None
 
-# Function to parse and format the event time
-def format_event_time(event_time_str):
-    # Convert the event time string into a datetime object
-    try:
-        event_time = datetime.strptime(event_time_str, '%B %d, %Y %H:%M %p')
-    except ValueError:
-        # Fallback in case the format doesn't match exactly
-        event_time = datetime.strptime(event_time_str, '%B %d, %Y %H:%M %M')
-    return event_time
+with open(INPUT_FILE, "r", encoding="utf-8") as f:
+    soup = BeautifulSoup(f, "html.parser")
 
-# Loop through each row and update the countdown timer data-start and data-end attributes
+rows = soup.select("table#eventsTable tbody tr")
+
 for row in rows:
-    # Find all the <td> elements in the row
-    tds = row.find_all('td')
-    
-    # Make sure the row contains at least 3 <td> elements (Event, Start Time, Countdown)
-    if len(tds) >= 3:
-        event_time_str = tds[1].get_text(strip=True)  # Get the start time from the second column
+    tds = row.find_all("td")
+    if len(tds) < 3:
+        continue
 
-        # Format the event time
-        formatted_event_time = format_event_time(event_time_str)
+    # Second <td> is the visible start time
+    event_time_str = tds[1].get_text(strip=True)
+    event_time = parse_event_time(event_time_str)
+    if not event_time:
+        continue
 
-        # Find the countdown timer (third <td> in the row)
-        countdown_timer = tds[2].find('span', class_='countdown-timer')
-        
-        if countdown_timer:
-            # Set the data-start attribute to the formatted event time
-            countdown_timer['data-start'] = formatted_event_time.strftime('%B %d, %Y %H:%M:%S')
+    countdown_span = tds[2].find("span", class_="countdown-timer")
+    if not countdown_span:
+        continue
 
-            # Set the data-end attribute to 2 hours after the event start time
-            end_time = formatted_event_time + timedelta(hours=23)
-            countdown_timer['data-end'] = end_time.strftime('%B %d, %Y %H:%M:%S')
+    # data-start = event start time
+    start_str = event_time.strftime('%B %d, %Y %I:%M:%S %p')
+    # data-end = 2 hours after start
+    end_time = event_time + timedelta(hours=2)
+    end_str = end_time.strftime('%B %d, %Y %I:%M:%S %p')
 
-# Save the updated HTML back to the file
-with open('nfl.html', 'w', encoding='utf-8') as file:
-    file.write(str(soup))
+    countdown_span["data-start"] = start_str
+    countdown_span["data-end"] = end_str
 
-print("HTML file updated successfully!")
+with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
+    f.write(str(soup))
+
+print("nfl.html updated successfully.")
