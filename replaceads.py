@@ -1,28 +1,39 @@
-from pathlib import Path
 import re
-
-extra_script = """    <script src="https://monthspathsmug.com/39/5b/74/395b743c98df9f3269c808abb2b1d06a.js"></script>"""
+from pathlib import Path
 
 root = Path(".")
+
+# Pattern matches the exact block you want to remove (multiline)
+ad_block_pattern = re.compile(
+    r"""
+    <script>\s*
+        atOptions\s*=\s*\{\s*
+            'key'\s*:\s*'b1b8ec11c0dbedd922608bac17f740ee',\s*
+            'format'\s*:\s*'iframe',\s*
+            'height'\s*:\s*250,\s*
+            'width'\s*:\s*300,\s*
+            'params'\s*:\s*\{\s*\}\s*
+        \};\s*
+    </script>\s*
+    <script\s+src="https://monthspathsmug\.com/b1b8ec11c0dbedd922608bac17f740ee/invoke\.js"></script>\s*
+    <script\s+src="https://monthspathsmug\.com/39/5b/74/395b743c98df9f3269c808abb2b1d06a\.js"></script>
+    """,
+    re.VERBOSE | re.IGNORECASE
+)
 
 for html_file in root.rglob("*.html"):
     text = html_file.read_text(encoding="utf-8")
     
-    # Skip if this specific script already exists
-    if '395b743c98df9f3269c808abb2b1d06a.js' in text:
-        print(f"Already has extra script: {html_file}")
+    # Only process if the specific key exists
+    if 'b1b8ec11c0dbedd922608bac17f740ee' not in text:
         continue
     
-    # Find position: right after the invoke.js script (before </body>)
-    invoke_pos = text.rfind('monthspathsmug.com/b1b8ec11c0dbedd922608bac17f740ee/invoke.js')
+    # Remove the entire block
+    new_text = ad_block_pattern.sub("", text)
     
-    if invoke_pos != -1:
-        # Insert right after the invoke.js closing tag
-        script_close_pos = text.find('</script>', invoke_pos) + 9  # +9 for </script> length
-        new_text = text[:script_close_pos] + "\n" + extra_script + "\n" + text[script_close_pos:]
-    else:
-        print(f"No invoke.js found (skipping): {html_file}")
-        continue
+    # Clean up any extra blank lines left behind
+    new_text = re.sub(r'\n\s*\n\s*\n', '\n\n', new_text)
     
-    html_file.write_text(new_text, encoding="utf-8")
-    print(f"Added extra script: {html_file}")
+    if new_text != text:
+        html_file.write_text(new_text, encoding="utf-8")
+        print(f"Removed ad block: {html_file}")
