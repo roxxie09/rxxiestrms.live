@@ -41,7 +41,7 @@ for row in rows:
     # data-start = event start time
     start_str = event_time.strftime('%B %d, %Y %I:%M:%S %p')
     # data-end = 2 hours after start (matches soccer/nfl pattern)
-    end_time = event_time + timedelta(hours=2)
+    end_time = event_time + timedelta(hours=24)
     end_str = end_time.strftime('%B %d, %Y %I:%M:%S %p')
 
     countdown_span["data-start"] = start_str
