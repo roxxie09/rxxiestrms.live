@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" data-bs-theme="dark">
 <head>
-<script id="aclib" type="text/javascript" src="//acscdn.com/script/aclib.js"></script>
+    <script id="aclib" type="text/javascript" src="//acscdn.com/script/aclib.js"></script>
 
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -13,17 +13,17 @@
     <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="css/main.css">
     <link href="/css/buttons.css" rel="stylesheet">
-<link href="imgs/iconn.png" rel="shortcut icon" type="x-icon"/>
-<script disable-devtool-auto src='https://cdn.jsdelivr.net/npm/disable-devtool/disable-devtool.min.js'></script>
+    <link href="imgs/iconn.png" rel="shortcut icon" type="x-icon"/>
+    <script disable-devtool-auto src='https://cdn.jsdelivr.net/npm/disable-devtool/disable-devtool.min.js'></script>
     <script src="https://cdn.jsdelivr.net/npm/clappr@latest/dist/clappr.min.js"></script>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-EQ3BHVQGMN"></script>
     <script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
 
-  gtag('config', 'G-EQ3BHVQGMN');
-</script>
+        gtag('config', 'G-EQ3BHVQGMN');
+    </script>
     <style>
         .navbar-brand {
             color: pink;
@@ -83,14 +83,13 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-<li class="nav-item"><a class="nav-link" href="https://roxiestreams.live/soccer">Soccer</a></li>
-<li class="nav-item"><a class="nav-link" href="https://roxiestreams.live/mlb">MLB</a></li>
-<li class="nav-item"><a class="nav-link" href="https://roxiestreams.live/nba">NBA</a></li>
-<li class="nav-item"><a class="nav-link" href="https://roxiestreams.live/nfl">NFL</a></li>
-<li class="nav-item"><a class="nav-link" href="https://roxiestreams.live/nhl">NHL</a></li>
-
-<li class="nav-item"><a class="nav-link" href="https://roxiestreams.live/fighting">Fighting</a></li>
-<li class="nav-item"><a class="nav-link" href="https://roxiestreams.live/motorsports">Motorsports</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://roxiestreams.live/soccer">Soccer</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://roxiestreams.live/mlb">MLB</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://roxiestreams.live/nba">NBA</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://roxiestreams.live/nfl">NFL</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://roxiestreams.live/nhl">NHL</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://roxiestreams.live/fighting">Fighting</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://roxiestreams.live/motorsports">Motorsports</a></li>
                     <li class="nav-item"><a class="nav-link" href="https://discord.gg/JhkVmejRmn">Stream Request (Discord)</a></li>
                 </ul>
             </div>
@@ -99,9 +98,9 @@
 
     <div class="container container-fluid pt-2 text-white">
         <div class="fullplayer">
-            <div id="playerContainer"></div>
-            <div class="streamchanger">
-                <button class="streambutton" onclick="showPlayer('clappr', 'https://storage.railway.app/organized-pierogi-ssnev8/frofudrljocldrugudr295ifistlsw1w.m3u8?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=tid_Wzgsfcv_JTSuyvynvo_ERVPvp_zFPkylviswDZvLuepKWFpcJq%2F20260120%2Fauto%2Fs3%2Faws4_request&X-Amz-Date=20260120T222619Z&X-Amz-Expires=3600&X-Amz-Signature=d0102e4ef2f606769383d9d4144d55f6a7a33df48c558d11de12c7e8920ada83&X-Amz-SignedHeaders=host&x-amz-checksum-mode=ENABLED&x-id=GetObject')">Stream 1</button>
+            <!-- Replaced Clappr player with iframe embed -->
+            <div id="playerContainer">
+                <iframe src="https://justembeds.xyz/embed/130eb2958e436dcc39a8a9a439cca6d1" width="640" height="360" allowfullscreen></iframe>
             </div>
             <div class="embedchat">
                 <iframe src="https://www.youtube.com/live_chat?v=ZS9KXyH7Qjc&amp;embed_domain=roxiestreams.live"></iframe>
@@ -117,29 +116,6 @@
     </footer>
 
     <script>
-        var clapprPlayer;
-
-        function showPlayer(playerType, stream) {
-            if (playerType === "clappr") {
-                if (clapprPlayer) {
-                    clapprPlayer.destroy();
-                }
-
-                clapprPlayer = new Clappr.Player({
-                    source: stream,
-                    parentId: "#playerContainer",
-                    height: '100%',
-                    width: '100%',
-                    autoPlay: true,
-                });
-            }
-        }
-
-        window.onload = function() {
-            showPlayer('clappr', 'https://storage.railway.app/organized-pierogi-ssnev8/frofudrljocldrugudr295ifistlsw1w.m3u8?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=tid_Wzgsfcv_JTSuyvynvo_ERVPvp_zFPkylviswDZvLuepKWFpcJq%2F20260120%2Fauto%2Fs3%2Faws4_request&X-Amz-Date=20260120T222619Z&X-Amz-Expires=3600&X-Amz-Signature=d0102e4ef2f606769383d9d4144d55f6a7a33df48c558d11de12c7e8920ada83&X-Amz-SignedHeaders=host&x-amz-checksum-mode=ENABLED&x-id=GetObject');
-        };
-    </script>
-    <script>
         document.addEventListener('contextmenu', function (e) {
             e.preventDefault();
         });
@@ -151,12 +127,5 @@
             }
         });
     </script>
-    <script src="js/bootstrap.bundle.min.js"></script>
-
-
-<script type="text/javascript">
-aclib.runPop({
-zoneId: '10754426',
-});
-</script></body>
+</body>
 </html>
