@@ -312,7 +312,7 @@ const normalizedCache = roxieStreamsCached.map(item => ({
     }
 
     if (eventTitle.includes('ufc')) {
-      channelName = 'ESPN+';
+      channelName = 'Paramount+';
     }
 
     const hasPlTeam = Array.from(premierLeagueTeams).some(plTeam => eventTitle.includes(plTeam));
