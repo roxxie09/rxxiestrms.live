@@ -159,9 +159,9 @@ const normalizedCache = roxieStreamsCached.map(item => ({{
 
   function findBestMatch(eventTitle) {{
     const lowerTitle = eventTitle.toLowerCase();
-    if (lowerTitle.includes("ufc")) return "https://roxiestreams.live/ufc";
-    if (lowerTitle.includes("grand prix")) return "https://roxiestreams.live/f1-streams";
-    if (lowerTitle.includes("wwe")) return "https://roxiestreams.live/wwe-streams";
+    if (lowerTitle.includes("ufc")) return "https://roxiestreams.info/ufc";
+    if (lowerTitle.includes("grand prix")) return "https://roxiestreams.info/f1-streams";
+    if (lowerTitle.includes("wwe")) return "https://roxiestreams.info/wwe-streams";
 
     let teams = [];
     if (lowerTitle.includes("@")) {{
@@ -172,14 +172,14 @@ const normalizedCache = roxieStreamsCached.map(item => ({{
       teams = [normalizeTeamName(lowerTitle.trim())];
     }}
 
-    if (teams.length === 0) return 'https://roxiestreams.live/missing';
+    if (teams.length === 0) return 'https://roxiestreams.info/missing';
 
     for (const entry of normalizedCache) {{
       for (const team of teams) {{
         if (entry.title.includes(team)) return entry.url;
       }}
     }}
-    return 'https://roxiestreams.live/missing';
+    return 'https://roxiestreams.info/missing';
   }}
 
   function getEventTitleFromListDiv(listDiv) {{
@@ -298,7 +298,7 @@ const normalizedCache = roxieStreamsCached.map(item => ({{
       const urlValue = urlInput.value.trim();
 
       // SKIP modals/events whose URL is "missing"
-      if (urlValue === 'https://roxiestreams.live/missing') {{
+      if (urlValue === 'https://roxiestreams.info/missing') {{
         console.log(`Skipping ${{gameId}}: URL is missing!`);
         // Optionally: You may wish to close the modal here so it doesn't remain open, OR ignore and let user close after
         // If you want to close, uncomment below:

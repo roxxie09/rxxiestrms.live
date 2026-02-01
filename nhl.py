@@ -105,7 +105,7 @@ def update_nhl_date_section(html_content, games, target_date_str):
     for i, game in enumerate(games, 1):
         new_rows += f'''
         <tr>
-            <td><a href="https://roxiestreams.live/nhl-streams-{i}">{game["matchup"]}</a></td>
+            <td><a href="https://roxiestreams.info/nhl-streams-{i}">{game["matchup"]}</a></td>
             <td>{game["time_display"]}</td>
             <td><span class="countdown-timer" data-end="{game["end_pst"]}" data-start="{game["start_pst"]}"></span></td>
         </tr>'''
