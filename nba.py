@@ -116,7 +116,7 @@ def append_or_replace_schedule(html_file_path, new_games, new_date):
                     tr = soup.new_tag('tr')
 
                     td_event = soup.new_tag('td')
-                    a = soup.new_tag('a', href=f"https://roxiestreams.live/nba-streams-{idx}")
+                    a = soup.new_tag('a', href=f"https://roxiestreams.info/nba-streams-{idx}")
                     a.string = game['event']
                     td_event.append(a)
 
@@ -153,7 +153,7 @@ def append_or_replace_schedule(html_file_path, new_games, new_date):
             tr = soup.new_tag('tr')
 
             td_event = soup.new_tag('td')
-            a = soup.new_tag('a', href=f"https://roxiestreams.live/nba-streams-{idx}")
+            a = soup.new_tag('a', href=f"https://roxiestreams.info/nba-streams-{idx}")
             a.string = game['event']
             td_event.append(a)
 
