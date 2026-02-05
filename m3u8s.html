@@ -1,136 +1,84 @@
-<!DOCTYPE html>
-<html lang="en" data-bs-theme="dark">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>RoxieStreams - Deep Quality Scanner</title>
-    
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@700&display=swap" rel="stylesheet">
-    
-    <style>
-        body { background-color: #000; color: white; font-family: sans-serif; }
-        .navbar-brand { color: pink !important; font-family: 'Kanit', sans-serif; font-weight: bold; }
-        .extractor-wrapper { max-width: 900px; margin: 50px auto; background: #111; border: 1px solid #222; border-radius: 12px; padding: 30px; }
-        .input-group input { background: #1a1a1a; border: 1px solid #333; color: white; }
-        .btn-scan { background-color: pink; color: black; font-weight: bold; border: none; }
-        .link-item { background: #1a1a1a; padding: 15px; border: 1px solid #333; margin-bottom: 12px; border-radius: 8px; border-left: 4px solid #444; }
-        .quality-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; margin-bottom: 8px; }
+<script>
+    function guessQuality(url) {
+        const lowUrl = url.toLowerCase();
         
-        /* Quality Colors */
-        .q-1080 { background: #00ff88; color: #000; }
-        .q-720 { background: #00bcff; color: #000; }
-        .q-unk { background: #ffc107; color: #000; }
+        // Priority 1: Main Streams
+        if (lowUrl.includes('601') && !lowUrl.includes('alt')) {
+            return { text: 'PREMIUM HD (1080p) - MAIN', class: 'q-1080', weight: 1 };
+        }
         
-        .link-text { color: #888; font-family: monospace; font-size: 11px; word-break: break-all; display: block; margin-bottom: 10px; }
-        .button-group { display: flex; gap: 8px; }
-        .action-btn { font-size: 12px; padding: 8px 15px; border-radius: 4px; border: none; font-weight: bold; text-decoration: none; cursor: pointer; }
-        .copy-btn { background: #333; color: white; }
-        .play-btn { background: #28a745; color: white; flex-grow: 1; text-align: center; }
-    </style>
-</head>
-<body>
-
-    <nav class="navbar navbar-expand-lg bg-black">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">RoxieStreams</a>
-        </div>
-    </nav>
-
-    <div class="container">
-        <div class="extractor-wrapper">
-            <h3 style="color: pink; font-family: 'Kanit';">Advanced Quality Logic</h3>
-            <p class="text-secondary small">VLC-Style stream detection via URL heuristics.</p>
-
-            <div class="input-group mb-3">
-                <input type="text" id="urlInput" class="form-control" value="https://roxiestreams.live/nba-streams-1">
-                <button class="btn btn-scan" onclick="extractLinks()">SCAN STREAMS</button>
-            </div>
-
-            <div id="status" class="text-secondary mb-3 small italic">Ready.</div>
-            <div id="results"></div>
-        </div>
-    </div>
-
-    <script>
-        function guessQuality(url) {
-            const lowUrl = url.toLowerCase();
-            
-            // Logic based on common pirate stream naming conventions
-            // Usually 'nba6' or 'nba1' indicates the channel/quality rank
-            // '601' subdomains are usually the HD nodes
-            
-            if (lowUrl.includes('1080') || lowUrl.includes('601') || lowUrl.includes('daffodil')) {
-                return { text: 'PREMIUM HD (1080p)', class: 'q-1080' };
-            }
-            if (lowUrl.includes('720') || lowUrl.includes('602') || lowUrl.includes('nba6')) {
-                return { text: 'STANDARD HD (720p)', class: 'q-720' };
-            }
-            if (lowUrl.includes('playlist.m3u8')) {
-                return { text: 'ADAPTIVE MASTER', class: 'q-1080' };
-            }
-            
-            return { text: 'SD / MOBILE QUALITY', class: 'q-unk' };
+        // Priority 2: Alternative/Backup Streams
+        if (lowUrl.includes('alt') || lowUrl.includes('backup')) {
+            return { text: 'STANDARD HD (720p) - ALT', class: 'q-720', weight: 2 };
         }
 
-        async function extractLinks() {
-            const urlInput = document.getElementById('urlInput');
-            const resultsDiv = document.getElementById('results');
-            const statusDiv = document.getElementById('status');
-            const targetUrl = urlInput.value.trim();
+        // Priority 3: Specific Node names (Daffodil is usually a high-cap node)
+        if (lowUrl.includes('daffodil')) {
+            return { text: 'PREMIUM HD (1080p) - RELAY', class: 'q-1080', weight: 1 };
+        }
+        
+        return { text: 'SD / MOBILE QUALITY', class: 'q-unk', weight: 3 };
+    }
+
+    async function extractLinks() {
+        const urlInput = document.getElementById('urlInput');
+        const resultsDiv = document.getElementById('results');
+        const statusDiv = document.getElementById('status');
+        const targetUrl = urlInput.value.trim();
+        
+        if (!targetUrl) return;
+
+        resultsDiv.innerHTML = '';
+        statusDiv.textContent = 'Analyzing link priorities...';
+
+        try {
+            const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`;
+            const response = await fetch(proxyUrl);
+            const data = await response.json();
             
-            if (!targetUrl) return;
+            const regex = /(https?:\/\/[^\s"']+\.m3u8(\?[^\s"']*)?)/g;
+            const matches = data.contents.match(regex);
+            let uniqueLinks = matches ? [...new Set(matches)] : [];
 
-            resultsDiv.innerHTML = '';
-            statusDiv.textContent = 'Fetching source...';
+            if (uniqueLinks.length > 0) {
+                // Map links to their quality objects
+                let sortedResults = uniqueLinks.map(link => {
+                    return { url: link, info: guessQuality(link) };
+                });
 
-            try {
-                const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`;
-                const response = await fetch(proxyUrl);
-                const data = await response.json();
+                // Sort so 1080p (weight 1) is at the top
+                sortedResults.sort((a, b) => a.info.weight - b.info.weight);
+
+                statusDiv.innerHTML = `Identified <strong>${uniqueLinks.length}</strong> streams. Highest quality first:`;
                 
-                // Matches M3U8 links
-                const regex = /(https?:\/\/[^\s"']+\.m3u8(\?[^\s"']*)?)/g;
-                const matches = data.contents.match(regex);
-                const uniqueLinks = matches ? [...new Set(matches)] : [];
-
-                if (uniqueLinks.length > 0) {
-                    statusDiv.innerHTML = `Identified <strong>${uniqueLinks.length}</strong> possible streams.`;
+                sortedResults.forEach(item => {
+                    const embedUrl = `https://hlsplayer.net/embed?type=m3u8&src=${encodeURIComponent(item.url)}`;
                     
-                    uniqueLinks.forEach(link => {
-                        const quality = guessQuality(link);
-                        const embedUrl = `https://hlsplayer.net/embed?type=m3u8&src=${encodeURIComponent(link)}`;
-                        
-                        const div = document.createElement('div');
-                        div.className = 'link-item';
-                        // Apply specific color to border based on quality
-                        div.style.borderLeftColor = quality.class === 'q-1080' ? '#00ff88' : '#00bcff';
-                        
-                        div.innerHTML = `
-                            <div class="quality-badge ${quality.class}">${quality.text}</div>
-                            <span class="link-text">${link}</span>
-                            <div class="button-group">
-                                <a href="${embedUrl}" target="_blank" class="action-btn play-btn">▶ PLAY IN BROWSER</a>
-                                <button class="action-btn copy-btn" onclick="copyLink('${link}', this)">COPY FOR VLC</button>
-                            </div>
-                        `;
-                        resultsDiv.appendChild(div);
-                    });
-                } else {
-                    statusDiv.innerHTML = 'No streams found.';
-                }
-            } catch (e) {
-                statusDiv.innerHTML = 'Error: Connection blocked.';
+                    const div = document.createElement('div');
+                    div.className = 'link-item';
+                    div.style.borderLeftColor = item.info.class === 'q-1080' ? '#00ff88' : '#00bcff';
+                    
+                    div.innerHTML = `
+                        <div class="quality-badge ${item.info.class}">${item.info.text}</div>
+                        <span class="link-text">${item.url}</span>
+                        <div class="button-group">
+                            <a href="${embedUrl}" target="_blank" class="action-btn play-btn">▶ PLAY IN BROWSER</a>
+                            <button class="action-btn copy-btn" onclick="copyLink('${item.url}', this)">COPY FOR VLC</button>
+                        </div>
+                    `;
+                    resultsDiv.appendChild(div);
+                });
+            } else {
+                statusDiv.innerHTML = 'No streams found.';
             }
+        } catch (e) {
+            statusDiv.innerHTML = 'Error: Connection blocked.';
         }
+    }
 
-        function copyLink(text, btn) {
-            navigator.clipboard.writeText(text);
-            btn.textContent = 'COPIED';
-            setTimeout(() => btn.textContent = 'COPY FOR VLC', 2000);
-        }
-    </script>
-</body>
-</html>
+    function copyLink(text, btn) {
+        navigator.clipboard.writeText(text);
+        btn.textContent = 'COPIED';
+        setTimeout(() => btn.textContent = 'COPY FOR VLC', 2000);
+    }
+</script>
