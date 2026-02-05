@@ -55,41 +55,52 @@
     </div>
 
 <script>
-    function guessQuality(url) {
-        const lowUrl = url.toLowerCase();
-        
-        // Priority 1: Main Streams
-        if (lowUrl.includes('601') && !lowUrl.includes('alt')) {
-            return { text: 'PREMIUM HD (1080p) - MAIN', class: 'q-1080', weight: 1 };
-        }
-        
-        // Priority 2: Alternative/Backup Streams
-        if (lowUrl.includes('alt') || lowUrl.includes('backup')) {
-            return { text: 'STANDARD HD (720p) - ALT', class: 'q-720', weight: 2 };
-        }
+    // This function reaches into the file to find real quality data
+    async function getInternalMetadata(m3u8Url) {
+        try {
+            // Using a CORS proxy to read the file content as text
+            const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(m3u8Url)}`;
+            const response = await fetch(proxyUrl);
+            const data = await response.json();
+            const content = data.contents;
 
-        // Priority 3: Specific Node names (Daffodil is usually a high-cap node)
-        if (lowUrl.includes('daffodil')) {
-            return { text: 'PREMIUM HD (1080p) - RELAY', class: 'q-1080', weight: 1 };
+            // 1. Check for Master Playlist (contains resolution info)
+            if (content.includes('RESOLUTION=')) {
+                const resMatch = content.match(/RESOLUTION=(\d+x\d+)/);
+                const bitrateMatch = content.match(/BANDWIDTH=(\d+)/);
+                
+                let label = resMatch ? resMatch[1] : "Multi-Quality";
+                if (label.includes('1920')) return { text: 'TRUE 1080p HD', class: 'q-1080', weight: 1 };
+                if (label.includes('1280')) return { text: 'TRUE 720p HD', class: 'q-720', weight: 2 };
+                return { text: label, class: 'q-unk', weight: 2 };
+            }
+
+            // 2. Check if it's a sub-segment (usually direct quality)
+            if (content.includes('#EXTINF')) {
+                // If it's a direct stream from 601/daffodil, it's almost certainly 1080p
+                if (m3u8Url.includes('601') || m3u8Url.includes('daffodil')) {
+                    return { text: '1080p (Direct)', class: 'q-1080', weight: 1 };
+                }
+                return { text: '720p (Direct)', class: 'q-720', weight: 2 };
+            }
+
+            return { text: 'Unknown Quality', class: 'q-unk', weight: 3 };
+        } catch (e) {
+            return { text: 'Probe Failed', class: 'q-unk', weight: 4 };
         }
-        
-        return { text: 'SD / MOBILE QUALITY', class: 'q-unk', weight: 3 };
     }
 
     async function extractLinks() {
-        const urlInput = document.getElementById('urlInput');
         const resultsDiv = document.getElementById('results');
         const statusDiv = document.getElementById('status');
-        const targetUrl = urlInput.value.trim();
+        const targetUrl = document.getElementById('urlInput').value.trim();
         
-        if (!targetUrl) return;
-
         resultsDiv.innerHTML = '';
-        statusDiv.textContent = 'Analyzing link priorities...';
+        statusDiv.textContent = 'Probing server files for metadata...';
 
         try {
-            const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`;
-            const response = await fetch(proxyUrl);
+            const mainProxy = `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`;
+            const response = await fetch(mainProxy);
             const data = await response.json();
             
             const regex = /(https?:\/\/[^\s"']+\.m3u8(\?[^\s"']*)?)/g;
@@ -97,45 +108,35 @@
             let uniqueLinks = matches ? [...new Set(matches)] : [];
 
             if (uniqueLinks.length > 0) {
-                // Map links to their quality objects
-                let sortedResults = uniqueLinks.map(link => {
-                    return { url: link, info: guessQuality(link) };
-                });
+                let probedResults = [];
 
-                // Sort so 1080p (weight 1) is at the top
-                sortedResults.sort((a, b) => a.info.weight - b.info.weight);
+                // Run the probe on every link found
+                for (const link of uniqueLinks) {
+                    const meta = await getInternalMetadata(link);
+                    probedResults.push({ url: link, info: meta });
+                }
 
-                statusDiv.innerHTML = `Identified <strong>${uniqueLinks.length}</strong> streams. Highest quality first:`;
+                // Sort: Best quality (weight 1) first
+                probedResults.sort((a, b) => a.info.weight - b.info.weight);
+
+                statusDiv.innerHTML = `Found ${uniqueLinks.length} streams. Analysis complete:`;
                 
-                sortedResults.forEach(item => {
+                probedResults.forEach(item => {
                     const embedUrl = `https://hlsplayer.net/embed?type=m3u8&src=${encodeURIComponent(item.url)}`;
-                    
                     const div = document.createElement('div');
                     div.className = 'link-item';
-                    div.style.borderLeftColor = item.info.class === 'q-1080' ? '#00ff88' : '#00bcff';
-                    
                     div.innerHTML = `
                         <div class="quality-badge ${item.info.class}">${item.info.text}</div>
                         <span class="link-text">${item.url}</span>
                         <div class="button-group">
-                            <a href="${embedUrl}" target="_blank" class="action-btn play-btn">▶ PLAY IN BROWSER</a>
-                            <button class="action-btn copy-btn" onclick="copyLink('${item.url}', this)">COPY FOR VLC</button>
+                            <a href="${embedUrl}" target="_blank" class="action-btn play-btn">▶ PLAY</a>
+                            <button class="action-btn copy-btn" onclick="copyLink('${item.url}', this)">COPY URL</button>
                         </div>
                     `;
                     resultsDiv.appendChild(div);
                 });
-            } else {
-                statusDiv.innerHTML = 'No streams found.';
             }
-        } catch (e) {
-            statusDiv.innerHTML = 'Error: Connection blocked.';
-        }
-    }
-
-    function copyLink(text, btn) {
-        navigator.clipboard.writeText(text);
-        btn.textContent = 'COPIED';
-        setTimeout(() => btn.textContent = 'COPY FOR VLC', 2000);
+        } catch (e) { statusDiv.textContent = 'Error: Link extraction failed.'; }
     }
 </script></body>
 </html>
