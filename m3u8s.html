@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>M3U8 Link Extractor</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; max-width: 800px; margin: 2rem auto; padding: 0 1rem; background-color: #f4f4f9; }
+        .container { background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h2 { margin-top: 0; color: #333; }
+        .input-group { display: flex; gap: 10px; margin-bottom: 20px; }
+        input[type="text"] { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 16px; }
+        button { padding: 10px 20px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; font-weight: bold; }
+        button:hover { background-color: #0056b3; }
+        button:disabled { background-color: #ccc; cursor: not-allowed; }
+        
+        #results { margin-top: 20px; }
+        .link-item { background: #f8f9fa; padding: 10px; border: 1px solid #e9ecef; margin-bottom: 8px; border-radius: 4px; word-break: break-all; display: flex; justify-content: space-between; align-items: center; }
+        .link-text { color: #28a745; font-family: monospace; font-size: 14px; }
+        .copy-btn { font-size: 12px; padding: 4px 8px; background: #6c757d; color: white; border: none; border-radius: 3px; cursor: pointer; margin-left: 10px; }
+        .copy-btn:hover { background: #5a6268; }
+        .error { color: #dc3545; padding: 10px; background: #f8d7da; border-radius: 4px; }
+        .status { color: #666; font-style: italic; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>M3U8 Stream Extractor</h2>
+    <p>Enter a URL to scan its source code for M3U8 playlists.</p>
+    
+    <div class="input-group">
+        <input type="text" id="urlInput" placeholder="https://example.com/stream-page" value="https://roxiestreams.live/nba-streams-1">
+        <button id="scanBtn" onclick="extractLinks()">Scan URL</button>
+    </div>
+
+    <div id="status" class="status"></div>
+    <div id="results"></div>
+</div>
+
+<script>
+    async function extractLinks() {
+        const urlInput = document.getElementById('urlInput');
+        const scanBtn = document.getElementById('scanBtn');
+        const resultsDiv = document.getElementById('results');
+        const statusDiv = document.getElementById('status');
+        
+        const targetUrl = urlInput.value.trim();
+        
+        if (!targetUrl) {
+            statusDiv.innerHTML = '<span class="error">Please enter a URL</span>';
+            return;
+        }
+
+        // Reset UI
+        resultsDiv.innerHTML = '';
+        scanBtn.disabled = true;
+        scanBtn.textContent = 'Scanning...';
+        statusDiv.textContent = 'Fetching page source via proxy...';
+
+        // We use AllOrigins proxy to bypass CORS restrictions
+        const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`;
+
+        try {
+            const response = await fetch(proxyUrl);
+            const data = await response.json();
+            
+            if (!response.ok) throw new Error('Proxy connection failed');
+            
+            const pageSource = data.contents;
+            statusDiv.textContent = `Page fetched (${pageSource.length} bytes). Scanning for patterns...`;
+
+            // Regex to find .m3u8 links (looks for http/https starting and .m3u8 ending)
+            // It also captures query parameters usually attached to streams
+            const regex = /(https?:\/\/[^\s"']+\.m3u8(\?[^\s"']*)?)/g;
+            const matches = pageSource.match(regex);
+
+            // Filter duplicates
+            const uniqueLinks = matches ? [...new Set(matches)] : [];
+
+            scanBtn.disabled = false;
+            scanBtn.textContent = 'Scan URL';
+
+            if (uniqueLinks.length > 0) {
+                statusDiv.innerHTML = `Found <strong>${uniqueLinks.length}</strong> m3u8 link(s).`;
+                uniqueLinks.forEach(link => {
+                    const div = document.createElement('div');
+                    div.className = 'link-item';
+                    div.innerHTML = `
+                        <span class="link-text">${link}</span>
+                        <button class="copy-btn" onclick="navigator.clipboard.writeText('${link}')">Copy</button>
+                    `;
+                    resultsDiv.appendChild(div);
+                });
+            } else {
+                statusDiv.innerHTML = 'No direct .m3u8 links found in the source code. <br><small>Note: Some sites hide links inside obfuscated JavaScript or blobs.</small>';
+            }
+
+        } catch (error) {
+            console.error(error);
+            scanBtn.disabled = false;
+            scanBtn.textContent = 'Scan URL';
+            statusDiv.innerHTML = `<span class="error">Error: ${error.message}. <br>The site might be blocking proxies.</span>`;
+        }
+    }
+</script>
+
+</body>
+</html>
