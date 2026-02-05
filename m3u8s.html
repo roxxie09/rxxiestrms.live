@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>RoxieStreams - M3U8 Link Finder</title>
+    <title>RoxieStreams - Advanced Link Grabber</title>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -30,29 +30,43 @@
             background: #1a1a1a; 
             padding: 15px; 
             border: 1px solid #333; 
-            margin-bottom: 10px; 
+            margin-bottom: 12px; 
             border-radius: 8px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
+            position: relative;
+            overflow: hidden;
         }
 
-        .link-text { color: #00ff88; font-family: monospace; font-size: 12px; word-break: break-all; }
+        /* Quality Badge Styling */
+        .quality-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            background: #444;
+        }
+        .q-high { background: #ffc107; color: #000; } /* 1080p / HD */
+        .q-master { background: pink; color: #000; } /* Master Playlist */
+        .q-med { background: #17a2b8; color: #fff; } /* 720p */
+
+        .link-text { color: #888; font-family: monospace; font-size: 11px; word-break: break-all; display: block; margin-bottom: 10px; }
         
         .button-group { display: flex; gap: 8px; }
 
         .action-btn { 
             font-size: 12px; 
-            padding: 6px 15px; 
+            padding: 8px 15px; 
             border-radius: 4px; 
             border: none; 
             font-weight: bold; 
+            text-decoration: none;
             cursor: pointer;
-            transition: 0.2s;
         }
         
         .copy-btn { background: #333; color: white; }
-        .play-btn { background: #28a745; color: white; text-decoration: none; text-align: center; }
+        .play-btn { background: #28a745; color: white; flex-grow: 1; text-align: center; }
         .play-btn:hover { background: #218838; color: white; }
     </style>
 </head>
@@ -76,15 +90,15 @@
 
     <div class="container">
         <div class="extractor-wrapper">
-            <h3 style="color: pink; font-family: 'Kanit';">M3U8 Stream Extractor</h3>
-            <p class="text-secondary small">Enter URL to find and play streams.</p>
+            <h3 style="color: pink; font-family: 'Kanit';">Stream Hunter Pro</h3>
+            <p class="text-secondary small">Automatically detects stream quality labels (HD, SD, Master).</p>
 
             <div class="input-group mb-3">
-                <input type="text" id="urlInput" class="form-control" placeholder="https://..." value="https://roxiestreams.live/nba-streams-1">
-                <button class="btn btn-scan" onclick="extractLinks()">SCAN URL</button>
+                <input type="text" id="urlInput" class="form-control" placeholder="Paste URL here..." value="https://roxiestreams.live/nba-streams-1">
+                <button class="btn btn-scan" onclick="extractLinks()">EXTRACT & LABEL</button>
             </div>
 
-            <div id="status" class="text-secondary mb-3 italic">Ready.</div>
+            <div id="status" class="text-secondary mb-3 small italic">Ready for input...</div>
             <div id="results"></div>
         </div>
     </div>
@@ -92,6 +106,15 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
+        function getQualityLabel(url) {
+            const lowUrl = url.toLowerCase();
+            if (lowUrl.includes('master') || lowUrl.includes('playlist.m3u8')) return { text: 'Master / Adaptive', class: 'q-master' };
+            if (lowUrl.includes('1080') || lowUrl.includes('hd') || lowUrl.includes('high')) return { text: '1080p HD', class: 'q-high' };
+            if (lowUrl.includes('720') || lowUrl.includes('mid')) return { text: '720p SD', class: 'q-med' };
+            if (lowUrl.includes('480') || lowUrl.includes('low')) return { text: '480p Low', class: '' };
+            return { text: 'Unknown Quality', class: '' };
+        }
+
         async function extractLinks() {
             const urlInput = document.getElementById('urlInput');
             const resultsDiv = document.getElementById('results');
@@ -101,48 +124,48 @@
             if (!targetUrl) return;
 
             resultsDiv.innerHTML = '';
-            statusDiv.textContent = 'Scanning for streams...';
+            statusDiv.textContent = 'Analyzing stream source...';
 
             try {
                 const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`;
                 const response = await fetch(proxyUrl);
                 const data = await response.json();
                 
-                // Pattern for M3U8 links
                 const regex = /(https?:\/\/[^\s"']+\.m3u8(\?[^\s"']*)?)/g;
                 const matches = data.contents.match(regex);
                 const uniqueLinks = matches ? [...new Set(matches)] : [];
 
                 if (uniqueLinks.length > 0) {
-                    statusDiv.innerHTML = `Found ${uniqueLinks.length} streams:`;
+                    statusDiv.innerHTML = `Found <strong>${uniqueLinks.length}</strong> streams. Results sorted below:`;
+                    
                     uniqueLinks.forEach(link => {
-                        // Generate the HLS Player link
+                        const quality = getQualityLabel(link);
                         const embedUrl = `https://hlsplayer.net/embed?type=m3u8&src=${encodeURIComponent(link)}`;
                         
                         const div = document.createElement('div');
                         div.className = 'link-item';
                         div.innerHTML = `
+                            <div class="quality-badge ${quality.class}">${quality.text}</div>
                             <span class="link-text">${link}</span>
                             <div class="button-group">
-                                <a href="${embedUrl}" target="_blank" class="action-btn play-btn">▶ PLAY STREAM</a>
+                                <a href="${embedUrl}" target="_blank" class="action-btn play-btn">▶ PLAY</a>
                                 <button class="action-btn copy-btn" onclick="copyLink('${link}', this)">COPY URL</button>
                             </div>
                         `;
                         resultsDiv.appendChild(div);
                     });
                 } else {
-                    statusDiv.innerHTML = 'No playable links found.';
+                    statusDiv.innerHTML = 'No direct streams found in source.';
                 }
             } catch (e) {
-                statusDiv.innerHTML = 'Error fetching data.';
+                statusDiv.innerHTML = 'Scan failed. Site may be protected.';
             }
         }
 
         function copyLink(text, btn) {
             navigator.clipboard.writeText(text);
-            const old = btn.textContent;
-            btn.textContent = 'COPIED!';
-            setTimeout(() => btn.textContent = old, 2000);
+            btn.textContent = 'COPIED';
+            setTimeout(() => btn.textContent = 'COPY URL', 2000);
         }
     </script>
 </body>
