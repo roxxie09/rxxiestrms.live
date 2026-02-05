@@ -1,1 +1,120 @@
-<!doctype html> <html lang="en"> <head> <meta charset="utf-8" /> <title>m3u8 Link Grabber</title> <meta name="viewport" content="width=device-width, initial-scale=1" /> <style> body { font-family: Arial, sans-serif; padding: 20px; max-width: 800px; margin: auto; } input[type="url"] { width: 100%; padding: 0.5rem; } button { padding: 0.5rem 1rem; margin-top: 0.5rem; } .results { margin-top: 1rem; } .item { padding: 0.5rem; border: 1px solid #ddd; border-radius: 6px; margin-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center; } .badge { font-family: monospace; color: #555; } .copy { cursor: pointer; padding: 0.25rem 0.5rem; border: 1px solid #ccc; border-radius: 4px; background: #f7f7f7; } .note { color: #666; font-size: 0.9em; } .hidden { display: none; } </style> </head> <body> <h1>m3u8 Link Grabber</h1> <p class="note">Enter a page URL. The app will fetch the page source and extract any m3u8 links found in the HTML or scripts.</p> <input id="urlInput" type="url" placeholder="https://roxiestreams.live/nba-streams-1" /> <button id="runBtn">Grab m3u8 links</button> <div class="results" id="results" aria-live="polite"></div> <script> // Utility to deduplicate and normalize URLs function normUrl(u, base) { try { return new URL(u, base).href; } catch { return u; } } // Simple regex to catch common m3u8 URLs const M3U8_REGEX = /https?:\/\/[^"'()\s]+\.m3u8[^"'()\s]*/g; document.getElementById('runBtn').addEventListener('click', async () => { const url = document.getElementById('urlInput').value.trim(); const resultsEl = document.getElementById('results'); resultsEl.innerHTML = ''; if (!url) { resultsEl.textContent = 'Please enter a URL.'; return; } // Header hint to the user const loading = document.createElement('div'); loading.textContent = 'Fetching page... (may be blocked by CORS)'; resultsEl.appendChild(loading); try { // Fetch the page content // Note: This fetch will be subject to CORS. If the site disallows it, you may need a server-side proxy. const resp = await fetch(url, { mode: 'cors', credentials: 'omit' }); // If CORS disallows, fallback message if (!resp.ok) { loading.textContent = `Failed to fetch page: ${resp.status} ${resp.statusText}. This may be due to CORS protections.`; return; } const text = await resp.text(); // Clear loading indicator loading.remove(); // Collect potential m3u8 candidates from HTML and inline script blocks const candidates = new Set(); // 1) Direct HTML attributes and tags const doc = new DOMParser().parseFromString(text, 'text/html'); doc.querySelectorAll('source[src], video[src], audio[src]').forEach(n => { const src = n.getAttribute('src'); if (src && src.endsWith('.m3u8')) candidates.add(normUrl(src, url)); }); // 2) href/script contents that may contain m3u8 doc.querySelectorAll('[src], [href]').forEach(n => { const attr = n.getAttribute(n.hasAttribute('href') ? 'href' : 'src'); if (attr && attr.includes('.m3u8')) candidates.add(normUrl(attr, url)); }); // 3) script tag contents doc.querySelectorAll('script').forEach(s => { const content = s.textContent || ''; const matches = content.match(M3U8_REGEX); if (matches) matches.forEach(m => candidates.add(normUrl(m, url))); }); // 4) meta refresh or JSON data blobs const blobMatches = text.match(M3U8_REGEX); if (blobMatches) blobMatches.forEach(m => candidates.add(normUrl(m, url))); // If nothing found, show a friendly message if (candidates.size === 0) { resultsEl.innerHTML = '<div class="item">No m3u8 links found on this page.</div>'; return; } // Render results const frag = document.createDocumentFragment(); candidates.forEach((u) => { const row = document.createElement('div'); row.className = 'item'; const left = document.createElement('span'); left.textContent = u; const right = document.createElement('div'); right.style.display = 'flex'; right.style.gap = '8px'; const openBtn = document.createElement('a'); openBtn.href = u; openBtn.target = '_blank'; openBtn.rel = 'noopener'; openBtn.textContent = 'Open'; openBtn.className = 'copy'; right.appendChild(openBtn); const copyBtn = document.createElement('button'); copyBtn.className = 'copy'; copyBtn.textContent = 'Copy'; copyBtn.addEventListener('click', async () => { try { await navigator.clipboard.writeText(u); copyBtn.textContent = 'Copied'; setTimeout(() => copyBtn.textContent = 'Copy', 1500); } catch { copyBtn.textContent = 'Error'; setTimeout(() => copyBtn.textContent = 'Copy', 1500); } }); right.appendChild(copyBtn); row.appendChild(left); row.appendChild(right); frag.appendChild(row); }); resultsEl.appendChild(frag); } catch (err) { resultsEl.innerHTML = `<div class="item">Error fetching or parsing page: ${err.message}</div>`; } }); </script> </body> </html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>M3U8 Link Extractor v2</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; max-width: 800px; margin: 2rem auto; padding: 0 1rem; background-color: #f4f4f9; }
+        .container { background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h2 { margin-top: 0; color: #333; }
+        .input-group { display: flex; gap: 10px; margin-bottom: 20px; }
+        input[type="text"] { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 16px; }
+        button { padding: 10px 20px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; font-weight: bold; }
+        button:hover { background-color: #0056b3; }
+        button:disabled { background-color: #ccc; cursor: not-allowed; }
+        
+        #results { margin-top: 20px; }
+        .link-item { background: #f8f9fa; padding: 10px; border: 1px solid #e9ecef; margin-bottom: 8px; border-radius: 4px; word-break: break-all; display: flex; justify-content: space-between; align-items: center; }
+        .link-text { color: #28a745; font-family: monospace; font-size: 14px; }
+        .copy-btn { font-size: 12px; padding: 4px 8px; background: #6c757d; color: white; border: none; border-radius: 3px; cursor: pointer; margin-left: 10px; }
+        .copy-btn:hover { background: #5a6268; }
+        .error { color: #721c24; padding: 10px; background: #f8d7da; border-radius: 4px; border: 1px solid #f5c6cb;}
+        .status { color: #666; font-style: italic; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>M3U8 Stream Extractor v2</h2>
+    <p>Enter a URL to scan its source code for M3U8 playlists.</p>
+    
+    <div class="input-group">
+        <input type="text" id="urlInput" placeholder="https://example.com/stream-page" value="https://roxiestreams.live/nba-streams-1">
+        <button id="scanBtn" onclick="extractLinks()">Scan URL</button>
+    </div>
+
+    <div id="status" class="status"></div>
+    <div id="results"></div>
+</div>
+
+<script>
+    async function extractLinks() {
+        const urlInput = document.getElementById('urlInput');
+        const scanBtn = document.getElementById('scanBtn');
+        const resultsDiv = document.getElementById('results');
+        const statusDiv = document.getElementById('status');
+        
+        // 1. Prepare URL
+        // We do NOT encodeURIComponent the URL for corsproxy.io in this specific format
+        let targetUrl = urlInput.value.trim();
+        
+        if (!targetUrl) {
+            statusDiv.innerHTML = '<span class="error">Please enter a URL</span>';
+            return;
+        }
+
+        // Reset UI
+        resultsDiv.innerHTML = '';
+        scanBtn.disabled = true;
+        scanBtn.textContent = 'Scanning...';
+        statusDiv.textContent = 'Attempting to bypass CORS...';
+
+        // 2. Use CorsProxy.io
+        // This proxy usually handles raw HTML better than AllOrigins
+        const proxyUrl = 'https://corsproxy.io/?' + targetUrl;
+
+        try {
+            const response = await fetch(proxyUrl);
+            
+            if (!response.ok) {
+                throw new Error(`Proxy responded with status: ${response.status}`);
+            }
+            
+            // Unlike AllOrigins, this proxy returns raw text, not JSON
+            const pageSource = await response.text();
+            
+            statusDiv.textContent = `Page fetched (${pageSource.length} bytes). Searching regex...`;
+
+            // 3. Regex Pattern
+            // Looks for http/https, ends with .m3u8, and optionally captures query params
+            const regex = /(https?:\/\/[a-zA-Z0-9\-\._~:\/?#\[\]@!$&'\(\)*+,;=]+\.m3u8(\?[a-zA-Z0-9\-\._~:\/?#\[\]@!$&'\(\)*+,;=]*)?)/g;
+            const matches = pageSource.match(regex);
+            
+            // Filter duplicates
+            const uniqueLinks = matches ? [...new Set(matches)] : [];
+
+            scanBtn.disabled = false;
+            scanBtn.textContent = 'Scan URL';
+
+            if (uniqueLinks.length > 0) {
+                statusDiv.innerHTML = `Found <strong>${uniqueLinks.length}</strong> m3u8 link(s).`;
+                uniqueLinks.forEach(link => {
+                    const div = document.createElement('div');
+                    div.className = 'link-item';
+                    div.innerHTML = `
+                        <span class="link-text">${link}</span>
+                        <button class="copy-btn" onclick="navigator.clipboard.writeText('${link}')">Copy</button>
+                    `;
+                    resultsDiv.appendChild(div);
+                });
+            } else {
+                // If no links found, check if the source looks like a Cloudflare challenge
+                if (pageSource.includes('Just a moment...') || pageSource.includes('Enable JavaScript')) {
+                    statusDiv.innerHTML = '<span class="error">Failed: The site is protected by Cloudflare/Anti-Bot. This tool cannot bypass browser challenges.</span>';
+                } else {
+                    statusDiv.innerHTML = 'No direct .m3u8 links found in text. They might be hidden in encrypted JS.';
+                }
+            }
+
+        } catch (error) {
+            console.error(error);
+            scanBtn.disabled = false;
+            scanBtn.textContent = 'Scan URL';
+            statusDiv.innerHTML = `<span class="error">Connection Failed: ${error.message}.<br>The site is likely blocking automated requests.</span>`;
+        }
+    }
+</script>
+
+</body>
+</html>
