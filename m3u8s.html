@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>RoxieStreams - Advanced Link Grabber</title>
+    <title>RoxieStreams - Metadata Extractor</title>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -13,106 +13,67 @@
     <style>
         body { background-color: #000; color: white; font-family: sans-serif; }
         .navbar-brand { color: pink !important; font-family: 'Kanit', sans-serif; font-weight: bold; }
-        
-        .extractor-wrapper {
-            max-width: 900px;
-            margin: 50px auto;
-            background: #111;
-            border: 1px solid #222;
-            border-radius: 12px;
-            padding: 30px;
-        }
-
+        .extractor-wrapper { max-width: 900px; margin: 50px auto; background: #111; border: 1px solid #222; border-radius: 12px; padding: 30px; }
         .input-group input { background: #1a1a1a; border: 1px solid #333; color: white; }
         .btn-scan { background-color: pink; color: black; font-weight: bold; border: none; }
-
-        .link-item { 
-            background: #1a1a1a; 
-            padding: 15px; 
-            border: 1px solid #333; 
-            margin-bottom: 12px; 
-            border-radius: 8px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        /* Quality Badge Styling */
-        .quality-badge {
-            display: inline-block;
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-size: 10px;
-            font-weight: bold;
-            text-transform: uppercase;
-            margin-bottom: 8px;
-            background: #444;
-        }
-        .q-high { background: #ffc107; color: #000; } /* 1080p / HD */
-        .q-master { background: pink; color: #000; } /* Master Playlist */
-        .q-med { background: #17a2b8; color: #fff; } /* 720p */
-
+        .link-item { background: #1a1a1a; padding: 15px; border: 1px solid #333; margin-bottom: 12px; border-radius: 8px; }
+        .quality-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; margin-bottom: 8px; background: #444; }
+        .q-master { background: pink; color: #000; }
+        .q-hd { background: #ffc107; color: #000; }
         .link-text { color: #888; font-family: monospace; font-size: 11px; word-break: break-all; display: block; margin-bottom: 10px; }
-        
         .button-group { display: flex; gap: 8px; }
-
-        .action-btn { 
-            font-size: 12px; 
-            padding: 8px 15px; 
-            border-radius: 4px; 
-            border: none; 
-            font-weight: bold; 
-            text-decoration: none;
-            cursor: pointer;
-        }
-        
+        .action-btn { font-size: 12px; padding: 8px 15px; border-radius: 4px; border: none; font-weight: bold; text-decoration: none; cursor: pointer; }
         .copy-btn { background: #333; color: white; }
         .play-btn { background: #28a745; color: white; flex-grow: 1; text-align: center; }
-        .play-btn:hover { background: #218838; color: white; }
     </style>
 </head>
 <body>
 
     <nav class="navbar navbar-expand-lg bg-black">
         <div class="container-fluid">
-            <a class="navbar-brand" href="https://roxiestreams.info/">RoxieStreams</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
-                <span class="navbar-toggler-icon" style="filter: invert(1);"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/nba">NBA</a></li>
-                    <li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/nfl">NFL</a></li>
-                    <li class="nav-item"><a class="nav-link" href="https://discord.gg/JhkVmejRmn">Discord</a></li>
-                </ul>
-            </div>
+            <a class="navbar-brand" href="#">RoxieStreams</a>
         </div>
     </nav>
 
     <div class="container">
         <div class="extractor-wrapper">
-            <h3 style="color: pink; font-family: 'Kanit';">Stream Hunter Pro</h3>
-            <p class="text-secondary small">Automatically detects stream quality labels (HD, SD, Master).</p>
+            <h3 style="color: pink; font-family: 'Kanit';">Metadata Stream Scanner</h3>
+            <p class="text-secondary small">Probing M3U8 headers for resolution data...</p>
 
             <div class="input-group mb-3">
-                <input type="text" id="urlInput" class="form-control" placeholder="Paste URL here..." value="https://roxiestreams.live/nba-streams-1">
-                <button class="btn btn-scan" onclick="extractLinks()">EXTRACT & LABEL</button>
+                <input type="text" id="urlInput" class="form-control" value="https://roxiestreams.live/nba-streams-1">
+                <button class="btn btn-scan" onclick="extractLinks()">DEEP SCAN</button>
             </div>
 
-            <div id="status" class="text-secondary mb-3 small italic">Ready for input...</div>
+            <div id="status" class="text-secondary mb-3 small italic">Ready.</div>
             <div id="results"></div>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
     <script>
-        function getQualityLabel(url) {
-            const lowUrl = url.toLowerCase();
-            if (lowUrl.includes('master') || lowUrl.includes('playlist.m3u8')) return { text: 'Master / Adaptive', class: 'q-master' };
-            if (lowUrl.includes('1080') || lowUrl.includes('hd') || lowUrl.includes('high')) return { text: '1080p HD', class: 'q-high' };
-            if (lowUrl.includes('720') || lowUrl.includes('mid')) return { text: '720p SD', class: 'q-med' };
-            if (lowUrl.includes('480') || lowUrl.includes('low')) return { text: '480p Low', class: '' };
-            return { text: 'Unknown Quality', class: '' };
+        // Function to probe the M3U8 file content for quality info
+        async function probeMetadata(m3u8Url) {
+            try {
+                // We use the proxy again to read the content of the .m3u8 file
+                const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(m3u8Url)}`;
+                const response = await fetch(proxyUrl);
+                const data = await response.json();
+                const content = data.contents;
+
+                if (content.includes('RESOLUTION=')) {
+                    // Extract resolution like 1920x1080
+                    const match = content.match(/RESOLUTION=(\d+x\d+)/);
+                    return { 
+                        text: match ? `Multi-Quality (${match[1]})` : 'Master Playlist', 
+                        class: 'q-master' 
+                    };
+                } else if (content.includes('#EXTINF')) {
+                    return { text: 'Direct Stream (Chunked)', class: 'q-hd' };
+                }
+                return { text: 'Unknown Stream', class: '' };
+            } catch (e) {
+                return { text: 'Probe Failed', class: '' };
+            }
         }
 
         async function extractLinks() {
@@ -124,7 +85,7 @@
             if (!targetUrl) return;
 
             resultsDiv.innerHTML = '';
-            statusDiv.textContent = 'Analyzing stream source...';
+            statusDiv.textContent = 'Finding links...';
 
             try {
                 const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`;
@@ -136,10 +97,10 @@
                 const uniqueLinks = matches ? [...new Set(matches)] : [];
 
                 if (uniqueLinks.length > 0) {
-                    statusDiv.innerHTML = `Found <strong>${uniqueLinks.length}</strong> streams. Results sorted below:`;
+                    statusDiv.innerHTML = `Found ${uniqueLinks.length} links. Probing metadata...`;
                     
-                    uniqueLinks.forEach(link => {
-                        const quality = getQualityLabel(link);
+                    for (const link of uniqueLinks) {
+                        const quality = await probeMetadata(link);
                         const embedUrl = `https://hlsplayer.net/embed?type=m3u8&src=${encodeURIComponent(link)}`;
                         
                         const div = document.createElement('div');
@@ -153,12 +114,13 @@
                             </div>
                         `;
                         resultsDiv.appendChild(div);
-                    });
+                    }
+                    statusDiv.textContent = 'Scan Complete.';
                 } else {
-                    statusDiv.innerHTML = 'No direct streams found in source.';
+                    statusDiv.innerHTML = 'No links found.';
                 }
             } catch (e) {
-                statusDiv.innerHTML = 'Scan failed. Site may be protected.';
+                statusDiv.innerHTML = 'Error fetching data.';
             }
         }
 
