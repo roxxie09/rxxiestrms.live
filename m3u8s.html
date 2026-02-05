@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>RoxieStreams - Smart M3U8 Finder</title>
+    <title>RoxieStreams - Universal Deep Scanner</title>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -13,40 +13,63 @@
     <style>
         body { background-color: #000; color: white; font-family: sans-serif; }
         .navbar-brand { color: pink !important; font-family: 'Kanit', sans-serif; font-weight: bold; }
-        .extractor-wrapper { max-width: 900px; margin: 40px auto; background: #111; border: 1px solid #222; border-radius: 12px; padding: 30px; }
-        .input-group input { background: #1a1a1a; border: 1px solid #333; color: white; }
-        .btn-scan { background-color: pink; color: black; font-weight: bold; border: none; }
-        .link-item { background: #1a1a1a; padding: 15px; border: 1px solid #333; margin-bottom: 10px; border-radius: 8px; border-left: 4px solid #00ff88; }
-        .link-text { color: #00ff88; font-family: monospace; font-size: 11px; word-break: break-all; display: block; margin-bottom: 10px; }
-        .badge-type { font-size: 10px; text-transform: uppercase; margin-bottom: 5px; display: inline-block; padding: 2px 5px; background: #333; border-radius: 3px; }
-        .button-group { display: flex; gap: 8px; }
-        .action-btn { font-size: 12px; padding: 6px 15px; border-radius: 4px; border: none; font-weight: bold; cursor: pointer; text-decoration: none; }
+        .extractor-wrapper { max-width: 900px; margin: 40px auto; background: #111; border: 1px solid #222; border-radius: 12px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .input-group input { background: #1a1a1a; border: 1px solid #333; color: white; padding: 12px; }
+        .btn-scan { background-color: pink; color: black; font-weight: bold; border: none; padding: 0 25px; }
+        .btn-scan:hover { background-color: #ffc0cb; }
+        
+        .link-item { background: #1a1a1a; padding: 15px; border: 1px solid #333; margin-bottom: 15px; border-radius: 8px; border-left: 5px solid #00ff88; }
+        .badge-type { font-size: 10px; text-transform: uppercase; margin-bottom: 5px; display: inline-block; padding: 2px 5px; background: #333; border-radius: 3px; color: #aaa; }
+        .link-text { color: #00ff88; font-family: monospace; font-size: 11px; word-break: break-all; display: block; margin-bottom: 12px; }
+        .button-group { display: flex; gap: 10px; }
+        .action-btn { font-size: 13px; padding: 10px 20px; border-radius: 5px; border: none; font-weight: bold; text-decoration: none; cursor: pointer; transition: 0.2s; }
         .copy-btn { background: #333; color: white; }
         .play-btn { background: #28a745; color: white; flex-grow: 1; text-align: center; }
+        .play-btn:hover { background: #218838; transform: translateY(-1px); }
+        
+        .status-box { color: #888; font-size: 0.9rem; font-style: italic; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+        .spinner-border { width: 1rem; height: 1rem; }
     </style>
 </head>
 <body>
 
-    <nav class="navbar navbar-expand-lg bg-black">
+    <nav class="navbar navbar-expand-lg bg-black border-bottom border-secondary">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">RoxieStreams Smart Finder</a>
+            <a class="navbar-brand" href="https://roxiestreams.info/">RoxieStreams</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/soccer">Soccer</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/mlb">MLB</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/nba">NBA</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/nfl">NFL</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/nhl">NHL</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/fighting">Fighting</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/motorsports">Motorsports</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://discord.gg/JhkVmejRmn" target="_blank">Stream Request (Discord)</a></li>
+                </ul>
+            </div>
         </div>
     </nav>
 
     <div class="container">
         <div class="extractor-wrapper">
-            <h3 style="color: pink; font-family: 'Kanit';">Universal Stream Extractor</h3>
-            <p class="text-secondary small">Detects static links and dynamic JS-generated streams.</p>
+            <h2 style="color: pink; font-family: 'Kanit';">Universal Deep Scanner</h2>
+            <p class="text-secondary mb-4">Finding M3U8 links and reconstructing JS dynamic streams.</p>
 
             <div class="input-group mb-3">
                 <input type="text" id="urlInput" class="form-control" placeholder="https://..." value="https://roxiestreams.live/nba-streams-1">
-                <button class="btn btn-scan" onclick="extractLinks()">DEEP SCAN</button>
+                <button class="btn btn-scan" id="scanBtn" onclick="extractLinks()">START SCAN</button>
             </div>
 
-            <div id="status" class="text-secondary mb-3 italic">Ready.</div>
+            <div id="status" class="status-box">Ready for deep analysis.</div>
             <div id="results"></div>
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
         const proxy = "https://api.allorigins.win/get?url=";
@@ -55,11 +78,14 @@
             const urlInput = document.getElementById('urlInput');
             const resultsDiv = document.getElementById('results');
             const statusDiv = document.getElementById('status');
+            const scanBtn = document.getElementById('scanBtn');
             const targetUrl = urlInput.value.trim();
             
             if (!targetUrl) return;
+
             resultsDiv.innerHTML = '';
-            statusDiv.textContent = 'Analyzing page source and JavaScript...';
+            scanBtn.disabled = true;
+            statusDiv.innerHTML = `<div class="spinner-border text-pink" role="status"></div> Extracting binary streams...`;
 
             try {
                 const response = await fetch(proxy + encodeURIComponent(targetUrl));
@@ -68,71 +94,70 @@
                 
                 let foundStreams = [];
 
-                // 1. Scan for Standard M3U8 Links
+                // 1. Static Scan (Direct .m3u8 links)
                 const staticRegex = /(https?:\/\/[^\s"']+\.m3u8(\?[^\s"']*)?)/g;
                 const staticMatches = html.match(staticRegex);
-                if (staticMatches) staticMatches.forEach(link => foundStreams.push({url: link, type: 'Static Link'}));
+                if (staticMatches) staticMatches.forEach(link => foundStreams.push({url: link, type: 'Direct Source'}));
 
-                // 2. Scan for JS Dynamic Patterns (getRandomStream logic)
-                // Look for: getRandomStream('filename.m3u8', 'subdomain')
+                // 2. Dynamic Scan (JS patterns like getRandomStream)
                 const jsRegex = /getRandomStream\(['"]([^'"]+)['"](?:,\s*['"]([^'"]+)['"])?\)/g;
                 let jsMatch;
                 
-                // Try to find the domains.txt on the target server
-                let domains = ['shadow-ran.online']; // Default fallback
+                // Try to find domains.txt
+                let domains = ['shadow-ran.online']; 
                 try {
                     const baseUrl = targetUrl.substring(0, targetUrl.lastIndexOf('/') + 1);
                     const domResp = await fetch(proxy + encodeURIComponent(baseUrl + 'domains.txt'));
                     const domData = await domResp.json();
                     if (domData.contents) domains = domData.contents.trim().split('\n').map(d => d.trim());
-                } catch(e) { console.log("Could not load domains.txt, using fallback."); }
+                } catch(e) { console.warn("Using fallback domain list."); }
 
                 while ((jsMatch = jsRegex.exec(html)) !== null) {
                     const streamPath = jsMatch[1];
-                    const subdomain = jsMatch[2] || '601'; // Use match or default 601
-                    
-                    // Reconstruct links using found domains
+                    const subdomain = jsMatch[2] || '601'; 
                     domains.forEach(dom => {
                         foundStreams.push({
                             url: `https://${subdomain}.${dom}/${streamPath}`,
-                            type: 'Generated JS Stream'
+                            type: 'Reconstructed JS Node'
                         });
                     });
                 }
 
-                // Remove duplicates
+                // Deduplicate
                 const uniqueStreams = Array.from(new Set(foundStreams.map(s => s.url)))
                                            .map(url => foundStreams.find(s => s.url === url));
 
                 if (uniqueStreams.length > 0) {
-                    statusDiv.innerHTML = `Success! Detected ${uniqueStreams.length} potential streams:`;
+                    statusDiv.innerHTML = `✅ Found ${uniqueStreams.length} streams.`;
                     uniqueStreams.forEach(item => {
                         const embedUrl = `https://hlsplayer.net/embed?type=m3u8&src=${encodeURIComponent(item.url)}`;
-                        const div = document.createElement('div');
-                        div.className = 'link-item';
-                        div.innerHTML = `
+                        const card = document.createElement('div');
+                        card.className = 'link-item';
+                        card.innerHTML = `
                             <div class="badge-type">${item.type}</div>
-                            <span class="link-text">${item.url}</span>
+                            <code class="link-text">${item.url}</code>
                             <div class="button-group">
-                                <a href="${embedUrl}" target="_blank" class="action-btn play-btn">▶ PLAY</a>
-                                <button class="action-btn copy-btn" onclick="copyLink('${item.url}', this)">COPY URL</button>
+                                <a href="${embedUrl}" target="_blank" class="action-btn play-btn">▶ PLAY STREAM</a>
+                                <button class="action-btn copy-btn" onclick="copyToClipboard('${item.url}', this)">COPY URL</button>
                             </div>
                         `;
-                        resultsDiv.appendChild(div);
+                        resultsDiv.appendChild(card);
                     });
                 } else {
-                    statusDiv.innerHTML = 'No streams found. The site might be using high-level encryption.';
+                    statusDiv.innerHTML = "❌ No active streams detected.";
                 }
-            } catch (e) {
-                statusDiv.innerHTML = 'Scan failed. Check your internet or URL.';
+            } catch (err) {
+                statusDiv.innerHTML = "❌ Connection error.";
+            } finally {
+                scanBtn.disabled = false;
             }
         }
 
-        function copyLink(text, btn) {
+        function copyToClipboard(text, btn) {
             navigator.clipboard.writeText(text);
-            const old = btn.textContent;
-            btn.textContent = 'COPIED!';
-            setTimeout(() => btn.textContent = old, 2000);
+            const originalText = btn.textContent;
+            btn.textContent = "COPIED!";
+            setTimeout(() => btn.textContent = originalText, 2000);
         }
     </script>
 </body>
