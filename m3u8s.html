@@ -7,204 +7,221 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     
-    <script src="https://cdn.jsdelivr.net/npm/clappr@latest/dist/clappr.min.js"></script>
-
     <style>
         body {
-            background-color: #000; /* Matching your bg-black */
+            background-color: #000; /* Matching your black background */
             color: white;
-            font-family: 'Kanit', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
+
+        /* Navbar Styling from your site */
         .navbar-brand {
             color: pink !important;
             font-size: 1.3rem;
-            font-weight: bold;
             text-decoration: none;
+            font-family: 'Kanit', sans-serif;
+            font-weight: bold;
         }
-        .navbar-brand:hover { text-decoration: underline; }
-        
-        /* Scanner UI Styling */
-        .scanner-container {
+        .nav-link {
+            color: rgba(255,255,255,0.7) !important;
+        }
+        .nav-link:hover {
+            color: #fff !important;
+        }
+
+        /* Container for the Extractor (Replacing the Player area) */
+        .extractor-wrapper {
+            max-width: 900px;
+            margin: 50px auto;
             background: #111;
-            border: 1px solid #333;
-            border-radius: 8px;
-            padding: 20px;
-            margin-top: 20px;
+            border: 1px solid #222;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
+
         .input-group input {
-            background: #222;
-            border: 1px solid #444;
+            background: #1a1a1a;
+            border: 1px solid #333;
             color: white;
+            padding: 12px;
         }
         .input-group input:focus {
-            background: #2a2a2a;
+            background: #222;
             color: white;
             border-color: pink;
-            box-shadow: 0 0 0 0.25rem rgba(255, 192, 203, 0.25);
+            box-shadow: none;
         }
-        .btn-pink {
+
+        .btn-scan {
             background-color: pink;
             color: black;
             font-weight: bold;
+            border: none;
+            padding: 0 25px;
         }
-        .btn-pink:hover {
-            background-color: #ffb6c1;
+        .btn-scan:hover {
+            background-color: #ffc0cb;
+            color: black;
         }
-        
+
+        /* Results Styling */
         #results { margin-top: 20px; }
-        .link-item {
-            background: #1a1a1a;
-            padding: 12px;
-            border: 1px solid #333;
-            margin-bottom: 8px;
-            border-radius: 4px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .link-item { 
+            background: #1a1a1a; 
+            padding: 15px; 
+            border: 1px solid #333; 
+            margin-bottom: 10px; 
+            border-radius: 6px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
         }
-        .link-text {
-            color: #28a745;
-            font-family: monospace;
-            font-size: 0.9rem;
+        .link-text { 
+            color: #00ff88; 
+            font-family: monospace; 
+            font-size: 13px; 
             word-break: break-all;
+            margin-right: 10px;
         }
-        .action-btns { display: flex; gap: 5px; }
-        
-        /* Player Box */
-        #player-preview {
-            width: 100%;
-            height: 400px;
-            background: #000;
-            margin-top: 20px;
-            border-radius: 8px;
-            display: none; /* Hidden until a link is played */
+        .copy-btn { 
+            background: #333; 
+            color: #ccc; 
+            border: none; 
+            padding: 5px 12px; 
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
         }
-        .status-msg { font-style: italic; color: #888; margin-top: 10px; }
+        .copy-btn:hover { background: #444; color: white; }
+
+        .status { color: #888; font-style: italic; margin-bottom: 15px; font-size: 0.9rem; }
+        .error { color: #ff4d4d; }
+
+        footer {
+            border-top: 1px solid #222;
+            margin-top: 100px;
+            color: #666;
+        }
     </style>
 </head>
 <body>
 
-    <nav class="navbar navbar-expand-lg bg-black border-bottom border-secondary">
+    <nav class="navbar navbar-expand-lg bg-black">
         <div class="container-fluid">
             <a class="navbar-brand" href="#">RoxieStreams</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <div class="collapse navbar-collapse">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item"><a class="nav-link text-white" href="#">Soccer</a></li>
-                    <li class="nav-item"><a class="nav-link text-white" href="#">MLB</a></li>
-                    <li class="nav-item"><a class="nav-link text-white" href="#">NBA</a></li>
-                    <li class="nav-item"><a class="nav-link text-white" href="#">NFL</a></li>
-                    <li class="nav-item"><a class="nav-link text-white" href="https://discord.gg/JhkVmejRmn">Discord</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Soccer</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">MLB</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">NBA</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">NFL</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Fighting</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Discord</a></li>
                 </ul>
             </div>
         </div>
     </nav>
 
-    <div class="container mt-4">
-        <div class="row justify-content-center">
-            <div class="col-lg-8">
-                <div class="scanner-container">
-                    <h3 class="mb-3" style="color: pink;">Stream Link Extractor</h3>
-                    <p class="text-secondary small">Enter a URL below to find .m3u8 stream links in the source code.</p>
-                    
-                    <div class="input-group">
-                        <input type="text" id="targetUrl" class="form-control" placeholder="https://..." value="https://roxiestreams.live/nba-streams-1">
-                        <button class="btn btn-pink" onclick="startScan()">SCAN URL</button>
-                    </div>
+    <div class="container">
+        <div class="extractor-wrapper">
+            <h3 class="mb-3" style="color: pink; font-family: 'Kanit', sans-serif;">M3U8 Stream Link Grabber</h3>
+            <p class="text-secondary small mb-4">Enter a streaming URL below to extract hidden .m3u8 playlist links.</p>
 
-                    <div id="status" class="status-msg">Ready to scan...</div>
-
-                    <div id="player-preview"></div>
-
-                    <div id="results"></div>
-                </div>
+            <div class="input-group mb-3">
+                <input type="text" id="urlInput" class="form-control" placeholder="https://roxiestreams.live/..." value="https://roxiestreams.live/nba-streams-1">
+                <button class="btn btn-scan" type="button" id="scanBtn" onclick="extractLinks()">SCAN URL</button>
             </div>
+
+            <div id="status" class="status">Ready to scan...</div>
+            
+            <div id="results">
+                </div>
         </div>
     </div>
 
-    <footer class="container-fluid d-flex flex-column flex-lg-row justify-content-lg-between align-items-center py-4 border-top mt-5 bg-black">
-        <ul class="nav">
-            <li class="nav-item"><a href="#" class="nav-link px-2 text-body-secondary">Stream Request (Discord)</a></li>
-        </ul>
-        <p class="mb-0 text-body-secondary">RoxieStreams © 2024</p>
+    <footer class="container-fluid py-4 text-center">
+        <p class="mb-0">RoxieStreams © 2024 - Stream Extraction Tool</p>
     </footer>
 
     <script>
-        let clapprPlayer;
-
-        async function startScan() {
-            const url = document.getElementById('targetUrl').value.trim();
-            const status = document.getElementById('status');
+        async function extractLinks() {
+            const urlInput = document.getElementById('urlInput');
+            const scanBtn = document.getElementById('scanBtn');
             const resultsDiv = document.getElementById('results');
+            const statusDiv = document.getElementById('status');
             
-            if (!url) return alert("Please enter a URL");
+            const targetUrl = urlInput.value.trim();
+            
+            if (!targetUrl) {
+                statusDiv.innerHTML = '<span class="error">Please enter a valid URL</span>';
+                return;
+            }
 
+            // Reset UI
             resultsDiv.innerHTML = '';
-            status.innerHTML = "Fetching page source via CORS Proxy...";
-            
-            // Using AllOrigins to get the source
-            const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
+            scanBtn.disabled = true;
+            scanBtn.textContent = 'SCANNING...';
+            statusDiv.textContent = 'Bypassing CORS and fetching source...';
+
+            // AllOrigins Proxy
+            const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`;
 
             try {
                 const response = await fetch(proxyUrl);
+                if (!response.ok) throw new Error('Proxy connection failed');
+                
                 const data = await response.json();
-                const html = data.contents;
+                const pageSource = data.contents;
 
-                if (!html) throw new Error("Could not reach site.");
+                statusDiv.textContent = `Analyzing ${pageSource.length} bytes of code...`;
 
-                // Regex for M3U8
+                // Regex for M3U8 links
                 const regex = /(https?:\/\/[^\s"']+\.m3u8(\?[^\s"']*)?)/g;
-                const matches = html.match(regex);
+                const matches = pageSource.match(regex);
+
                 const uniqueLinks = matches ? [...new Set(matches)] : [];
 
+                scanBtn.disabled = false;
+                scanBtn.textContent = 'SCAN URL';
+
                 if (uniqueLinks.length > 0) {
-                    status.innerHTML = `Found <b style="color:pink">${uniqueLinks.length}</b> links!`;
+                    statusDiv.innerHTML = `Success! Found <strong style="color:pink">${uniqueLinks.length}</strong> link(s):`;
                     uniqueLinks.forEach(link => {
                         const div = document.createElement('div');
                         div.className = 'link-item';
                         div.innerHTML = `
-                            <span class="link-text">${link.substring(0, 50)}...</span>
-                            <div class="action-btns">
-                                <button class="btn btn-sm btn-outline-success" onclick="playStream('${link}')">Play</button>
-                                <button class="btn btn-sm btn-outline-light" onclick="navigator.clipboard.writeText('${link}')">Copy</button>
-                            </div>
+                            <span class="link-text">${link}</span>
+                            <button class="copy-btn" onclick="copyToClipboard('${link}', this)">Copy</button>
                         `;
                         resultsDiv.appendChild(div);
                     });
                 } else {
-                    status.innerHTML = "No M3U8 links found in the static HTML.";
+                    statusDiv.innerHTML = 'No direct .m3u8 links found. They might be encrypted or hidden in JS.';
                 }
 
-            } catch (err) {
-                status.innerHTML = `<span class="text-danger">Error: ${err.message}</span>`;
+            } catch (error) {
+                scanBtn.disabled = false;
+                scanBtn.textContent = 'SCAN URL';
+                statusDiv.innerHTML = `<span class="error">Error: ${error.message}. Try a different URL or proxy.</span>`;
             }
         }
 
-        function playStream(url) {
-            const playerDiv = document.getElementById('player-preview');
-            playerDiv.style.display = 'block';
-            
-            if (clapprPlayer) {
-                clapprPlayer.destroy();
-            }
-
-            clapprPlayer = new Clappr.Player({
-                source: url,
-                parentId: "#player-preview",
-                width: '100%',
-                height: '100%',
-                autoPlay: true,
-                mimeType: "application/x-mpegURL"
+        function copyToClipboard(text, btn) {
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = btn.textContent;
+                btn.textContent = 'Copied!';
+                btn.style.background = 'pink';
+                btn.style.color = 'black';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = '#333';
+                    btn.style.color = '#ccc';
+                }, 2000);
             });
-            
-            playerDiv.scrollIntoView({ behavior: 'smooth' });
         }
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
