@@ -1,109 +1,210 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-bs-theme="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>M3U8 Link Extractor</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>RoxieStreams - M3U8 Link Finder</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <script src="https://cdn.jsdelivr.net/npm/clappr@latest/dist/clappr.min.js"></script>
+
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; max-width: 800px; margin: 2rem auto; padding: 0 1rem; background-color: #f4f4f9; }
-        .container { background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        h2 { margin-top: 0; color: #333; }
-        .input-group { display: flex; gap: 10px; margin-bottom: 20px; }
-        input[type="text"] { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 16px; }
-        button { padding: 10px 20px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; font-weight: bold; }
-        button:hover { background-color: #0056b3; }
-        button:disabled { background-color: #ccc; cursor: not-allowed; }
+        body {
+            background-color: #000; /* Matching your bg-black */
+            color: white;
+            font-family: 'Kanit', sans-serif;
+        }
+        .navbar-brand {
+            color: pink !important;
+            font-size: 1.3rem;
+            font-weight: bold;
+            text-decoration: none;
+        }
+        .navbar-brand:hover { text-decoration: underline; }
+        
+        /* Scanner UI Styling */
+        .scanner-container {
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        .input-group input {
+            background: #222;
+            border: 1px solid #444;
+            color: white;
+        }
+        .input-group input:focus {
+            background: #2a2a2a;
+            color: white;
+            border-color: pink;
+            box-shadow: 0 0 0 0.25rem rgba(255, 192, 203, 0.25);
+        }
+        .btn-pink {
+            background-color: pink;
+            color: black;
+            font-weight: bold;
+        }
+        .btn-pink:hover {
+            background-color: #ffb6c1;
+        }
         
         #results { margin-top: 20px; }
-        .link-item { background: #f8f9fa; padding: 10px; border: 1px solid #e9ecef; margin-bottom: 8px; border-radius: 4px; word-break: break-all; display: flex; justify-content: space-between; align-items: center; }
-        .link-text { color: #28a745; font-family: monospace; font-size: 14px; }
-        .copy-btn { font-size: 12px; padding: 4px 8px; background: #6c757d; color: white; border: none; border-radius: 3px; cursor: pointer; margin-left: 10px; }
-        .copy-btn:hover { background: #5a6268; }
-        .error { color: #dc3545; padding: 10px; background: #f8d7da; border-radius: 4px; }
-        .status { color: #666; font-style: italic; margin-bottom: 10px; }
+        .link-item {
+            background: #1a1a1a;
+            padding: 12px;
+            border: 1px solid #333;
+            margin-bottom: 8px;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .link-text {
+            color: #28a745;
+            font-family: monospace;
+            font-size: 0.9rem;
+            word-break: break-all;
+        }
+        .action-btns { display: flex; gap: 5px; }
+        
+        /* Player Box */
+        #player-preview {
+            width: 100%;
+            height: 400px;
+            background: #000;
+            margin-top: 20px;
+            border-radius: 8px;
+            display: none; /* Hidden until a link is played */
+        }
+        .status-msg { font-style: italic; color: #888; margin-top: 10px; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h2>M3U8 Stream Extractor</h2>
-    <p>Enter a URL to scan its source code for M3U8 playlists.</p>
-    
-    <div class="input-group">
-        <input type="text" id="urlInput" placeholder="https://example.com/stream-page" value="https://roxiestreams.info/nba-streams-1">
-        <button id="scanBtn" onclick="extractLinks()">Scan URL</button>
+    <nav class="navbar navbar-expand-lg bg-black border-bottom border-secondary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">RoxieStreams</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link text-white" href="#">Soccer</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" href="#">MLB</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" href="#">NBA</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" href="#">NFL</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" href="https://discord.gg/JhkVmejRmn">Discord</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="scanner-container">
+                    <h3 class="mb-3" style="color: pink;">Stream Link Extractor</h3>
+                    <p class="text-secondary small">Enter a URL below to find .m3u8 stream links in the source code.</p>
+                    
+                    <div class="input-group">
+                        <input type="text" id="targetUrl" class="form-control" placeholder="https://..." value="https://roxiestreams.live/nba-streams-1">
+                        <button class="btn btn-pink" onclick="startScan()">SCAN URL</button>
+                    </div>
+
+                    <div id="status" class="status-msg">Ready to scan...</div>
+
+                    <div id="player-preview"></div>
+
+                    <div id="results"></div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div id="status" class="status"></div>
-    <div id="results"></div>
-</div>
+    <footer class="container-fluid d-flex flex-column flex-lg-row justify-content-lg-between align-items-center py-4 border-top mt-5 bg-black">
+        <ul class="nav">
+            <li class="nav-item"><a href="#" class="nav-link px-2 text-body-secondary">Stream Request (Discord)</a></li>
+        </ul>
+        <p class="mb-0 text-body-secondary">RoxieStreams © 2024</p>
+    </footer>
 
-<script>
-    async function extractLinks() {
-        const urlInput = document.getElementById('urlInput');
-        const scanBtn = document.getElementById('scanBtn');
-        const resultsDiv = document.getElementById('results');
-        const statusDiv = document.getElementById('status');
-        
-        const targetUrl = urlInput.value.trim();
-        
-        if (!targetUrl) {
-            statusDiv.innerHTML = '<span class="error">Please enter a URL</span>';
-            return;
+    <script>
+        let clapprPlayer;
+
+        async function startScan() {
+            const url = document.getElementById('targetUrl').value.trim();
+            const status = document.getElementById('status');
+            const resultsDiv = document.getElementById('results');
+            
+            if (!url) return alert("Please enter a URL");
+
+            resultsDiv.innerHTML = '';
+            status.innerHTML = "Fetching page source via CORS Proxy...";
+            
+            // Using AllOrigins to get the source
+            const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
+
+            try {
+                const response = await fetch(proxyUrl);
+                const data = await response.json();
+                const html = data.contents;
+
+                if (!html) throw new Error("Could not reach site.");
+
+                // Regex for M3U8
+                const regex = /(https?:\/\/[^\s"']+\.m3u8(\?[^\s"']*)?)/g;
+                const matches = html.match(regex);
+                const uniqueLinks = matches ? [...new Set(matches)] : [];
+
+                if (uniqueLinks.length > 0) {
+                    status.innerHTML = `Found <b style="color:pink">${uniqueLinks.length}</b> links!`;
+                    uniqueLinks.forEach(link => {
+                        const div = document.createElement('div');
+                        div.className = 'link-item';
+                        div.innerHTML = `
+                            <span class="link-text">${link.substring(0, 50)}...</span>
+                            <div class="action-btns">
+                                <button class="btn btn-sm btn-outline-success" onclick="playStream('${link}')">Play</button>
+                                <button class="btn btn-sm btn-outline-light" onclick="navigator.clipboard.writeText('${link}')">Copy</button>
+                            </div>
+                        `;
+                        resultsDiv.appendChild(div);
+                    });
+                } else {
+                    status.innerHTML = "No M3U8 links found in the static HTML.";
+                }
+
+            } catch (err) {
+                status.innerHTML = `<span class="text-danger">Error: ${err.message}</span>`;
+            }
         }
 
-        // Reset UI
-        resultsDiv.innerHTML = '';
-        scanBtn.disabled = true;
-        scanBtn.textContent = 'Scanning...';
-        statusDiv.textContent = 'Fetching page source via proxy...';
-
-        // We use AllOrigins proxy to bypass CORS restrictions
-        const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`;
-
-        try {
-            const response = await fetch(proxyUrl);
-            const data = await response.json();
+        function playStream(url) {
+            const playerDiv = document.getElementById('player-preview');
+            playerDiv.style.display = 'block';
             
-            if (!response.ok) throw new Error('Proxy connection failed');
-            
-            const pageSource = data.contents;
-            statusDiv.textContent = `Page fetched (${pageSource.length} bytes). Scanning for patterns...`;
-
-            // Regex to find .m3u8 links (looks for http/https starting and .m3u8 ending)
-            // It also captures query parameters usually attached to streams
-            const regex = /(https?:\/\/[^\s"']+\.m3u8(\?[^\s"']*)?)/g;
-            const matches = pageSource.match(regex);
-
-            // Filter duplicates
-            const uniqueLinks = matches ? [...new Set(matches)] : [];
-
-            scanBtn.disabled = false;
-            scanBtn.textContent = 'Scan URL';
-
-            if (uniqueLinks.length > 0) {
-                statusDiv.innerHTML = `Found <strong>${uniqueLinks.length}</strong> m3u8 link(s).`;
-                uniqueLinks.forEach(link => {
-                    const div = document.createElement('div');
-                    div.className = 'link-item';
-                    div.innerHTML = `
-                        <span class="link-text">${link}</span>
-                        <button class="copy-btn" onclick="navigator.clipboard.writeText('${link}')">Copy</button>
-                    `;
-                    resultsDiv.appendChild(div);
-                });
-            } else {
-                statusDiv.innerHTML = 'No direct .m3u8 links found in the source code. <br><small>Note: Some sites hide links inside obfuscated JavaScript or blobs.</small>';
+            if (clapprPlayer) {
+                clapprPlayer.destroy();
             }
 
-        } catch (error) {
-            console.error(error);
-            scanBtn.disabled = false;
-            scanBtn.textContent = 'Scan URL';
-            statusDiv.innerHTML = `<span class="error">Error: ${error.message}. <br>The site might be blocking proxies.</span>`;
+            clapprPlayer = new Clappr.Player({
+                source: url,
+                parentId: "#player-preview",
+                width: '100%',
+                height: '100%',
+                autoPlay: true,
+                mimeType: "application/x-mpegURL"
+            });
+            
+            playerDiv.scrollIntoView({ behavior: 'smooth' });
         }
-    }
-</script>
-
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
