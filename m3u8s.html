@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>RoxieStreams - Universal Deep Scanner</title>
+    <title>RoxieStreams - Grouped Deep Scanner</title>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,16 +16,18 @@
         .extractor-wrapper { max-width: 900px; margin: 40px auto; background: #111; border: 1px solid #222; border-radius: 12px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .input-group input { background: #1a1a1a; border: 1px solid #333; color: white; padding: 12px; }
         .btn-scan { background-color: pink; color: black; font-weight: bold; border: none; padding: 0 25px; }
-        .btn-scan:hover { background-color: #ffc0cb; }
         
-        .link-item { background: #1a1a1a; padding: 15px; border: 1px solid #333; margin-bottom: 15px; border-radius: 8px; border-left: 5px solid #00ff88; }
-        .badge-type { font-size: 10px; text-transform: uppercase; margin-bottom: 5px; display: inline-block; padding: 2px 5px; background: #333; border-radius: 3px; color: #aaa; }
-        .link-text { color: #00ff88; font-family: monospace; font-size: 11px; word-break: break-all; display: block; margin-bottom: 12px; }
+        /* Grouped Card Styling */
+        .link-item { background: #1a1a1a; padding: 20px; border: 1px solid #333; margin-bottom: 20px; border-radius: 12px; border-top: 4px solid pink; }
+        .stream-title { font-family: 'Kanit'; font-size: 1.2rem; color: #fff; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
+        .server-count { font-size: 11px; color: #888; margin-bottom: 15px; display: block; }
+        
+        .server-select { background: #222; border: 1px solid #444; color: #00ff88; font-family: monospace; font-size: 12px; padding: 8px; border-radius: 5px; width: 100%; margin-bottom: 15px; }
+        
         .button-group { display: flex; gap: 10px; }
         .action-btn { font-size: 13px; padding: 10px 20px; border-radius: 5px; border: none; font-weight: bold; text-decoration: none; cursor: pointer; transition: 0.2s; }
         .copy-btn { background: #333; color: white; }
         .play-btn { background: #28a745; color: white; flex-grow: 1; text-align: center; }
-        .play-btn:hover { background: #218838; transform: translateY(-1px); }
         
         .status-box { color: #888; font-size: 0.9rem; font-style: italic; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
         .spinner-border { width: 1rem; height: 1rem; }
@@ -36,7 +38,7 @@
     <nav class="navbar navbar-expand-lg bg-black border-bottom border-secondary">
         <div class="container-fluid">
             <a class="navbar-brand" href="https://roxiestreams.info/">RoxieStreams</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -48,7 +50,7 @@
                     <li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/nhl">NHL</a></li>
                     <li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/fighting">Fighting</a></li>
                     <li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/motorsports">Motorsports</a></li>
-                    <li class="nav-item"><a class="nav-link" href="https://discord.gg/JhkVmejRmn" target="_blank">Stream Request (Discord)</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://discord.gg/JhkVmejRmn" target="_blank">Discord</a></li>
                 </ul>
             </div>
         </div>
@@ -56,15 +58,15 @@
 
     <div class="container">
         <div class="extractor-wrapper">
-            <h2 style="color: pink; font-family: 'Kanit';">Universal Deep Scanner</h2>
-            <p class="text-secondary mb-4">Search by hitting Enter. Detecting static and JS-generated streams.</p>
+            <h2 style="color: pink; font-family: 'Kanit';">Grouped Stream Scanner</h2>
+            <p class="text-secondary mb-4">Same streams are automatically grouped. Use the dropdown to switch mirrors.</p>
 
             <div class="input-group mb-3">
-                <input type="text" id="urlInput" class="form-control" placeholder="Paste URL and hit Enter..." value="https://roxiestreams.live/nba-streams-1" onkeydown="if(event.key==='Enter') extractLinks()" onfocus="this.select()">
-                <button class="btn btn-scan" id="scanBtn" onclick="extractLinks()">START SCAN</button>
+                <input type="text" id="urlInput" class="form-control" placeholder="Paste URL..." value="https://roxiestreams.live/nba-streams-1" onkeydown="if(event.key==='Enter') extractLinks()" onfocus="this.select()">
+                <button class="btn btn-scan" id="scanBtn" onclick="extractLinks()">SCAN URL</button>
             </div>
 
-            <div id="status" class="status-box">Ready for deep analysis.</div>
+            <div id="status" class="status-box">Ready.</div>
             <div id="results"></div>
         </div>
     </div>
@@ -82,67 +84,89 @@
             const targetUrl = urlInput.value.trim();
             
             if (!targetUrl) return;
-
             resultsDiv.innerHTML = '';
             scanBtn.disabled = true;
-            statusDiv.innerHTML = `<div class="spinner-border text-pink" role="status"></div> Extracting binary streams...`;
+            statusDiv.innerHTML = `<div class="spinner-border text-pink" role="status"></div> Filtering duplicates...`;
 
             try {
                 const response = await fetch(proxy + encodeURIComponent(targetUrl));
                 const data = await response.json();
                 const html = data.contents;
                 
-                let foundStreams = [];
+                let rawStreams = [];
 
-                // 1. Static Scan
+                // 1. Collect all potential links
                 const staticRegex = /(https?:\/\/[^\s"']+\.m3u8(\?[^\s"']*)?)/g;
                 const staticMatches = html.match(staticRegex);
-                if (staticMatches) staticMatches.forEach(link => foundStreams.push({url: link, type: 'Direct Source'}));
+                if (staticMatches) staticMatches.forEach(link => rawStreams.push(link));
 
-                // 2. Dynamic Scan
                 const jsRegex = /getRandomStream\(['"]([^'"]+)['"](?:,\s*['"]([^'"]+)['"])?\)/g;
                 let jsMatch;
-                
                 let domains = ['shadow-ran.online']; 
                 try {
                     const baseUrl = targetUrl.substring(0, targetUrl.lastIndexOf('/') + 1);
                     const domResp = await fetch(proxy + encodeURIComponent(baseUrl + 'domains.txt'));
                     const domData = await domResp.json();
                     if (domData.contents) domains = domData.contents.trim().split('\n').map(d => d.trim());
-                } catch(e) { console.warn("Using fallback domain list."); }
+                } catch(e) {}
 
                 while ((jsMatch = jsRegex.exec(html)) !== null) {
                     const streamPath = jsMatch[1];
                     const subdomain = jsMatch[2] || '601'; 
-                    domains.forEach(dom => {
-                        foundStreams.push({
-                            url: `https://${subdomain}.${dom}/${streamPath}`,
-                            type: 'Reconstructed JS Node'
-                        });
-                    });
+                    domains.forEach(dom => rawStreams.push(`https://${subdomain}.${dom}/${streamPath}`));
                 }
 
-                const uniqueStreams = Array.from(new Set(foundStreams.map(s => s.url)))
-                                           .map(url => foundStreams.find(s => s.url === url));
+                // 2. GROUPING LOGIC
+                // Group key = subdomain + filename (e.g., "daffodil-rush.m3u8")
+                const groups = {};
+                rawStreams.forEach(url => {
+                    try {
+                        const urlObj = new URL(url);
+                        const subdomain = urlObj.hostname.split('.')[0];
+                        const filename = urlObj.pathname.split('/').pop();
+                        const key = `${subdomain}-${filename}`;
+                        
+                        if (!groups[key]) {
+                            groups[key] = {
+                                title: filename.replace('.m3u8', '').toUpperCase(),
+                                subdomain: subdomain,
+                                urls: []
+                            };
+                        }
+                        if (!groups[key].urls.includes(url)) groups[key].urls.push(url);
+                    } catch(e) {}
+                });
 
-                if (uniqueStreams.length > 0) {
-                    statusDiv.innerHTML = `✅ Found ${uniqueStreams.length} streams.`;
-                    uniqueStreams.forEach(item => {
-                        const embedUrl = `https://hlsplayer.net/embed?type=m3u8&src=${encodeURIComponent(item.url)}`;
+                const groupKeys = Object.keys(groups);
+                if (groupKeys.length > 0) {
+                    statusDiv.innerHTML = `✅ Found ${groupKeys.length} unique stream feeds.`;
+                    groupKeys.forEach((key, index) => {
+                        const group = groups[key];
                         const card = document.createElement('div');
                         card.className = 'link-item';
+                        
+                        // Create unique ID for the dropdown
+                        const selectId = `select-${index}`;
+                        
+                        let options = group.urls.map(u => `<option value="${u}">${u}</option>`).join('');
+                        
                         card.innerHTML = `
-                            <div class="badge-type">${item.type}</div>
-                            <code class="link-text">${item.url}</code>
+                            <div class="stream-title">${group.title} <span style="color:pink">(${group.subdomain})</span></div>
+                            <span class="server-count">Available on ${group.urls.length} mirrored servers</span>
+                            
+                            <select id="${selectId}" class="server-select">
+                                ${options}
+                            </select>
+
                             <div class="button-group">
-                                <a href="${embedUrl}" target="_blank" class="action-btn play-btn">▶ PLAY STREAM</a>
-                                <button class="action-btn copy-btn" onclick="copyToClipboard('${item.url}', this)">COPY URL</button>
+                                <button class="action-btn play-btn" onclick="playSelected('${selectId}')">▶ PLAY SELECTED</button>
+                                <button class="action-btn copy-btn" onclick="copySelected('${selectId}', this)">COPY URL</button>
                             </div>
                         `;
                         resultsDiv.appendChild(card);
                     });
                 } else {
-                    statusDiv.innerHTML = "❌ No active streams detected.";
+                    statusDiv.innerHTML = "❌ No streams detected.";
                 }
             } catch (err) {
                 statusDiv.innerHTML = "❌ Connection error.";
@@ -151,8 +175,15 @@
             }
         }
 
-        function copyToClipboard(text, btn) {
-            navigator.clipboard.writeText(text);
+        function playSelected(id) {
+            const url = document.getElementById(id).value;
+            const embedUrl = `https://hlsplayer.net/embed?type=m3u8&src=${encodeURIComponent(url)}`;
+            window.open(embedUrl, '_blank');
+        }
+
+        function copySelected(id, btn) {
+            const url = document.getElementById(id).value;
+            navigator.clipboard.writeText(url);
             const originalText = btn.textContent;
             btn.textContent = "COPIED!";
             setTimeout(() => btn.textContent = originalText, 2000);
