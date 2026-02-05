@@ -5,18 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>RoxieStreams - M3U8 Link Finder</title>
     
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@700&display=swap" rel="stylesheet">
     
     <style>
         body {
-            background-color: #000; /* Matching your black background */
+            background-color: #000;
             color: white;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
 
-        /* Navbar Styling from your site */
         .navbar-brand {
             color: pink !important;
             font-size: 1.3rem;
@@ -24,14 +24,17 @@
             font-family: 'Kanit', sans-serif;
             font-weight: bold;
         }
-        .nav-link {
-            color: rgba(255,255,255,0.7) !important;
-        }
-        .nav-link:hover {
-            color: #fff !important;
+
+        .navbar-nav .nav-link {
+            color: rgba(255,255,255,0.8) !important;
+            font-size: 0.95rem;
         }
 
-        /* Container for the Extractor (Replacing the Player area) */
+        .navbar-nav .nav-link:hover {
+            color: pink !important;
+        }
+
+        /* Container for the Extractor */
         .extractor-wrapper {
             max-width: 900px;
             margin: 50px auto;
@@ -48,6 +51,7 @@
             color: white;
             padding: 12px;
         }
+
         .input-group input:focus {
             background: #222;
             color: white;
@@ -62,12 +66,11 @@
             border: none;
             padding: 0 25px;
         }
+
         .btn-scan:hover {
             background-color: #ffc0cb;
-            color: black;
         }
 
-        /* Results Styling */
         #results { margin-top: 20px; }
         .link-item { 
             background: #1a1a1a; 
@@ -79,13 +82,14 @@
             justify-content: space-between; 
             align-items: center; 
         }
+
         .link-text { 
             color: #00ff88; 
             font-family: monospace; 
             font-size: 13px; 
             word-break: break-all;
-            margin-right: 10px;
         }
+
         .copy-btn { 
             background: #333; 
             color: #ccc; 
@@ -93,11 +97,10 @@
             padding: 5px 12px; 
             border-radius: 4px;
             font-size: 12px;
-            cursor: pointer;
+            margin-left: 10px;
         }
-        .copy-btn:hover { background: #444; color: white; }
 
-        .status { color: #888; font-style: italic; margin-bottom: 15px; font-size: 0.9rem; }
+        .status { color: #888; font-style: italic; margin-bottom: 15px; }
         .error { color: #ff4d4d; }
 
         footer {
@@ -111,15 +114,20 @@
 
     <nav class="navbar navbar-expand-lg bg-black">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">RoxieStreams</a>
-            <div class="collapse navbar-collapse">
+            <a class="navbar-brand" href="https://roxiestreams.info/">RoxieStreams</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon" style="filter: invert(1);"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item"><a class="nav-link" href="#">Soccer</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">MLB</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">NBA</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">NFL</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Fighting</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Discord</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/soccer">Soccer</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/mlb">MLB</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/nba">NBA</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/nfl">NFL</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/nhl">NHL</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/fighting">Fighting</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/motorsports">Motorsports</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://discord.gg/JhkVmejRmn">Stream Request (Discord)</a></li>
                 </ul>
             </div>
         </div>
@@ -127,24 +135,24 @@
 
     <div class="container">
         <div class="extractor-wrapper">
-            <h3 class="mb-3" style="color: pink; font-family: 'Kanit', sans-serif;">M3U8 Stream Link Grabber</h3>
-            <p class="text-secondary small mb-4">Enter a streaming URL below to extract hidden .m3u8 playlist links.</p>
+            <h3 class="mb-3" style="color: pink; font-family: 'Kanit', sans-serif;">M3U8 Source Extractor</h3>
+            <p class="text-secondary small mb-4">Scan your live streaming pages to pull the master playlist URLs.</p>
 
             <div class="input-group mb-3">
-                <input type="text" id="urlInput" class="form-control" placeholder="https://roxiestreams.live/..." value="https://roxiestreams.live/nba-streams-1">
+                <input type="text" id="urlInput" class="form-control" placeholder="URL here..." value="https://roxiestreams.live/nba-streams-1">
                 <button class="btn btn-scan" type="button" id="scanBtn" onclick="extractLinks()">SCAN URL</button>
             </div>
 
-            <div id="status" class="status">Ready to scan...</div>
-            
-            <div id="results">
-                </div>
+            <div id="status" class="status">Ready.</div>
+            <div id="results"></div>
         </div>
     </div>
 
     <footer class="container-fluid py-4 text-center">
-        <p class="mb-0">RoxieStreams © 2024 - Stream Extraction Tool</p>
+        <p class="mb-0">Roxiestreams © 2024</p>
     </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
         async function extractLinks() {
@@ -152,75 +160,54 @@
             const scanBtn = document.getElementById('scanBtn');
             const resultsDiv = document.getElementById('results');
             const statusDiv = document.getElementById('status');
-            
             const targetUrl = urlInput.value.trim();
             
-            if (!targetUrl) {
-                statusDiv.innerHTML = '<span class="error">Please enter a valid URL</span>';
-                return;
-            }
+            if (!targetUrl) return;
 
-            // Reset UI
             resultsDiv.innerHTML = '';
             scanBtn.disabled = true;
             scanBtn.textContent = 'SCANNING...';
-            statusDiv.textContent = 'Bypassing CORS and fetching source...';
-
-            // AllOrigins Proxy
-            const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`;
+            statusDiv.textContent = 'Fetching page data...';
 
             try {
+                // Using AllOrigins
+                const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`;
                 const response = await fetch(proxyUrl);
-                if (!response.ok) throw new Error('Proxy connection failed');
-                
                 const data = await response.json();
                 const pageSource = data.contents;
 
-                statusDiv.textContent = `Analyzing ${pageSource.length} bytes of code...`;
-
-                // Regex for M3U8 links
                 const regex = /(https?:\/\/[^\s"']+\.m3u8(\?[^\s"']*)?)/g;
                 const matches = pageSource.match(regex);
-
                 const uniqueLinks = matches ? [...new Set(matches)] : [];
 
                 scanBtn.disabled = false;
                 scanBtn.textContent = 'SCAN URL';
 
                 if (uniqueLinks.length > 0) {
-                    statusDiv.innerHTML = `Success! Found <strong style="color:pink">${uniqueLinks.length}</strong> link(s):`;
+                    statusDiv.innerHTML = `Found <strong>${uniqueLinks.length}</strong> links.`;
                     uniqueLinks.forEach(link => {
                         const div = document.createElement('div');
                         div.className = 'link-item';
                         div.innerHTML = `
                             <span class="link-text">${link}</span>
-                            <button class="copy-btn" onclick="copyToClipboard('${link}', this)">Copy</button>
+                            <button class="copy-btn" onclick="copyText('${link}', this)">Copy</button>
                         `;
                         resultsDiv.appendChild(div);
                     });
                 } else {
-                    statusDiv.innerHTML = 'No direct .m3u8 links found. They might be encrypted or hidden in JS.';
+                    statusDiv.innerHTML = 'No M3U8 links found in the code.';
                 }
-
             } catch (error) {
                 scanBtn.disabled = false;
                 scanBtn.textContent = 'SCAN URL';
-                statusDiv.innerHTML = `<span class="error">Error: ${error.message}. Try a different URL or proxy.</span>`;
+                statusDiv.innerHTML = '<span class="error">Proxy error. Try again.</span>';
             }
         }
 
-        function copyToClipboard(text, btn) {
-            navigator.clipboard.writeText(text).then(() => {
-                const originalText = btn.textContent;
-                btn.textContent = 'Copied!';
-                btn.style.background = 'pink';
-                btn.style.color = 'black';
-                setTimeout(() => {
-                    btn.textContent = originalText;
-                    btn.style.background = '#333';
-                    btn.style.color = '#ccc';
-                }, 2000);
-            });
+        function copyText(text, btn) {
+            navigator.clipboard.writeText(text);
+            btn.textContent = 'Copied!';
+            setTimeout(() => btn.textContent = 'Copy', 2000);
         }
     </script>
 </body>
