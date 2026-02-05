@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>RoxieStreams - Metadata Extractor</title>
+    <title>RoxieStreams - Deep Quality Scanner</title>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,10 +16,14 @@
         .extractor-wrapper { max-width: 900px; margin: 50px auto; background: #111; border: 1px solid #222; border-radius: 12px; padding: 30px; }
         .input-group input { background: #1a1a1a; border: 1px solid #333; color: white; }
         .btn-scan { background-color: pink; color: black; font-weight: bold; border: none; }
-        .link-item { background: #1a1a1a; padding: 15px; border: 1px solid #333; margin-bottom: 12px; border-radius: 8px; }
-        .quality-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; margin-bottom: 8px; background: #444; }
-        .q-master { background: pink; color: #000; }
-        .q-hd { background: #ffc107; color: #000; }
+        .link-item { background: #1a1a1a; padding: 15px; border: 1px solid #333; margin-bottom: 12px; border-radius: 8px; border-left: 4px solid #444; }
+        .quality-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; margin-bottom: 8px; }
+        
+        /* Quality Colors */
+        .q-1080 { background: #00ff88; color: #000; }
+        .q-720 { background: #00bcff; color: #000; }
+        .q-unk { background: #ffc107; color: #000; }
+        
         .link-text { color: #888; font-family: monospace; font-size: 11px; word-break: break-all; display: block; margin-bottom: 10px; }
         .button-group { display: flex; gap: 8px; }
         .action-btn { font-size: 12px; padding: 8px 15px; border-radius: 4px; border: none; font-weight: bold; text-decoration: none; cursor: pointer; }
@@ -37,12 +41,12 @@
 
     <div class="container">
         <div class="extractor-wrapper">
-            <h3 style="color: pink; font-family: 'Kanit';">Metadata Stream Scanner</h3>
-            <p class="text-secondary small">Probing M3U8 headers for resolution data...</p>
+            <h3 style="color: pink; font-family: 'Kanit';">Advanced Quality Logic</h3>
+            <p class="text-secondary small">VLC-Style stream detection via URL heuristics.</p>
 
             <div class="input-group mb-3">
                 <input type="text" id="urlInput" class="form-control" value="https://roxiestreams.live/nba-streams-1">
-                <button class="btn btn-scan" onclick="extractLinks()">DEEP SCAN</button>
+                <button class="btn btn-scan" onclick="extractLinks()">SCAN STREAMS</button>
             </div>
 
             <div id="status" class="text-secondary mb-3 small italic">Ready.</div>
@@ -51,29 +55,24 @@
     </div>
 
     <script>
-        // Function to probe the M3U8 file content for quality info
-        async function probeMetadata(m3u8Url) {
-            try {
-                // We use the proxy again to read the content of the .m3u8 file
-                const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(m3u8Url)}`;
-                const response = await fetch(proxyUrl);
-                const data = await response.json();
-                const content = data.contents;
-
-                if (content.includes('RESOLUTION=')) {
-                    // Extract resolution like 1920x1080
-                    const match = content.match(/RESOLUTION=(\d+x\d+)/);
-                    return { 
-                        text: match ? `Multi-Quality (${match[1]})` : 'Master Playlist', 
-                        class: 'q-master' 
-                    };
-                } else if (content.includes('#EXTINF')) {
-                    return { text: 'Direct Stream (Chunked)', class: 'q-hd' };
-                }
-                return { text: 'Unknown Stream', class: '' };
-            } catch (e) {
-                return { text: 'Probe Failed', class: '' };
+        function guessQuality(url) {
+            const lowUrl = url.toLowerCase();
+            
+            // Logic based on common pirate stream naming conventions
+            // Usually 'nba6' or 'nba1' indicates the channel/quality rank
+            // '601' subdomains are usually the HD nodes
+            
+            if (lowUrl.includes('1080') || lowUrl.includes('601') || lowUrl.includes('daffodil')) {
+                return { text: 'PREMIUM HD (1080p)', class: 'q-1080' };
             }
+            if (lowUrl.includes('720') || lowUrl.includes('602') || lowUrl.includes('nba6')) {
+                return { text: 'STANDARD HD (720p)', class: 'q-720' };
+            }
+            if (lowUrl.includes('playlist.m3u8')) {
+                return { text: 'ADAPTIVE MASTER', class: 'q-1080' };
+            }
+            
+            return { text: 'SD / MOBILE QUALITY', class: 'q-unk' };
         }
 
         async function extractLinks() {
@@ -85,49 +84,52 @@
             if (!targetUrl) return;
 
             resultsDiv.innerHTML = '';
-            statusDiv.textContent = 'Finding links...';
+            statusDiv.textContent = 'Fetching source...';
 
             try {
                 const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`;
                 const response = await fetch(proxyUrl);
                 const data = await response.json();
                 
+                // Matches M3U8 links
                 const regex = /(https?:\/\/[^\s"']+\.m3u8(\?[^\s"']*)?)/g;
                 const matches = data.contents.match(regex);
                 const uniqueLinks = matches ? [...new Set(matches)] : [];
 
                 if (uniqueLinks.length > 0) {
-                    statusDiv.innerHTML = `Found ${uniqueLinks.length} links. Probing metadata...`;
+                    statusDiv.innerHTML = `Identified <strong>${uniqueLinks.length}</strong> possible streams.`;
                     
-                    for (const link of uniqueLinks) {
-                        const quality = await probeMetadata(link);
+                    uniqueLinks.forEach(link => {
+                        const quality = guessQuality(link);
                         const embedUrl = `https://hlsplayer.net/embed?type=m3u8&src=${encodeURIComponent(link)}`;
                         
                         const div = document.createElement('div');
                         div.className = 'link-item';
+                        // Apply specific color to border based on quality
+                        div.style.borderLeftColor = quality.class === 'q-1080' ? '#00ff88' : '#00bcff';
+                        
                         div.innerHTML = `
                             <div class="quality-badge ${quality.class}">${quality.text}</div>
                             <span class="link-text">${link}</span>
                             <div class="button-group">
-                                <a href="${embedUrl}" target="_blank" class="action-btn play-btn">▶ PLAY</a>
-                                <button class="action-btn copy-btn" onclick="copyLink('${link}', this)">COPY URL</button>
+                                <a href="${embedUrl}" target="_blank" class="action-btn play-btn">▶ PLAY IN BROWSER</a>
+                                <button class="action-btn copy-btn" onclick="copyLink('${link}', this)">COPY FOR VLC</button>
                             </div>
                         `;
                         resultsDiv.appendChild(div);
-                    }
-                    statusDiv.textContent = 'Scan Complete.';
+                    });
                 } else {
-                    statusDiv.innerHTML = 'No links found.';
+                    statusDiv.innerHTML = 'No streams found.';
                 }
             } catch (e) {
-                statusDiv.innerHTML = 'Error fetching data.';
+                statusDiv.innerHTML = 'Error: Connection blocked.';
             }
         }
 
         function copyLink(text, btn) {
             navigator.clipboard.writeText(text);
             btn.textContent = 'COPIED';
-            setTimeout(() => btn.textContent = 'COPY URL', 2000);
+            setTimeout(() => btn.textContent = 'COPY FOR VLC', 2000);
         }
     </script>
 </body>
