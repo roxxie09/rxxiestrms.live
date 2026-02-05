@@ -2,78 +2,105 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Advanced M3U8 Extractor</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>M3U8 Link Extractor</title>
     <style>
-        body { font-family: sans-serif; max-width: 800px; margin: 20px auto; background: #1a1a1a; color: white; padding: 20px; }
-        .box { background: #2a2a2a; padding: 20px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
-        input { width: 70%; padding: 12px; border-radius: 5px; border: none; margin-right: 10px; }
-        button { padding: 12px 20px; cursor: pointer; background: #007bff; color: white; border: none; border-radius: 5px; font-weight: bold; }
-        button:hover { background: #0056b3; }
-        #status { margin: 15px 0; color: #aaa; font-style: italic; }
-        .link-card { background: #333; padding: 10px; margin: 10px 0; border-left: 4px solid #28a745; display: flex; justify-content: space-between; align-items: center; }
-        .url-text { font-family: monospace; font-size: 12px; color: #28a745; word-break: break-all; margin-right: 10px; }
-        .copy-btn { background: #444; font-size: 11px; padding: 5px 10px; }
-        .error { color: #ff4d4d; font-weight: bold; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; max-width: 800px; margin: 2rem auto; padding: 0 1rem; background-color: #f4f4f9; }
+        .container { background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h2 { margin-top: 0; color: #333; }
+        .input-group { display: flex; gap: 10px; margin-bottom: 20px; }
+        input[type="text"] { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 16px; }
+        button { padding: 10px 20px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; font-weight: bold; }
+        button:hover { background-color: #0056b3; }
+        button:disabled { background-color: #ccc; cursor: not-allowed; }
+        
+        #results { margin-top: 20px; }
+        .link-item { background: #f8f9fa; padding: 10px; border: 1px solid #e9ecef; margin-bottom: 8px; border-radius: 4px; word-break: break-all; display: flex; justify-content: space-between; align-items: center; }
+        .link-text { color: #28a745; font-family: monospace; font-size: 14px; }
+        .copy-btn { font-size: 12px; padding: 4px 8px; background: #6c757d; color: white; border: none; border-radius: 3px; cursor: pointer; margin-left: 10px; }
+        .copy-btn:hover { background: #5a6268; }
+        .error { color: #dc3545; padding: 10px; background: #f8d7da; border-radius: 4px; }
+        .status { color: #666; font-style: italic; margin-bottom: 10px; }
     </style>
 </head>
 <body>
 
-<div class="box">
-    <h2>M3U8 Source Grabber</h2>
-    <p style="font-size: 0.9em; color: #ccc;">This version uses a specialized bypass proxy to get around Cloudflare 403 errors.</p>
+<div class="container">
+    <h2>M3U8 Stream Extractor</h2>
+    <p>Enter a URL to scan its source code for M3U8 playlists.</p>
     
-    <input type="text" id="targetUrl" value="https://roxiestreams.live/nba-streams-1">
-    <button onclick="grabSource()">Extract Links</button>
+    <div class="input-group">
+        <input type="text" id="urlInput" placeholder="https://example.com/stream-page" value="https://roxiestreams.info/nba-streams-1">
+        <button id="scanBtn" onclick="extractLinks()">Scan URL</button>
+    </div>
 
-    <div id="status">Ready.</div>
+    <div id="status" class="status"></div>
     <div id="results"></div>
 </div>
 
 <script>
-    async function grabSource() {
-        const url = document.getElementById('targetUrl').value;
-        const status = document.getElementById('status');
-        const results = document.getElementById('results');
+    async function extractLinks() {
+        const urlInput = document.getElementById('urlInput');
+        const scanBtn = document.getElementById('scanBtn');
+        const resultsDiv = document.getElementById('results');
+        const statusDiv = document.getElementById('status');
         
-        results.innerHTML = '';
-        status.innerHTML = "Connecting to Bypass Server...";
+        const targetUrl = urlInput.value.trim();
+        
+        if (!targetUrl) {
+            statusDiv.innerHTML = '<span class="error">Please enter a URL</span>';
+            return;
+        }
 
-        // Using a different proxy (Pirate-Proxy/Cloudflare Bypass logic)
-        // We use a "Worker" approach or a more aggressive CORS bypasser
-        const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
-        
-        // Note: If AllOrigins still fails, the site has "Aggressive Bot Protection"
-        // In that case, the only way is to use a Scraper API key (Free)
-        
+        // Reset UI
+        resultsDiv.innerHTML = '';
+        scanBtn.disabled = true;
+        scanBtn.textContent = 'Scanning...';
+        statusDiv.textContent = 'Fetching page source via proxy...';
+
+        // We use AllOrigins proxy to bypass CORS restrictions
+        const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`;
+
         try {
             const response = await fetch(proxyUrl);
             const data = await response.json();
-            const html = data.contents;
+            
+            if (!response.ok) throw new Error('Proxy connection failed');
+            
+            const pageSource = data.contents;
+            statusDiv.textContent = `Page fetched (${pageSource.length} bytes). Scanning for patterns...`;
 
-            if (!html) throw new Error("Could not retrieve page source.");
+            // Regex to find .m3u8 links (looks for http/https starting and .m3u8 ending)
+            // It also captures query parameters usually attached to streams
+            const regex = /(https?:\/\/[^\s"']+\.m3u8(\?[^\s"']*)?)/g;
+            const matches = pageSource.match(regex);
 
-            status.innerHTML = "Source grabbed! Searching for .m3u8 patterns...";
+            // Filter duplicates
+            const uniqueLinks = matches ? [...new Set(matches)] : [];
 
-            // Find M3U8 links
-            const regex = /https?:\/\/[\w\.\/-]+\.m3u8(?:\?[\w\=&]+)?/g;
-            const matches = html.match(regex);
+            scanBtn.disabled = false;
+            scanBtn.textContent = 'Scan URL';
 
-            if (matches && matches.length > 0) {
-                const uniqueLinks = [...new Set(matches)];
-                status.innerHTML = `Success! Found ${uniqueLinks.length} links:`;
+            if (uniqueLinks.length > 0) {
+                statusDiv.innerHTML = `Found <strong>${uniqueLinks.length}</strong> m3u8 link(s).`;
                 uniqueLinks.forEach(link => {
-                    results.innerHTML += `
-                        <div class="link-card">
-                            <span class="url-text">${link}</span>
-                            <button class="copy-btn" onclick="navigator.clipboard.writeText('${link}')">Copy</button>
-                        </div>
+                    const div = document.createElement('div');
+                    div.className = 'link-item';
+                    div.innerHTML = `
+                        <span class="link-text">${link}</span>
+                        <button class="copy-btn" onclick="navigator.clipboard.writeText('${link}')">Copy</button>
                     `;
+                    resultsDiv.appendChild(div);
                 });
             } else {
-                status.innerHTML = "No direct M3U8 links found. They might be generated by JavaScript after the page loads.";
+                statusDiv.innerHTML = 'No direct .m3u8 links found in the source code. <br><small>Note: Some sites hide links inside obfuscated JavaScript or blobs.</small>';
             }
-        } catch (e) {
-            status.innerHTML = `<span class="error">Error: ${e.message}</span><br><small>The site is likely blocking all public proxies. Try the Manual Method below.</small>`;
+
+        } catch (error) {
+            console.error(error);
+            scanBtn.disabled = false;
+            scanBtn.textContent = 'Scan URL';
+            statusDiv.innerHTML = `<span class="error">Error: ${error.message}. <br>The site might be blocking proxies.</span>`;
         }
     }
 </script>
