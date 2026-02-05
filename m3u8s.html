@@ -57,10 +57,10 @@
     <div class="container">
         <div class="extractor-wrapper">
             <h2 style="color: pink; font-family: 'Kanit';">Universal Deep Scanner</h2>
-            <p class="text-secondary mb-4">Finding M3U8 links and reconstructing JS dynamic streams.</p>
+            <p class="text-secondary mb-4">Search by hitting Enter. Detecting static and JS-generated streams.</p>
 
             <div class="input-group mb-3">
-                <input type="text" id="urlInput" class="form-control" placeholder="https://..." value="https://roxiestreams.live/nba-streams-1">
+                <input type="text" id="urlInput" class="form-control" placeholder="Paste URL and hit Enter..." value="https://roxiestreams.live/nba-streams-1" onkeydown="if(event.key==='Enter') extractLinks()" onfocus="this.select()">
                 <button class="btn btn-scan" id="scanBtn" onclick="extractLinks()">START SCAN</button>
             </div>
 
@@ -94,16 +94,15 @@
                 
                 let foundStreams = [];
 
-                // 1. Static Scan (Direct .m3u8 links)
+                // 1. Static Scan
                 const staticRegex = /(https?:\/\/[^\s"']+\.m3u8(\?[^\s"']*)?)/g;
                 const staticMatches = html.match(staticRegex);
                 if (staticMatches) staticMatches.forEach(link => foundStreams.push({url: link, type: 'Direct Source'}));
 
-                // 2. Dynamic Scan (JS patterns like getRandomStream)
+                // 2. Dynamic Scan
                 const jsRegex = /getRandomStream\(['"]([^'"]+)['"](?:,\s*['"]([^'"]+)['"])?\)/g;
                 let jsMatch;
                 
-                // Try to find domains.txt
                 let domains = ['shadow-ran.online']; 
                 try {
                     const baseUrl = targetUrl.substring(0, targetUrl.lastIndexOf('/') + 1);
@@ -123,7 +122,6 @@
                     });
                 }
 
-                // Deduplicate
                 const uniqueStreams = Array.from(new Set(foundStreams.map(s => s.url)))
                                            .map(url => foundStreams.find(s => s.url === url));
 
