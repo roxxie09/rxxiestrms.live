@@ -91,19 +91,6 @@
   <label for="eventFilter" class="form-label">Filter by sport / channel:</label>
   <select id="eventFilter" class="form-select" style="max-width: 300px;">
     <option value="">Show all</option>
-    <option value="Snowboarding">Snowboarding</option>
-    <option value="Alpine Skiing">Alpine Skiing</option>
-    <option value="Freestyle Skiing">Freestyle Skiing</option>
-    <option value="Curling">Curling</option>
-    <option value="Ice Hockey">Ice Hockey</option>
-    <option value="Luge">Luge</option>
-    <option value="Speed Skating">Speed Skating</option>
-    <option value="Figure Skating">Figure Skating</option>
-    <option value="Cross Country Skiing">Cross Country Skiing</option>
-    <option value="Ski Jumping">Ski Jumping</option>
-    <option value="TNT 2">TNT 2</option>
-    <option value="TNT 4">TNT 4</option>
-    <option value="NBC">NBC</option>
   </select>
 </div>
 <table id="eventsTable">
@@ -449,6 +436,46 @@
         window.onload = startCountdown;
     </script>
 <script>
+// Build and populate the filter dropdown from event titles
+function populateFilterDropdown() {
+  const table = document.getElementById("eventsTable");
+  const rows = table.querySelectorAll("tbody tr");
+  const select = document.getElementById("eventFilter");
+
+  // Keywords we care about (you can tweak this list)
+  const keywords = new Set();
+
+  rows.forEach(row => {
+    const link = row.querySelector("td a");
+    if (!link) return;
+
+    const text = link.textContent.trim();
+
+    // Simple word‑based extraction (you can refine this)
+    const words = text.split(/[\s:(),]+/);
+    words.forEach(word => {
+      if (word.length >= 3) { // ignore very short fragments
+        keywords.add(word);
+      }
+    });
+  });
+
+  // Clear existing options except "Show all"
+  while (select.options.length > 1) {
+    select.remove(1);
+  }
+
+  // Add sorted unique options
+  Array.from(keywords)
+    .sort()
+    .forEach(word => {
+      const option = document.createElement("option");
+      option.value = word;
+      option.textContent = word;
+      select.appendChild(option);
+    });
+}
+
 // Filter the Olympic events table by the dropdown
 function filterEventsTable() {
   const filterSelect = document.getElementById("eventFilter");
@@ -457,7 +484,7 @@ function filterEventsTable() {
   const rows = table.querySelectorAll("tbody tr");
 
   rows.forEach(row => {
-    const eventCell = row.querySelector("td a"); // link text inside first cell
+    const eventCell = row.querySelector("td a");
     const text = eventCell ? eventCell.textContent.toLowerCase() : "";
 
     if (filterText === "" || text.includes(filterText)) {
@@ -471,8 +498,11 @@ function filterEventsTable() {
 // Attach event listener to dropdown
 document.getElementById("eventFilter").addEventListener("change", filterEventsTable);
 
-// Run once on page load in case you want to pre‑filter
-window.addEventListener("load", filterEventsTable);
+// Populate dropdown on page load, then run filter once
+window.addEventListener("load", () => {
+  populateFilterDropdown();
+  filterEventsTable();
+});
 </script>
 </body>
 </html>
