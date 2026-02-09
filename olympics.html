@@ -439,6 +439,49 @@
         window.onload = startCountdown;
     </script>
 <script>
+// Map common variations to a canonical sport name
+function getCanonicalSport(text) {
+  text = text.toLowerCase();
+
+  if (text.includes("snowboard") || text.includes("snowboarding")) {
+    return "Snowboarding";
+  }
+  if (text.includes("alpine skiing")) {
+    return "Alpine Skiing";
+  }
+  if (text.includes("freestyle skiing")) {
+    return "Freestyle Skiing";
+  }
+  if (text.includes("cross country skiing")) {
+    return "Cross Country Skiing";
+  }
+  if (text.includes("luge")) {
+    return "Luge";
+  }
+  if (text.includes("speed skating")) {
+    return "Speed Skating";
+  }
+  if (text.includes("figure skating")) {
+    return "Figure Skating";
+  }
+  if (text.includes("curling")) {
+    return "Curling";
+  }
+  if (text.includes("ice hockey")) {
+    return "Ice Hockey";
+  }
+  if (text.includes("ski jumping")) {
+    return "Ski Jumping";
+  }
+
+  // If none of the above, fall back to the part before the colon
+  const sportMatch = text.match(/^([^:]+):/i);
+  if (sportMatch) {
+    return sportMatch[1].trim();
+  }
+
+  return null; // no sport found
+}
 // Populate sport and channel dropdowns from event titles
 function populateFilters() {
   const table = document.getElementById("eventsTable");
@@ -453,14 +496,13 @@ function populateFilters() {
 
     const text = link.textContent.trim();
 
-    // Sport: everything before the colon
-    const sportMatch = text.match(/^([^:]+):/);
-    if (sportMatch) {
-      const sport = sportMatch[1].trim();
+    // 1. Use canonical sport (handles "Snowboard", "Snowboarding", etc.)
+    const sport = getCanonicalSport(text);
+    if (sport) {
       sports.add(sport);
     }
 
-    // Channel: inside parentheses
+    // 2. Channel: inside parentheses
     const channelMatch = text.match(/\(([^)]+)\)/g);
     if (channelMatch) {
       channelMatch.forEach(match => {
