@@ -7,15 +7,6 @@
 <title>Roxiestreams - Watch Live Sports, F1, UFC, NFL, TV</title>
 <meta content="Free PPV ufc, TV, NBA, NFL, and F1 streams" name="description"/>
 <meta content="Roxiestreams, ppv, boxing, dazn, f1, ufc, nba, for, stream, online, free, mrgamingstreams, f1, tv, nfl" name="keywords"/>
-<link href="https://fonts.goo<!DOCTYPE html>
-
-<html data-bs-theme="dark" lang="en">
-<head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1" name="viewport"/>
-<title>Roxiestreams - Watch Live Sports, F1, UFC, NFL, TV</title>
-<meta content="Free PPV ufc, TV, NBA, NFL, and F1 streams" name="description"/>
-<meta content="Roxiestreams, ppv, boxing, dazn, f1, ufc, nba, for, stream, online, free, mrgamingstreams, f1, tv, nfl" name="keywords"/>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
@@ -96,6 +87,25 @@
 <div class="container container-fluid pt-2 text-white">
 <div class="mt-5">
 <h2 class="m-0" style="font-family: 'Kanit', sans-serif; font-weight: bold;">Upcoming Olympic Events</h2>
+<div class="mb-3">
+  <label for="eventFilter" class="form-label">Filter by sport / channel:</label>
+  <select id="eventFilter" class="form-select" style="max-width: 300px;">
+    <option value="">Show all</option>
+    <option value="Snowboarding">Snowboarding</option>
+    <option value="Alpine Skiing">Alpine Skiing</option>
+    <option value="Freestyle Skiing">Freestyle Skiing</option>
+    <option value="Curling">Curling</option>
+    <option value="Ice Hockey">Ice Hockey</option>
+    <option value="Luge">Luge</option>
+    <option value="Speed Skating">Speed Skating</option>
+    <option value="Figure Skating">Figure Skating</option>
+    <option value="Cross Country Skiing">Cross Country Skiing</option>
+    <option value="Ski Jumping">Ski Jumping</option>
+    <option value="TNT 2">TNT 2</option>
+    <option value="TNT 4">TNT 4</option>
+    <option value="NBC">NBC</option>
+  </select>
+</div>
 <table id="eventsTable">
 <thead>
 <tr>
@@ -438,5 +448,31 @@
 
         window.onload = startCountdown;
     </script>
+<script>
+// Filter the Olympic events table by the dropdown
+function filterEventsTable() {
+  const filterSelect = document.getElementById("eventFilter");
+  const filterText = filterSelect.value.trim().toLowerCase();
+  const table = document.getElementById("eventsTable");
+  const rows = table.querySelectorAll("tbody tr");
+
+  rows.forEach(row => {
+    const eventCell = row.querySelector("td a"); // link text inside first cell
+    const text = eventCell ? eventCell.textContent.toLowerCase() : "";
+
+    if (filterText === "" || text.includes(filterText)) {
+      row.style.display = "";
+    } else {
+      row.style.display = "none";
+    }
+  });
+}
+
+// Attach event listener to dropdown
+document.getElementById("eventFilter").addEventListener("change", filterEventsTable);
+
+// Run once on page load in case you want to pre‑filter
+window.addEventListener("load", filterEventsTable);
+</script>
 </body>
 </html>
