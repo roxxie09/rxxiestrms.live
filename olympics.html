@@ -435,15 +435,12 @@
 
         window.onload = startCountdown;
     </script>
-<script>
-// Build and populate the filter dropdown from event titles
 function populateFilterDropdown() {
   const table = document.getElementById("eventsTable");
   const rows = table.querySelectorAll("tbody tr");
   const select = document.getElementById("eventFilter");
 
-  // Keywords we care about (you can tweak this list)
-  const keywords = new Set();
+  const categories = new Set();
 
   rows.forEach(row => {
     const link = row.querySelector("td a");
@@ -451,13 +448,21 @@ function populateFilterDropdown() {
 
     const text = link.textContent.trim();
 
-    // Simple word‑based extraction (you can refine this)
-    const words = text.split(/[\s:(),]+/);
-    words.forEach(word => {
-      if (word.length >= 3) { // ignore very short fragments
-        keywords.add(word);
-      }
-    });
+    // 1. Get sport from before the colon
+    const sportMatch = text.match(/^([^:]+):/);
+    if (sportMatch) {
+      const sport = sportMatch[1].trim();
+      categories.add(sport);
+    }
+
+    // 2. Get channel from inside parentheses
+    const channelMatch = text.match(/\(([^)]+)\)/g);
+    if (channelMatch) {
+      channelMatch.forEach(match => {
+        const channel = match.slice(1, -1).trim();
+        categories.add(channel);
+      });
+    }
   });
 
   // Clear existing options except "Show all"
@@ -466,43 +471,14 @@ function populateFilterDropdown() {
   }
 
   // Add sorted unique options
-  Array.from(keywords)
+  Array.from(categories)
     .sort()
-    .forEach(word => {
+    .forEach(cat => {
       const option = document.createElement("option");
-      option.value = word;
-      option.textContent = word;
+      option.value = cat;
+      option.textContent = cat;
       select.appendChild(option);
     });
 }
-
-// Filter the Olympic events table by the dropdown
-function filterEventsTable() {
-  const filterSelect = document.getElementById("eventFilter");
-  const filterText = filterSelect.value.trim().toLowerCase();
-  const table = document.getElementById("eventsTable");
-  const rows = table.querySelectorAll("tbody tr");
-
-  rows.forEach(row => {
-    const eventCell = row.querySelector("td a");
-    const text = eventCell ? eventCell.textContent.toLowerCase() : "";
-
-    if (filterText === "" || text.includes(filterText)) {
-      row.style.display = "";
-    } else {
-      row.style.display = "none";
-    }
-  });
-}
-
-// Attach event listener to dropdown
-document.getElementById("eventFilter").addEventListener("change", filterEventsTable);
-
-// Populate dropdown on page load, then run filter once
-window.addEventListener("load", () => {
-  populateFilterDropdown();
-  filterEventsTable();
-});
-</script>
 </body>
 </html>
