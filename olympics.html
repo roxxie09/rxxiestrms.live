@@ -435,6 +435,8 @@
 
         window.onload = startCountdown;
     </script>
+<script>
+// Build and populate the filter dropdown from event titles
 function populateFilterDropdown() {
   const table = document.getElementById("eventsTable");
   const rows = table.querySelectorAll("tbody tr");
@@ -480,5 +482,34 @@ function populateFilterDropdown() {
       select.appendChild(option);
     });
 }
+
+// Filter the Olympic events table by the dropdown
+function filterEventsTable() {
+  const filterSelect = document.getElementById("eventFilter");
+  const filterText = filterSelect.value.trim().toLowerCase();
+  const table = document.getElementById("eventsTable");
+  const rows = table.querySelectorAll("tbody tr");
+
+  rows.forEach(row => {
+    const eventCell = row.querySelector("td a");
+    const text = eventCell ? eventCell.textContent.toLowerCase() : "";
+
+    if (filterText === "" || text.includes(filterText)) {
+      row.style.display = "";
+    } else {
+      row.style.display = "none";
+    }
+  });
+}
+
+// Attach event listener to dropdown
+document.getElementById("eventFilter").addEventListener("change", filterEventsTable);
+
+// Populate dropdown on page load, then run filter once
+window.addEventListener("load", () => {
+  populateFilterDropdown();
+  filterEventsTable();
+});
+</script>
 </body>
 </html>
