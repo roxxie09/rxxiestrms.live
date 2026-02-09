@@ -88,10 +88,19 @@
 <div class="mt-5">
 <h2 class="m-0" style="font-family: 'Kanit', sans-serif; font-weight: bold;">Upcoming Olympic Events</h2>
 <div class="mb-3">
-  <label for="eventFilter" class="form-label">Filter by sport / channel:</label>
-  <select id="eventFilter" class="form-select" style="max-width: 300px;">
-    <option value="">Show all</option>
-  </select>
+  <label class="form-label">Filter by:</label>
+  <div class="row g-2">
+    <div class="col-md-6">
+      <select id="sportFilter" class="form-select">
+        <option value="">All sports</option>
+      </select>
+    </div>
+    <div class="col-md-6">
+      <select id="channelFilter" class="form-select">
+        <option value="">All channels</option>
+      </select>
+    </div>
+  </div>
 </div>
 <table id="eventsTable">
 <thead>
@@ -436,13 +445,13 @@
         window.onload = startCountdown;
     </script>
 <script>
-// Build and populate the filter dropdown from event titles
-function populateFilterDropdown() {
+// Populate sport and channel dropdowns from event titles
+function populateFilters() {
   const table = document.getElementById("eventsTable");
   const rows = table.querySelectorAll("tbody tr");
-  const select = document.getElementById("eventFilter");
 
-  const categories = new Set();
+  const sports = new Set();
+  const channels = new Set();
 
   rows.forEach(row => {
     const link = row.querySelector("td a");
@@ -450,51 +459,75 @@ function populateFilterDropdown() {
 
     const text = link.textContent.trim();
 
-    // 1. Get sport from before the colon
+    // Sport: everything before the colon
     const sportMatch = text.match(/^([^:]+):/);
     if (sportMatch) {
       const sport = sportMatch[1].trim();
-      categories.add(sport);
+      sports.add(sport);
     }
 
-    // 2. Get channel from inside parentheses
+    // Channel: inside parentheses
     const channelMatch = text.match(/\(([^)]+)\)/g);
     if (channelMatch) {
       channelMatch.forEach(match => {
         const channel = match.slice(1, -1).trim();
-        categories.add(channel);
+        channels.add(channel);
       });
     }
   });
 
-  // Clear existing options except "Show all"
-  while (select.options.length > 1) {
-    select.remove(1);
-  }
+  const sportSelect = document.getElementById("sportFilter");
+  const channelSelect = document.getElementById("channelFilter");
 
-  // Add sorted unique options
-  Array.from(categories)
+  // Clear options except "All sports" / "All channels"
+  while (sportSelect.options.length > 1) sportSelect.remove(1);
+  while (channelSelect.options.length > 1) channelSelect.remove(1);
+
+  // Add sorted sports
+  Array.from(sports)
     .sort()
-    .forEach(cat => {
+    .forEach(sport => {
       const option = document.createElement("option");
-      option.value = cat;
-      option.textContent = cat;
-      select.appendChild(option);
+      option.value = sport;
+      option.textContent = sport;
+      sportSelect.appendChild(option);
+    });
+
+  // Add sorted channels
+  Array.from(channels)
+    .sort()
+    .forEach(channel => {
+      const option = document.createElement("option");
+      option.value = channel;
+      option.textContent = channel;
+      channelSelect.appendChild(option);
     });
 }
 
-// Filter the Olympic events table by the dropdown
+// Filter by both sport and channel
 function filterEventsTable() {
-  const filterSelect = document.getElementById("eventFilter");
-  const filterText = filterSelect.value.trim().toLowerCase();
+  const sportSelect = document.getElementById("sportFilter");
+  const channelSelect = document.getElementById("channelFilter");
+
+  const sportText = sportSelect.value.trim().toLowerCase();
+  const channelText = channelSelect.value.trim().toLowerCase();
+
   const table = document.getElementById("eventsTable");
   const rows = table.querySelectorAll("tbody tr");
 
   rows.forEach(row => {
-    const eventCell = row.querySelector("td a");
-    const text = eventCell ? eventCell.textContent.toLowerCase() : "";
+    const link = row.querySelector("td a");
+    if (!link) {
+      row.style.display = "none";
+      return;
+    }
 
-    if (filterText === "" || text.includes(filterText)) {
+    const text = link.textContent.toLowerCase();
+
+    const hasSport = sportText === "" || text.includes(sportText);
+    const hasChannel = channelText === "" || text.includes(channelText);
+
+    if (hasSport && hasChannel) {
       row.style.display = "";
     } else {
       row.style.display = "none";
@@ -502,12 +535,13 @@ function filterEventsTable() {
   });
 }
 
-// Attach event listener to dropdown
-document.getElementById("eventFilter").addEventListener("change", filterEventsTable);
+// Attach event listeners
+document.getElementById("sportFilter").addEventListener("change", filterEventsTable);
+document.getElementById("channelFilter").addEventListener("change", filterEventsTable);
 
-// Populate dropdown on page load, then run filter once
+// Populate filters and run once on load
 window.addEventListener("load", () => {
-  populateFilterDropdown();
+  populateFilters();
   filterEventsTable();
 });
 </script>
