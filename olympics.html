@@ -545,8 +545,13 @@ function filterEventsTable() {
   const sportSelect = document.getElementById("sportFilter");
   const channelSelect = document.getElementById("channelFilter");
 
-  const sportText = sportSelect.value.trim().toLowerCase();
+  let sportText = sportSelect.value.trim().toLowerCase();
   const channelText = channelSelect.value.trim().toLowerCase();
+
+  // Special case: treat "Snowboarding" as matching "snowboard" in text
+  if (sportText === "snowboarding") {
+    sportText = "snowboard";
+  }
 
   const table = document.getElementById("eventsTable");
   const rows = table.querySelectorAll("tbody tr");
