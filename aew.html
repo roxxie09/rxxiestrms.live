@@ -124,7 +124,7 @@ var domains = [];
 var subdomain = '601';  // Edit this per HTML file
 
 // Load domains from txt file
-fetch('domains.txt')
+fetch('domainsa.txt')
   .then(response => response.text())
   .then(data => {
     domains = data.trim().split('\n').filter(d => d.trim());
