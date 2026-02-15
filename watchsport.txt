@@ -10,10 +10,7 @@
   }
 
   const teamNameMap = {
-  "ama supercross seattle - heats/race": "ama supercross seattle - heats/race",
-  "ama supercross seattle - qualifyings": "ama supercross seattle - qualifyings",
   "angers sco": "angers sco",
-  "arca menards series - race": "arca menards series - race",
   "arsenal": "arsenal",
   "athletic club": "athletic club",
   "atletico madrid/a>": "atletico madrid/a>",
@@ -41,8 +38,8 @@
   "mallorca": "mallorca",
   "metz": "metz",
   "napoli": "napoli",
-  "nascar cup series - practice": "nascar cup series - practice",
-  "nba all-star saturday": "nba all-star saturday",
+  "nascar cup series - daytona": "nascar cup series - daytona",
+  "nba all-star sunday": "nba all-star sunday",
   "nice": "nice",
   "oxford united": "oxford united",
   "platense": "platense",
@@ -91,15 +88,12 @@
   {title: "cruz azul vs tigres uanl", url: "https://roxiestreams.info/soccer-streams-13"},
   {title: "boca juniors vs platense", url: "https://roxiestreams.info/soccer-streams-14"},
   {title: "internacional vs ypiranga erechim", url: "https://roxiestreams.info/soccer-streams-15"},
-  {title: "nba all-star saturday", url: "https://roxiestreams.info/nba-streams-1"},
-  {title: "arca menards series - race", url: "https://roxiestreams.info/arca"},
-  {title: "ama supercross seattle - qualifyings", url: "https://roxiestreams.info/supercross"},
-  {title: "nascar cup series - practice", url: "https://roxiestreams.info/nascar"},
-  {title: "ama supercross seattle - heats/race", url: "https://roxiestreams.info/supercross"},
+  {title: "nba all-star sunday", url: "https://roxiestreams.info/nba-streams-1"},
+  {title: "nascar cup series - daytona", url: "https://roxiestreams.info/nascar"},
   {title: "wwe smackdown", url: "https://roxiestreams.info/wwe-streams"}
 ];
 
-  const nbaTeams = new Set(["philadelphia 76ers","miami heat","denver nuggets","los angeles clippers","milwaukee bucks","chicago bulls","indiana pacers","new york knicks","houston rockets","detroit pistons","dallas mavericks","new orleans pelicans","utah jazz","toronto raptors","cleveland cavaliers","golden state warriors","boston celtics","orlando magic","san antonio spurs","atlanta hawks","sacramento kings","memphis grizzlies","portland trail blazers","washington wizards","phoenix suns","los angeles lakers","charlotte hornets","minnesota timberwolves","oklahoma city thunder"]);
+  const nbaTeams = new Set(["philadelphia 76ers","toronto raptors","new york knicks","golden state warriors","chicago bulls","detroit pistons","portland trail blazers","atlanta hawks","los angeles lakers","cleveland cavaliers","orlando magic","new orleans pelicans","houston rockets","los angeles clippers","charlotte hornets","memphis grizzlies","dallas mavericks","milwaukee bucks","indiana pacers","phoenix suns","san antonio spurs","utah jazz","washington wizards","sacramento kings","oklahoma city thunder","denver nuggets","miami heat","boston celtics","minnesota timberwolves"]);
   const premierLeagueTeams = new Set(["leeds","west ham","c palace","nottm forest","man united","man city","newcastle","brighton","brentford","liverpool","spurs"]);
   const laLigaTeams = new Set(["alaves","athletic bilbao","atm","atletico madrid","barcelona","celta vigo","elche","espanyol","getafe","girona","mallorca","osasuna","rayo vallecano","real betis","real madrid","real sociedad","real valladolid","sevilla","valencia","villarreal"]);
   const mlsTeams = new Set(["miami","atlanta","chicago","cincinnati","columbus","dallas","dc","houston","los angeles","minnesota","nashville","new england","new york","orlando","philadelphia","portland","real salt lake","seattle","sporting kansas city","san jose","toronto","vancouver"]);
