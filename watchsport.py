@@ -60,6 +60,7 @@ def extract_events_and_links(text):
         line = line.strip()
         if not line:
             continue
+        # Fixed regex: fewer backslashes, proper escaping
         m = re.match(r'^(.+?):\s*\[(https?://[^\s\]]+)\]', line)
         if m:
             event = m.group(1).strip()
@@ -109,7 +110,8 @@ def generate_full_js(team_map_js, roxie_js, nba_canonical_set):
     premier_league_js_array = ','.join(f'"{team}"' for team in PREMIER_LEAGUE_SHORT_NAMES)
     laliga_js_array = ','.join(f'"{team}"' for team in LALIGA_TEAMS)
     mls_js_array = ','.join(f'"{team}"' for team in MLS_TEAMS)
-    # Full JS including autofill/autoprocess logic
+    
+    # **UPDATED** JS with new selectors from admin.php HTML
     return f"""(async () => {{
   if (!window.Fuse) {{
     await new Promise((resolve, reject) => {{
@@ -130,9 +132,9 @@ def generate_full_js(team_map_js, roxie_js, nba_canonical_set):
   const laLigaTeams = new Set([{laliga_js_array}]);
   const mlsTeams = new Set([{mls_js_array}]);
 
-function normalizeTeamName(name) {{
-  return teamNameMap[name.toLowerCase().trim()] || name.toLowerCase().trim();
-}}
+  function normalizeTeamName(name) {{
+    return teamNameMap[name.toLowerCase().trim()] || name.toLowerCase().trim();
+  }}
 
   function normalizeTitle(title) {{
     let t = title.toLowerCase().replace(/@/g, 'vs').trim();
@@ -144,10 +146,10 @@ function normalizeTeamName(name) {{
     return teams.join(' vs ');
   }}
 
-const normalizedCache = roxieStreamsCached.map(item => ({{
-  title: normalizeTitle(item.title),
-  url: item.url
-}}));
+  const normalizedCache = roxieStreamsCached.map(item => ({{ 
+    title: normalizeTitle(item.title),
+    url: item.url
+  }}));
 
   const fuse = new Fuse(normalizedCache, {{
     keys: ['title'],
@@ -182,92 +184,104 @@ const normalizedCache = roxieStreamsCached.map(item => ({{
     return 'https://roxiestreams.info/missing';
   }}
 
-  function getEventTitleFromListDiv(listDiv) {{
-    if (!listDiv) return '';
-    let titleText = '';
-    listDiv.childNodes.forEach(node => {{
-      if (node.nodeType === Node.TEXT_NODE) {{
-        const trimmed = node.textContent.trim();
-        if (trimmed) titleText += trimmed + ' ';
-      }}
-    }});
-    return titleText.trim();
+  function getEventTitleFromGameItem(gameItem) {{
+    if (!gameItem) return '';
+    const matchupDiv = gameItem.querySelector('.game-matchup');
+    if (!matchupDiv) return '';
+    return matchupDiv.textContent.trim();
+  }}
+
+  function getLeagueFromGameItem(gameItem) {{
+    const broadcastDiv = gameItem.querySelector('.game-broadcast');
+    return broadcastDiv ? broadcastDiv.textContent.trim() : '';
   }}
 
   function autofillHandler(e) {{
-    const gameId = e.currentTarget.getAttribute('data-target');
-    const listDiv = e.currentTarget.closest('.list');
-    const eventTitle = getEventTitleFromListDiv(listDiv).toLowerCase();
-    console.log('Extracted event title:', eventTitle, 'for gameId:', gameId);
+    const button = e.currentTarget;
+    const gameId = button.getAttribute('data-modal');
+    const gameItem = button.closest('.game-item');
+
+    const eventTitle = getEventTitleFromGameItem(gameItem);
+    const leagueText = getLeagueFromGameItem(gameItem);
+    console.log('Extracted event title:', eventTitle, 'league:', leagueText, 'gameId:', gameId);
 
     let channelName = '';
-    const leagueSpan = listDiv ? listDiv.querySelector('span.league') : null;
-    if (leagueSpan) {{
-      const leagueText = leagueSpan.textContent.trim();
-      if (!/^\\d/.test(leagueText)) {{
-        channelName = leagueText;
-      }}
-    }}
+
+    const lowerTitle = eventTitle.toLowerCase();
 
     const nbaShortNames = Object.keys(teamNameMap).filter(key => nbaTeams.has(teamNameMap[key].toLowerCase()));
-    const hasNbaShortName = nbaShortNames.some(shortName => eventTitle.includes(shortName.toLowerCase()));
+    const hasNbaShortName = nbaShortNames.some(shortName => lowerTitle.includes(shortName.toLowerCase()));
 
     if ((!channelName || channelName.trim() === '') && hasNbaShortName) {{
       channelName = 'NBA League Pass';
     }}
 
-    if (eventTitle.includes('wwe')) {{
+    if (lowerTitle.includes('wwe')) {{
       channelName = 'Netflix';
     }}
 
-    if (eventTitle.includes('grand prix')) {{
+    if (lowerTitle.includes('grand prix')) {{
       channelName = 'Sky Sports F1';
     }}
 
-    if (eventTitle.includes('ufc')) {{
+    if (lowerTitle.includes('ufc')) {{
       channelName = 'ESPN+';
     }}
 
-    const hasPlTeam = Array.from(premierLeagueTeams).some(plTeam => eventTitle.includes(plTeam));
+    const hasPlTeam = Array.from(premierLeagueTeams).some(plTeam => lowerTitle.includes(plTeam));
     if ((!channelName || channelName.trim() === '') && hasPlTeam) {{
       channelName = 'Now Sports';
     }}
 
-    const hasLaLigaTeam = Array.from(laLigaTeams).some(laTeam => eventTitle.includes(laTeam));
+    const hasLaLigaTeam = Array.from(laLigaTeams).some(laTeam => lowerTitle.includes(laTeam));
     if ((!channelName || channelName.trim() === '') && hasLaLigaTeam) {{
       channelName = 'ESPN Deportes';
     }}
 
-    const hasMlsTeam = Array.from(mlsTeams).some(mlsTeam => eventTitle.includes(mlsTeam));
+    const hasMlsTeam = Array.from(mlsTeams).some(mlsTeam => lowerTitle.includes(mlsTeam));
     if ((!channelName || channelName.trim() === '') && hasMlsTeam) {{
       channelName = 'MLS Season Pass';
     }}
 
     setTimeout(() => {{
-      const form = document.querySelector(`#form-${{gameId}}`);
-      if (!form) {{
-        console.warn('Form not found for gameId:', gameId);
+      const modal = document.getElementById(`modal-${{gameId}}`);
+      if (!modal) {{
+        console.warn('Modal not found for gameId:', gameId);
         return;
       }}
+
+      const form = modal.querySelector('form.stream-form');
+      if (!form) {{
+        console.warn('Form not found in modal for gameId:', gameId);
+        return;
+      }}
+
       const streamUrl = findBestMatch(eventTitle);
-      form.querySelector('#site').value = 'RoxieStreams';
-      form.querySelector('#url').value = streamUrl;
-      form.querySelector('#channel').value = (channelName ? (channelName + ' (FHD)') : 'Main (FHD)');
-      form.querySelector('#fps').value = '60';
 
-      const bitrateInput = form.querySelector('#bitrate') || form.querySelector('input[name="bitrate"]');
+      const siteInput = form.querySelector('input[name="site"]');
+      const urlInput = form.querySelector('input[name="url"]');
+      const channelInput = form.querySelector('input[name="channel"]');
+      const bitrateInput = form.querySelector('input[name="bitrate"]');
+      const adsSelect = form.querySelector('select[name="ads"]');
+      const fpsSelect = form.querySelector('select[name="fps"]');
+
+      if (siteInput) siteInput.value = 'RoxieStreams';
+      if (urlInput) urlInput.value = streamUrl;
+      if (channelInput) channelInput.value = (channelName ? (channelName + ' (FHD)') : 'Main (FHD)');
       if (bitrateInput) bitrateInput.value = '7000';
+      if (adsSelect) adsSelect.value = '0';
+      if (fpsSelect) fpsSelect.value = '60';
 
-      const adsInput = form.querySelector('#ads') || form.querySelector('input[name="ads"]') || form.querySelector('input[name="numAds"]');
-      if (adsInput) adsInput.value = '0';
+      form.querySelectorAll('input[type="checkbox"][name="Compatibility"]').forEach(cb => {{
+        cb.checked = true;
+      }});
 
-      form.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = true);
-      console.log(`Autofilled URL: ${{streamUrl}} and channel: ${{channelName}} with bitrate 7000 and ads 0`);
+      console.log(`Autofilled URL: ${{streamUrl}} and channel: ${{channelName}} with bitrate 7000 and ads 0 for gameId ${{gameId}}`);
     }}, 300);
   }}
 
   function attachAutofill() {{
-    document.querySelectorAll('button.add.modal-trigger').forEach(button => {{
+    document.querySelectorAll('button.add-btn').forEach(button => {{
       button.removeEventListener('click', autofillHandler);
       button.addEventListener('click', autofillHandler);
     }});
@@ -276,56 +290,56 @@ const normalizedCache = roxieStreamsCached.map(item => ({{
   attachAutofill();
 
   async function autoProcessAllEvents() {{
-    const buttons = Array.from(document.querySelectorAll('button.add.modal-trigger'));
+    const buttons = Array.from(document.querySelectorAll('button.add-btn'));
 
     for (const button of buttons) {{
-      const gameId = button.getAttribute('data-target');
+      const gameId = button.getAttribute('data-modal');
       console.log(`Opening modal for gameId ${{gameId}}`);
       button.dispatchEvent(new MouseEvent('click', {{ bubbles: true, cancelable: true }}));
 
-      await new Promise(res => setTimeout(res, 300)); // Wait for autofill
+      await new Promise(res => setTimeout(res, 300));
 
-      const form = document.querySelector(`#form-${{gameId}}`);
+      const modal = document.getElementById(`modal-${{gameId}}`);
+      if (!modal) {{
+        console.warn(`Modal not found for gameId: ${{gameId}}`);
+        continue;
+      }}
+      const form = modal.querySelector('form.stream-form');
       if (!form) {{
         console.warn(`Form not found for gameId: ${{gameId}}`);
         continue;
       }}
-      const urlInput = form.querySelector('#url');
+
+      const urlInput = form.querySelector('input[name="url"]');
       if (!urlInput) {{
         console.warn(`URL input not found for gameId: ${{gameId}}`);
         continue;
       }}
+
       const urlValue = urlInput.value.trim();
 
-      // SKIP modals/events whose URL is "missing"
       if (urlValue === 'https://roxiestreams.info/missing') {{
         console.log(`Skipping ${{gameId}}: URL is missing!`);
-        // Optionally: You may wish to close the modal here so it doesn't remain open, OR ignore and let user close after
-        // If you want to close, uncomment below:
-        // const closeBtn = document.querySelector(`#submit-${{gameId}}`);
-        // if (closeBtn) closeBtn.click();
         await new Promise(res => setTimeout(res, 300));
         continue;
       }}
 
-      // Valid URL found, click external submit button to save/close
-      const submitBtn = document.querySelector(`#submit-${{gameId}}`);
+      const submitBtn = form.querySelector('button.submit-btn[type="submit"]');
       if (submitBtn) {{
         submitBtn.focus();
         submitBtn.dispatchEvent(new MouseEvent('click', {{bubbles: true, cancelable: true, view: window}}));
-        console.log(`Clicked external submit button for ${{gameId}}`);
-      }} else if (form) {{
+        console.log(`Clicked submit button for ${{gameId}}`);
+      }} else {{
         form.submit();
         console.log(`Fallback: submitted form element for ${{gameId}}`);
       }}
+
       await new Promise(res => setTimeout(res, 300));
     }}
   }}
 
-  // Start automated modal processing
   autoProcessAllEvents();
 
-  // For manual reruns, expose to window
   window.autoProcessAllEvents = autoProcessAllEvents;
 }})();
 """
@@ -350,7 +364,7 @@ def main():
     full_js_code = generate_full_js(team_map_js, roxie_js, nba_canonical)
 
     js_path.write_text(full_js_code, encoding="utf-8")
-    print("watchsport.txt updated with channel autofill for NBA, WWE, F1, UFC, Premier League, La Liga, MLS.")
+    print("watchsport.txt updated with NEW selectors for current watchsports.to admin page + dynamic RoxieStreams cache.")
 
 if __name__ == "__main__":
     main()
