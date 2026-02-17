@@ -10,33 +10,42 @@
   }
 
   const teamNameMap = {
-  "bangu": "bangu",
-  "barcelona": "barcelona",
-  "brentford": "brentford",
-  "cagliari": "cagliari",
-  "coventry city": "coventry city",
-  "fluminense": "fluminense",
-  "girona": "girona",
-  "leece": "leece",
-  "macclesfield": "macclesfield",
-  "middlesbrough": "middlesbrough",
+  "2 de mayo": "2 de mayo",
+  "atalanta": "atalanta",
+  "benfica": "benfica",
+  "blackpool": "blackpool",
+  "bristol city": "bristol city",
+  "carabobo": "carabobo",
+  "dortmund": "dortmund",
+  "galatasaray": "galatasaray",
+  "huachipato": "huachipato",
+  "juventus": "juventus",
+  "mansfield town": "mansfield town",
+  "monaco": "monaco",
   "nascar cup series - daytona": "nascar cup series - daytona",
   "nba all-star sunday": "nba all-star sunday",
+  "psg": "psg",
+  "real madrid": "real madrid",
+  "sporting cristal": "sporting cristal",
+  "wrexham": "wrexham",
   "wwe raw": "wwe raw"
 };
 
   const roxieStreamsCached = [
-  {title: "brentford vs macclesfield", url: "https://roxiestreams.info/soccer-streams-1"},
-  {title: "cagliari vs leece", url: "https://roxiestreams.info/soccer-streams-2"},
-  {title: "barcelona vs girona", url: "https://roxiestreams.info/soccer-streams-3"},
-  {title: "coventry city vs middlesbrough", url: "https://roxiestreams.info/soccer-streams-4"},
-  {title: "bangu vs fluminense", url: "https://roxiestreams.info/soccer-streams-5"},
+  {title: "galatasaray vs juventus", url: "https://roxiestreams.info/soccer-streams-1"},
+  {title: "bristol city vs wrexham", url: "https://roxiestreams.info/soccer-streams-2"},
+  {title: "blackpool vs mansfield town", url: "https://roxiestreams.info/soccer-streams-3"},
+  {title: "benfica vs real madrid", url: "https://roxiestreams.info/soccer-streams-4"},
+  {title: "atalanta vs dortmund", url: "https://roxiestreams.info/soccer-streams-5"},
+  {title: "monaco vs psg", url: "https://roxiestreams.info/soccer-streams-6"},
+  {title: "carabobo vs huachipato", url: "https://roxiestreams.info/soccer-streams-7"},
+  {title: "2 de mayo vs sporting cristal", url: "https://roxiestreams.info/soccer-streams-7"},
   {title: "nba all-star sunday", url: "https://roxiestreams.info/nba-streams-1"},
   {title: "nascar cup series - daytona", url: "https://roxiestreams.info/nascar"},
   {title: "wwe raw", url: "https://roxiestreams.info/wwe-streams"}
 ];
 
-  const nbaTeams = new Set(["indiana pacers","minnesota timberwolves","los angeles lakers","golden state warriors","new orleans pelicans","sacramento kings","milwaukee bucks","washington wizards","toronto raptors","san antonio spurs","utah jazz","cleveland cavaliers","detroit pistons","orlando magic","memphis grizzlies","chicago bulls","new york knicks","houston rockets","atlanta hawks","portland trail blazers","dallas mavericks","los angeles clippers","denver nuggets","charlotte hornets","miami heat","philadelphia 76ers","phoenix suns","oklahoma city thunder","boston celtics"]);
+  const nbaTeams = new Set(["washington wizards","atlanta hawks","portland trail blazers","detroit pistons","phoenix suns","minnesota timberwolves","orlando magic","new york knicks","toronto raptors","chicago bulls","new orleans pelicans","indiana pacers","dallas mavericks","houston rockets","memphis grizzlies","los angeles clippers","oklahoma city thunder","san antonio spurs","sacramento kings","cleveland cavaliers","denver nuggets","milwaukee bucks","golden state warriors","miami heat","utah jazz","charlotte hornets","los angeles lakers","philadelphia 76ers","boston celtics"]);
   const premierLeagueTeams = new Set(["leeds","west ham","c palace","nottm forest","man united","man city","newcastle","brighton","brentford","liverpool","spurs"]);
   const laLigaTeams = new Set(["alaves","athletic bilbao","atm","atletico madrid","barcelona","celta vigo","elche","espanyol","getafe","girona","mallorca","osasuna","rayo vallecano","real betis","real madrid","real sociedad","real valladolid","sevilla","valencia","villarreal"]);
   const mlsTeams = new Set(["miami","atlanta","chicago","cincinnati","columbus","dallas","dc","houston","los angeles","minnesota","nashville","new england","new york","orlando","philadelphia","portland","real salt lake","seattle","sporting kansas city","san jose","toronto","vancouver"]);
