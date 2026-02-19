@@ -1,6 +1,13 @@
 import re
 from pathlib import Path
 
+# Read Fuse.js ONCE at startup
+FUSE_CODE_PATH = Path("fuse.min.js")
+if not FUSE_CODE_PATH.exists():
+    raise SystemExit("fuse.min.js not found! Download from https://cdnjs.cloudflare.com/ajax/libs/fuse.js/3.4.6/fuse.min.js")
+
+FUSE_JS = FUSE_CODE_PATH.read_text(encoding="utf-8")
+
 ABBREVIATION_MAP = {
     "hawks": "atlanta hawks",
     "celtics": "boston celtics",
@@ -60,7 +67,6 @@ def extract_events_and_links(text):
         line = line.strip()
         if not line:
             continue
-        # Fixed regex: fewer backslashes, proper escaping
         m = re.match(r'^(.+?):\s*\[(https?://[^\s\]]+)\]', line)
         if m:
             event = m.group(1).strip()
@@ -111,17 +117,9 @@ def generate_full_js(team_map_js, roxie_js, nba_canonical_set):
     laliga_js_array = ','.join(f'"{team}"' for team in LALIGA_TEAMS)
     mls_js_array = ','.join(f'"{team}"' for team in MLS_TEAMS)
     
-    # **UPDATED** JS with new selectors from admin.php HTML
     return f"""(async () => {{
-  if (!window.Fuse) {{
-    await new Promise((resolve, reject) => {{
-      const script = document.createElement('script');
-      script.src = 'https://cdn.jsdelivr.net/npm/fuse.js@7.0.0';
-      script.onload = resolve;
-      script.onerror = reject;
-      document.head.appendChild(script);
-    }});
-  }}
+  // INLINE FUSE.JS - CSP COMPLIANT (no external script loads)
+  {FUSE_JS}
 
   {team_map_js}
 
