@@ -13,9 +13,8 @@
     <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="css/mainn.css">
     <link href="/css/buttons.css" rel="stylesheet">
-<link href="imgs/iconn.png" rel="shortcut icon" type="x-icon"/>
-<script disable-devtool-auto src='https://cdn.jsdelivr.net/npm/disable-devtool/disable-devtool.min.js'></script>
-    <script src="https://cdn.jsdelivr.net/npm/clappr@latest/dist/clappr.min.js"></script>
+    <link href="imgs/iconn.png" rel="shortcut icon" type="x-icon"/>
+    <script disable-devtool-auto src='https://cdn.jsdelivr.net/npm/disable-devtool/disable-devtool.min.js'></script>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-EQ3BHVQGMN"></script>
     <script>
   window.dataLayer = window.dataLayer || [];
@@ -83,16 +82,14 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item"><a class="nav-link nav-link-winter-blue" href="https://roxiestreams.info/olympics">Winter Olympics</a></li>
-
-<li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/soccer">Soccer</a></li>
-<li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/mlb">MLB</a></li>
-<li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/nba">NBA</a></li>
-<li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/nfl">NFL</a></li>
-<li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/nhl">NHL</a></li>
-
-<li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/fighting">Fighting</a></li>
-<li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/motorsports">Motorsports</a></li>
+                    <li class="nav-item"><a class="nav-link nav-link-winter-blue" href="https://roxiestreams.info/olympics">Winter Olympics</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/soccer">Soccer</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/mlb">MLB</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/nba">NBA</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/nfl">NFL</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/nhl">NHL</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/fighting">Fighting</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/motorsports">Motorsports</a></li>
                     <li class="nav-item"><a class="nav-link" href="https://discord.gg/JhkVmejRmn">Stream Request (Discord)</a></li>
                 </ul>
             </div>
@@ -101,9 +98,15 @@
 
     <div class="container container-fluid pt-2 text-white">
         <div class="fullplayer">
-            <div id="playerContainer"></div>
-            <div class="streamchanger">
-                <button class="streambutton" onclick="showPlayer('clappr', 'https://service.webvideocore.net/CL1olYogIrDWvwqiIKK7eBmnWbRkKKsu3nqabm9GlX02JOj3CDNXzodJMDEN2dk3/a_4nmtd6g69pgk.m3u8')">Stream 1</button>
+            <div id="playerContainer">
+                <iframe
+                    src="https://cstream.fit/embed/3a0b6feab5ba6686b3e6c2e2817821ab"
+                    width="100%"
+                    height="100%"
+                    frameborder="0"
+                    allowfullscreen
+                    scrolling="no"
+                ></iframe>
             </div>
             <div class="embedchat">
                 <iframe src="https://www.youtube.com/live_chat?v=ZS9KXyH7Qjc&amp;embed_domain=roxiestreams.info"></iframe>
@@ -119,29 +122,6 @@
     </footer>
 
     <script>
-        var clapprPlayer;
-
-        function showPlayer(playerType, stream) {
-            if (playerType === "clappr") {
-                if (clapprPlayer) {
-                    clapprPlayer.destroy();
-                }
-
-                clapprPlayer = new Clappr.Player({
-                    source: stream,
-                    parentId: "#playerContainer",
-                    height: '100%',
-                    width: '100%',
-                    autoPlay: true,
-                });
-            }
-        }
-
-        window.onload = function() {
-            showPlayer('clappr', 'https://service.webvideocore.net/CL1olYogIrDWvwqiIKK7eBmnWbRkKKsu3nqabm9GlX02JOj3CDNXzodJMDEN2dk3/a_4nmtd6g69pgk.m3u8');
-        };
-    </script>
-    <script>
         document.addEventListener('contextmenu', function (e) {
             e.preventDefault();
         });
@@ -154,10 +134,5 @@
         });
     </script>
     <script src="js/bootstrap.bundle.min.js"></script>
-<script type="text/javascript">
-    aclib.runPop({
-        zoneId: '10754426',
-    });
-</script>
 </body>
 </html>
