@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en" data-bs-theme="dark">
 <head>
+<script id="aclib" type="text/javascript" src="//acscdn.com/script/aclib.js"></script>
+
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Roxiestreams - Watch Live Sports, F1, UFC, NFL, TV</title>
@@ -11,25 +13,17 @@
     <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="css/mainn.css">
     <link href="/css/buttons.css" rel="stylesheet">
-    <link href="imgs/iconn.png" rel="shortcut icon" type="x-icon"/>
-
-    <!-- Disable devtools (optional) -->
-    <script disable-devtool-auto src="https://cdn.jsdelivr.net/npm/disable-devtool/disable-devtool.min.js"></script>
-
-    <!-- Clappr core -->
+<link href="imgs/iconn.png" rel="shortcut icon" type="x-icon"/>
+<script disable-devtool-auto src='https://cdn.jsdelivr.net/npm/disable-devtool/disable-devtool.min.js'></script>
     <script src="https://cdn.jsdelivr.net/npm/clappr@latest/dist/clappr.min.js"></script>
-    <!-- DashShakaPlayback plugin (wraps Shaka Player) -->
-    <script src="https://cdn.jsdelivr.net/gh/clappr/dash-shaka-playback@latest/dist/dash-shaka-playback.js"></script>
-
-    <!-- Google Analytics (optional) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-EQ3BHVQGMN"></script>
     <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-EQ3BHVQGMN');
-    </script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
 
+  gtag('config', 'G-EQ3BHVQGMN');
+</script>
     <style>
         .navbar-brand {
             color: pink;
@@ -78,6 +72,7 @@
             gap: 10px;
         }
     </style>
+
 </head>
 <body>
     <nav class="navbar navbar-expand-lg bg-black">
@@ -90,13 +85,14 @@
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item"><a class="nav-link nav-link-winter-blue" href="https://roxiestreams.info/olympics">Winter Olympics</a></li>
 
-                    <li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/soccer">Soccer</a></li>
-                    <li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/mlb">MLB</a></li>
-                    <li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/nba">NBA</a></li>
-                    <li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/nfl">NFL</a></li>
-                    <li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/nhl">NHL</a></li>
-                    <li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/fighting">Fighting</a></li>
-                    <li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/motorsports">Motorsports</a></li>
+<li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/soccer">Soccer</a></li>
+<li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/mlb">MLB</a></li>
+<li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/nba">NBA</a></li>
+<li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/nfl">NFL</a></li>
+<li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/nhl">NHL</a></li>
+
+<li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/fighting">Fighting</a></li>
+<li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/motorsports">Motorsports</a></li>
                     <li class="nav-item"><a class="nav-link" href="https://discord.gg/JhkVmejRmn">Stream Request (Discord)</a></li>
                 </ul>
             </div>
@@ -106,13 +102,11 @@
     <div class="container container-fluid pt-2 text-white">
         <div class="fullplayer">
             <div id="playerContainer"></div>
-
             <div class="streamchanger">
-                <button class="streambutton" onclick="showPlayer('clappr', DASH_SOURCE)">Stream 1</button>
+                <button class="streambutton" onclick="showPlayer('clappr', 'https://601.xn--1000-ugoa0hsb9a0hb.com/plymouth.m3u8')">Stream 1</button>
             </div>
-
             <div class="embedchat">
-                <iframe src="https://www.youtube.com/live_chat?v=ZS9KXyH7Qjc&embed_domain=roxiestreams.info"></iframe>
+                <iframe src="https://www.youtube.com/live_chat?v=ZS9KXyH7Qjc&amp;embed_domain=roxiestreams.info"></iframe>
             </div>
         </div>
     </div>
@@ -125,9 +119,6 @@
     </footer>
 
     <script>
-        const DASH_SOURCE =
-          "https://abm5x5xaaaaaaaamjgudev5k44qb3.otte.live.cf.ww.aiv-cdn.net/lhr-nitro/live/dash/enc/wf8usag51e/out/v1/bd3b0c314fff4bb1ab4693358f3cd2d3/cenc.mpd";
-
         var clapprPlayer;
 
         function showPlayer(playerType, stream) {
@@ -139,58 +130,35 @@
                 clapprPlayer = new Clappr.Player({
                     source: stream,
                     parentId: "#playerContainer",
-                    height: "100%",
-                    width: "100%",
+                    height: '100%',
+                    width: '100%',
                     autoPlay: true,
-                    playback: {
-                        playInline: true
-                    },
-                    plugins: [DashShakaPlayback],
-                    shakaConfiguration: {
-                        drm: {
-                            // Clear Key config for your own content
-                            clearKeys: {
-                                "d0f2e5c39e70c18f29bf77768a1ad89a":
-                                  "d6853c51fcf37a18905f0609972395d7"
-                            }
-                        },
-                        streaming: {
-                            rebufferingGoal: 15
-                        }
-                    }
                 });
             }
         }
 
-        window.onload = function () {
-            showPlayer("clappr", DASH_SOURCE);
+        window.onload = function() {
+            showPlayer('clappr', 'https://601.xn--1000-ugoa0hsb9a0hb.com/plymouth.m3u8');
         };
     </script>
-
     <script>
-        // Optional: disable context menu and common devtools shortcuts
-        document.addEventListener("contextmenu", function (e) {
+        document.addEventListener('contextmenu', function (e) {
             e.preventDefault();
         });
 
-        document.addEventListener("keydown", function (e) {
-            if (
-                (e.key === "F12" || (e.ctrlKey && e.shiftKey && (e.key === "I" || e.key === "C"))) ||
-                (e.ctrlKey && e.shiftKey && e.key === "J")
-            ) {
+        document.addEventListener('keydown', function (e) {
+            if ((e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'C'))) ||
+                (e.ctrlKey && e.shiftKey && e.key === 'J')) {
                 e.preventDefault();
             }
         });
     </script>
-
     <script src="js/bootstrap.bundle.min.js"></script>
 
-    <!-- Pop script -->
-    <script id="aclib" type="text/javascript" src="//acscdn.com/script/aclib.js"></script>
-    <script type="text/javascript">
-        aclib.runPop({
-            zoneId: "10754426"
-        });
-    </script>
-</body>
+
+<script type="text/javascript">
+aclib.runPop({
+zoneId: '10754426',
+});
+</script></body>
 </html>
