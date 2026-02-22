@@ -223,7 +223,7 @@ def generate_full_js(team_map_js, roxie_js, nba_canonical_set):
     }}
 
     if (lowerTitle.includes('ufc')) {{
-      channelName = 'ESPN+';
+      channelName = 'Paramount+';
     }}
 
     const hasPlTeam = Array.from(premierLeagueTeams).some(plTeam => lowerTitle.includes(plTeam));
