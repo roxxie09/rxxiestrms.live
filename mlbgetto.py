@@ -3,15 +3,32 @@ from datetime import datetime, timedelta
 import pytz
 import platform
 from bs4 import BeautifulSoup
+import sys
+
+def get_target_date_from_args_or_now():
+    pacific = pytz.timezone('US/Pacific')
+    # If a date argument is provided, parse it
+    if len(sys.argv) > 1:
+        raw = sys.argv[1]
+        # Accept formats like 2-23-26 or 02-23-2026
+        for fmt in ('%m-%d-%y', '%m-%d-%Y'):
+            try:
+                dt = datetime.strptime(raw, fmt)
+                return dt.date()
+            except ValueError:
+                continue
+        raise ValueError(f"Could not parse date argument: {raw}")
+    else:
+        now_pacific = datetime.now(pacific)
+        if 21 <= now_pacific.hour <= 23:
+            target_date = now_pacific + timedelta(days=1)
+        else:
+            target_date = now_pacific
+        return target_date.date()
 
 def fetch_mlb_games_for_today():
     pacific = pytz.timezone('US/Pacific')
-    now_pacific = datetime.now(pacific)
-    # If time is between 9 PM and 11:59 PM, fetch for next day
-    if 21 <= now_pacific.hour <= 23:
-        target_date = now_pacific + timedelta(days=1)
-    else:
-        target_date = now_pacific
+    target_date = get_target_date_from_args_or_now()
     today = target_date.strftime('%Y-%m-%d')
 
     url = f'https://statsapi.mlb.com/api/v1/schedule/games/?sportId=1&date={today}'
@@ -20,7 +37,6 @@ def fetch_mlb_games_for_today():
     games = data.get('dates', [])
     
     games_list = []
-    # Cross-platform day format (for removing leading zero in day)
     if platform.system() == 'Windows':
         day_format = '%#d'
     else:
@@ -46,12 +62,9 @@ def fetch_mlb_games_for_today():
     return games_list
 
 def update_games_in_html(html_path='mlb.html'):
-    # Load the HTML
     with open(html_path, 'r', encoding='utf-8') as f:
         soup = BeautifulSoup(f, 'html.parser')
-    # Fetch today's games
     games = fetch_mlb_games_for_today()
-    # Find the events table by id
     table = soup.find('table', id='eventsTable')
     if table is None:
         print("Could not find table with id='eventsTable'")
@@ -60,31 +73,31 @@ def update_games_in_html(html_path='mlb.html'):
     if tbody is None:
         print("Could not find <tbody> under eventsTable")
         return
-    # Remove all old <tr> (don't leave trailing empty row)
     for tr in list(tbody.find_all('tr')):
         tr.decompose()
-    # Add one row per game
     for idx, game in enumerate(games, start=1):
-        stream_url = f"https://roxiestreams.cc/mlb-streams-{idx}"
+        stream_url = f"https://roxiestreams.info/mlb-streams-{idx}"
         tr = soup.new_tag('tr')
-        # 1. Game link
+
         td1 = soup.new_tag('td')
         a = soup.new_tag('a', href=stream_url)
         a.string = game['teams']
         td1.append(a)
         tr.append(td1)
-        # 2. Display time
+
         td2 = soup.new_tag('td')
         td2.string = game['display_time']
         tr.append(td2)
-        # 3. Countdown timer
+
         td3 = soup.new_tag('td')
         span = soup.new_tag('span', **{'class':'countdown-timer'})
         span['data-start'] = game['data_start']
         span['data-end'] = game['data_end']
         td3.append(span)
         tr.append(td3)
+
         tbody.append(tr)
+
     with open(html_path, 'w', encoding='utf-8') as f:
         f.write(str(soup.prettify(formatter="minimal")))
     print(f"Updated MLB games in {html_path}")
