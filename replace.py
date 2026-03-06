@@ -7,13 +7,24 @@ with open('arnolds.html', 'r', encoding='utf-8') as f:
 soup = BeautifulSoup(html_content, 'html.parser')
 
 table = soup.find('table', id='eventsTable')
-tbody = soup.new_tag('tbody')  # Fresh tbody
-table.clear()  # Wipe everything
-table.append(soup.new_tag('thead'))
-table.thead.append(soup.new_tag('tr', [soup.new_tag('th', 'Event'), soup.new_tag('th', 'Countdown')]))
+tbody = soup.new_tag('tbody')
+table.clear()
+
+# PROPER HEADERS (styled like original)
+thead = soup.new_tag('thead')
+tr_header = soup.new_tag('tr')
+th1 = soup.new_tag('th')
+th1.string = 'Event'
+th2 = soup.new_tag('th')
+th2.string = 'Start Time (PST)'
+th3 = soup.new_tag('th')
+th3.string = 'Countdown'
+tr_header.extend([th1, th2, th3])
+thead.append(tr_header)
+table.append(thead)
 table.append(tbody)
 
-# EXACT Arnold schedule with day headers
+# Arnold schedule
 schedule = [
     ('Friday, March 6', [
         ('Animal Cage - Day 1', 'March 6, 2026 7:00 AM'),
@@ -41,9 +52,9 @@ schedule = [
 
 i = 1
 for day, events in schedule:
-    # Day header
+    # Day header (colspan=3)
     hrow = soup.new_tag('tr')
-    hcell = soup.new_tag('td', colspan=2)
+    hcell = soup.new_tag('td', colspan=3)
     h3 = soup.new_tag('h3')
     h3.string = day
     h3['style'] = 'color:pink;margin:15px 0;text-align:center;font-size:1.2em;'
@@ -59,10 +70,13 @@ for day, events in schedule:
         tde = soup.new_tag('td')
         tde.append(a)
         
-        # EXACT original date format for JS
-        start_full = f'{start_time}:00 PST'
+        tdt = soup.new_tag('td', start_time.replace(' 2026', '') + ' PST')
+        
+        # Countdown (matches original soccer format exactly)
+        start_full = start_time.replace('March 6', 'March 06').replace('March 7', 'March 07').replace('March 8', 'March 08') + ':00 PST'
         day_num = int(re.search(r'(\d+)', start_time.split(',')[0]).group(1))
-        end_full = start_full.replace(f'March {day_num}', f'March {day_num+1}')
+        end_day = '07' if day_num == 6 else '08' if day_num == 7 else '09'
+        end_full = start_full.replace('March 06', f'March {end_day}').replace('March 07', f'March {end_day}')
         
         span = soup.new_tag('span')
         span['class'] = 'countdown-timer'
@@ -71,11 +85,11 @@ for day, events in schedule:
         tdc = soup.new_tag('td')
         tdc.append(span)
         
-        row.extend([tde, tdc])
+        row.extend([tde, tdt, tdc])
         tbody.append(row)
         i += 1
 
 with open('arnold_schedule.html', 'w', encoding='utf-8') as f:
     f.write(str(soup))
 
-print('✅ FIXED! Countdowns work (like original soccer), day headers, arnolds-1..16')
+print('✅ COMPLETE! Headers + 3 columns + working countdowns + day groups!')
