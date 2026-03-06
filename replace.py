@@ -1,9 +1,31 @@
+from bs4 import BeautifulSoup
 import re
 
-with open('paste.txt', 'r', encoding='utf-8', errors='replace') as f:
-    content = f.read()
+# Read input file (arnolds.html per your error)
+with open('arnolds.html', 'r', encoding='utf-8') as f:
+    html_content = f.read()
 
-# Exact Arnold events/times from your list (kept duplicates, used start times)
+soup = BeautifulSoup(html_content, 'html.parser')
+
+table = soup.find('table', id='eventsTable')
+if not table:
+    print("ERROR: No table! Check id='eventsTable'")
+    exit(1)
+
+# Clean table completely (keep thead)
+tbody = table.find('tbody')
+if tbody is None:
+    tbody = soup.new_tag('tbody')
+    table.append(tbody)
+
+# Nuke all data rows
+for tr in tbody.find_all('tr'):
+    tr.decompose()
+
+# Flatten nested tbodies
+for nested_tbody in soup.select('tbody tbody'):
+    nested_tbody.unwrap()
+
 arnold_events = [
     ("Animal Cage - Day 1", "March 6, 2026 7:00 AM"),
     ("Arnold Strongman Classic & Arnold Strongwoman Classic - Day 1", "March 6, 2026 8:00 AM"),
@@ -23,28 +45,35 @@ arnold_events = [
     ("Amateur Strongman Finals", "March 8, 2026 10:00 AM")
 ]
 
-# Build table rows (arnold-1, arnold-2, etc.)
-table_rows = ''
-for i, (name, time) in enumerate(arnold_events, 1):
-    link = f'https://roxiestreams.info/arnold-{i}'
-    # data-end = next day same time, data-start = same day
-    end_time = time.replace('AM', ':00 AM').replace('PM', ':00 PM')
-    start_time = end_time  # Same format
-    row = f'''<tr>
-<td><a href="{link}">{name}</a></td>
-<td>{time}</td>
-<td><span class="countdown-timer" data-end="{time.replace("March", "March 07,") if "March 6" in time else time.replace("March 7", "March 08,") if "March 7" in time else time.replace("March 8", "March 09,")}" data-start="{time}"></span></td>
-</tr>'''
-    table_rows += row
-
-# Replace table (keep header as "Upcoming Arnold Events")
-soccer_pattern = r'<tbody>.*?</table>'
-arnold_table = f'<tbody>\n{table_rows}\n</tbody></table>'
-new_content = content.replace('Upcoming Arnolds Events', 'Upcoming Arnold Events')
-new_content = re.sub(soccer_pattern, arnold_table, new_content, flags=re.DOTALL)
+for i, (name, time_str) in enumerate(arnold_events, 1):
+    row = soup.new_tag('tr')
+    
+    link = soup.new_tag('a', href=f'https://roxiestreams.info/arnold-{i}')
+    link.string = name
+    td_event = soup.new_tag('td')
+    td_event.append(link)
+    
+    td_time = soup.new_tag('td', time_str)
+    
+    # Simple countdown: parse day, add :00 PST, next day end
+    day_match = re.search(r'March (\d+), 2026', time_str)
+    day = int(day_match.group(1)) if day_match else 6
+    time_part = re.search(r'(\d+:\d+ (AM|PM))', time_str).group(1) if re.search(r'(\d+:\d+ (AM|PM))', time_str) else '7:00 AM'
+    
+    start_dt = f'March {day}, 2026 {time_part}:00 PST'
+    end_dt = f'March {day+1}, 2026 {time_part}:00 PST'
+    
+    span = soup.new_tag('span')
+    span['class'] = 'countdown-timer'
+    span['data-start'] = start_dt
+    span['data-end'] = end_dt
+    td_count = soup.new_tag('td')
+    td_count.append(span)
+    
+    row.extend([td_event, td_time, td_count])
+    tbody.append(row)
 
 with open('arnold_schedule.html', 'w', encoding='utf-8') as f:
-    f.write(new_content)
+    f.write(str(soup))
 
-print('Arnold schedule generated: arnold_schedule.html (16 events with your exact names/times)')
-print('Links: arnold-1 through arnold-16')
+print('✅ SUCCESS! arnold_schedule.html ready - 16 Arnold events added.')
