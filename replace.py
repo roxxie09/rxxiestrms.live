@@ -9,22 +9,15 @@ soup = BeautifulSoup(html_content, 'html.parser')
 table = soup.find('table', id='eventsTable')
 tbody = soup.new_tag('tbody')
 table.clear()
-
-# PROPER HEADERS (styled like original)
-thead = soup.new_tag('thead')
-tr_header = soup.new_tag('tr')
-th1 = soup.new_tag('th')
-th1.string = 'Event'
-th2 = soup.new_tag('th')
-th2.string = 'Start Time (PST)'
-th3 = soup.new_tag('th')
-th3.string = 'Countdown'
-tr_header.extend([th1, th2, th3])
-thead.append(tr_header)
-table.append(thead)
+table.append(soup.new_tag('thead'))
+table.thead.append(soup.new_tag('tr', 
+    [soup.new_tag('th', 'Event'), 
+     soup.new_tag('th', 'Start Time (PST)'), 
+     soup.new_tag('th', 'Countdown')]
+))
 table.append(tbody)
 
-# Arnold schedule
+# Arnold schedule with full times
 schedule = [
     ('Friday, March 6', [
         ('Animal Cage - Day 1', 'March 6, 2026 7:00 AM'),
@@ -52,7 +45,7 @@ schedule = [
 
 i = 1
 for day, events in schedule:
-    # Day header (colspan=3)
+    # Header row (colspan=3)
     hrow = soup.new_tag('tr')
     hcell = soup.new_tag('td', colspan=3)
     h3 = soup.new_tag('h3')
@@ -65,18 +58,20 @@ for day, events in schedule:
     for name, start_time in events:
         row = soup.new_tag('tr')
         
+        # Event link
         a = soup.new_tag('a', href=f'https://roxiestreams.info/arnolds-{i}')
         a.string = name
         tde = soup.new_tag('td')
         tde.append(a)
         
-        tdt = soup.new_tag('td', start_time.replace(' 2026', '') + ' PST')
+        # Start Time column
+        tdt = soup.new_tag('td')
+        tdt.string = start_time.replace('2026', '') + ' PST'  # Clean display
         
-        # Countdown (matches original soccer format exactly)
-        start_full = start_time.replace('March 6', 'March 06').replace('March 7', 'March 07').replace('March 8', 'March 08') + ':00 PST'
+        # Countdown (exact original format)
+        start_full = f'{start_time}:00 PST'
         day_num = int(re.search(r'(\d+)', start_time.split(',')[0]).group(1))
-        end_day = '07' if day_num == 6 else '08' if day_num == 7 else '09'
-        end_full = start_full.replace('March 06', f'March {end_day}').replace('March 07', f'March {end_day}')
+        end_full = start_full.replace(f'March {day_num},', f'March {day_num+1},')
         
         span = soup.new_tag('span')
         span['class'] = 'countdown-timer'
@@ -92,4 +87,4 @@ for day, events in schedule:
 with open('arnold_schedule.html', 'w', encoding='utf-8') as f:
     f.write(str(soup))
 
-print('✅ COMPLETE! Headers + 3 columns + working countdowns + day groups!')
+print(f'✅ PERFECT! 3 columns: Event | Start Time (PST) | Countdown | {i-1} events')
