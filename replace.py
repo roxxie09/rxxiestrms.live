@@ -1,90 +1,21 @@
-from bs4 import BeautifulSoup
-import re
+import os
 
-with open('arnolds.html', 'r', encoding='utf-8') as f:
-    html_content = f.read()
+# Get the current working directory
+folder = os.path.dirname(os.path.abspath(__file__))
 
-soup = BeautifulSoup(html_content, 'html.parser')
+# Loop through files in the current directory
+for filename in os.listdir(folder):
+    if filename.endswith(".html"):
+        filepath = os.path.join(folder, filename)
 
-table = soup.find('table', id='eventsTable')
-tbody = soup.new_tag('tbody')
-table.clear()
-table.append(soup.new_tag('thead'))
-table.thead.append(soup.new_tag('tr', 
-    [soup.new_tag('th', 'Event'), 
-     soup.new_tag('th', 'Start Time (PST)'), 
-     soup.new_tag('th', 'Countdown')]
-))
-table.append(tbody)
+        with open(filepath, 'r', encoding='utf-8') as file:
+            content = file.read()
 
-# Arnold schedule with full times
-schedule = [
-    ('Friday, March 6', [
-        ('Animal Cage - Day 1', 'March 6, 2026 7:00 AM'),
-        ('Arnold Strongman Classic & Arnold Strongwoman Classic - Day 1', 'March 6, 2026 8:00 AM'),
-        ('Friday Night Finals (Arnold Mens Open Prejudging + Classic Physique, Fitness & Wellness Finals)', 'March 6, 2026 4:00 PM')
-    ]),
-    ('Saturday, March 7', [
-        ('High Five Armwrestling - Day 1', 'March 7, 2026 6:00 AM'),
-        ('Arnold Strongman Classic & Arnold Strongwoman Classic - Day 2', 'March 7, 2026 7:00 AM'),
-        ('Animal Cage - Day 2', 'March 7, 2026 7:00 AM'),
-        ('IFBB Pro Wheelchair Prejudging & Finals + Arnold Mens Physique & Bikini Prejudging', 'March 7, 2026 7:00 AM'),
-        ('Angel Fashion Show', 'March 7, 2026 9:15 AM'),
-        ('Worlds Strongest Firefighter', 'March 7, 2026 10:15 AM'),
-        ('Joey Swoll hosted by Siddique Farooqui', 'March 7, 2026 1:15 PM'),
-        ('Saturday Night Finals (Arnold Classic Mens Open, Mens Physique & Bikini)', 'March 7, 2026 4:00 PM')
-    ]),
-    ('Sunday, March 8', [
-        ('Arnold Showcase', 'March 8, 2026 6:30 AM'),
-        ('Animal Cage - Day 3', 'March 8, 2026 7:00 AM'),
-        ('Amateur Strongman Finals', 'March 8, 2026 7:00 AM'),
-        ('Sam Sulek', 'March 8, 2026 9:30 AM'),
-        ('Amateur Strongman Finals', 'March 8, 2026 10:00 AM')
-    ])
-]
+        # Replace all instances of "601" with "602"
+        updated_content = content.replace("601", "602")
 
-i = 1
-for day, events in schedule:
-    # Header row (colspan=3)
-    hrow = soup.new_tag('tr')
-    hcell = soup.new_tag('td', colspan=3)
-    h3 = soup.new_tag('h3')
-    h3.string = day
-    h3['style'] = 'color:pink;margin:15px 0;text-align:center;font-size:1.2em;'
-    hcell.append(h3)
-    hrow.append(hcell)
-    tbody.append(hrow)
-    
-    for name, start_time in events:
-        row = soup.new_tag('tr')
-        
-        # Event link
-        a = soup.new_tag('a', href=f'https://roxiestreams.info/arnolds-{i}')
-        a.string = name
-        tde = soup.new_tag('td')
-        tde.append(a)
-        
-        # Start Time column
-        tdt = soup.new_tag('td')
-        tdt.string = start_time.replace('2026', '') + ' PST'  # Clean display
-        
-        # Countdown (exact original format)
-        start_full = f'{start_time}:00 PST'
-        day_num = int(re.search(r'(\d+)', start_time.split(',')[0]).group(1))
-        end_full = start_full.replace(f'March {day_num},', f'March {day_num+1},')
-        
-        span = soup.new_tag('span')
-        span['class'] = 'countdown-timer'
-        span['data-start'] = start_full
-        span['data-end'] = end_full
-        tdc = soup.new_tag('td')
-        tdc.append(span)
-        
-        row.extend([tde, tdt, tdc])
-        tbody.append(row)
-        i += 1
+        # Write the changes back to the file
+        with open(filepath, 'w', encoding='utf-8') as file:
+            file.write(updated_content)
 
-with open('arnold_schedule.html', 'w', encoding='utf-8') as f:
-    f.write(str(soup))
-
-print(f'✅ PERFECT! 3 columns: Event | Start Time (PST) | Countdown | {i-1} events')
+        print(f"✅ Updated: {filename}")
