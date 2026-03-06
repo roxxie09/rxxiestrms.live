@@ -7,90 +7,75 @@ with open('arnolds.html', 'r', encoding='utf-8') as f:
 soup = BeautifulSoup(html_content, 'html.parser')
 
 table = soup.find('table', id='eventsTable')
-if not table:
-    print("ERROR: No table!")
-    exit(1)
+tbody = soup.new_tag('tbody')  # Fresh tbody
+table.clear()  # Wipe everything
+table.append(soup.new_tag('thead'))
+table.thead.append(soup.new_tag('tr', [soup.new_tag('th', 'Event'), soup.new_tag('th', 'Countdown')]))
+table.append(tbody)
 
-# New 2-column header: Event | Countdown
-thead = table.find('thead')
-if thead:
-    thead.decompose()
-thead = soup.new_tag('thead')
-tr_header = soup.new_tag('tr')
-th_event = soup.new_tag('th', 'Event')
-th_countdown = soup.new_tag('th', 'Countdown')
-tr_header.extend([th_event, th_countdown])
-thead.append(tr_header)
-table.insert(0, thead)
+# EXACT Arnold schedule with day headers
+schedule = [
+    ('Friday, March 6', [
+        ('Animal Cage - Day 1', 'March 6, 2026 7:00 AM'),
+        ('Arnold Strongman Classic & Arnold Strongwoman Classic - Day 1', 'March 6, 2026 8:00 AM'),
+        ('Friday Night Finals (Arnold Mens Open Prejudging + Classic Physique, Fitness & Wellness Finals)', 'March 6, 2026 4:00 PM')
+    ]),
+    ('Saturday, March 7', [
+        ('High Five Armwrestling - Day 1', 'March 7, 2026 6:00 AM'),
+        ('Arnold Strongman Classic & Arnold Strongwoman Classic - Day 2', 'March 7, 2026 7:00 AM'),
+        ('Animal Cage - Day 2', 'March 7, 2026 7:00 AM'),
+        ('IFBB Pro Wheelchair Prejudging & Finals + Arnold Mens Physique & Bikini Prejudging', 'March 7, 2026 7:00 AM'),
+        ('Angel Fashion Show', 'March 7, 2026 9:15 AM'),
+        ('Worlds Strongest Firefighter', 'March 7, 2026 10:15 AM'),
+        ('Joey Swoll hosted by Siddique Farooqui', 'March 7, 2026 1:15 PM'),
+        ('Saturday Night Finals (Arnold Classic Mens Open, Mens Physique & Bikini)', 'March 7, 2026 4:00 PM')
+    ]),
+    ('Sunday, March 8', [
+        ('Arnold Showcase', 'March 8, 2026 6:30 AM'),
+        ('Animal Cage - Day 3', 'March 8, 2026 7:00 AM'),
+        ('Amateur Strongman Finals', 'March 8, 2026 7:00 AM'),
+        ('Sam Sulek', 'March 8, 2026 9:30 AM'),
+        ('Amateur Strongman Finals', 'March 8, 2026 10:00 AM')
+    ])
+]
 
-tbody = table.find('tbody') or soup.new_tag('tbody')
-if tbody.parent != table:
-    table.append(tbody)
-
-# Clear old rows
-for tr in tbody.find_all('tr'):
-    tr.decompose()
-
-# Grouped Arnold events by day
-events_by_day = {
-    'Friday, March 6': [
-        ("Animal Cage - Day 1", "7:00 AM"),
-        ("Arnold Strongman Classic & Arnold Strongwoman Classic - Day 1", "8:00 AM"),
-        ("Friday Night Finals (Arnold Men's Open Prejudging + Classic Physique, Fitness & Wellness Finals)", "4:00 PM")
-    ],
-    'Saturday, March 7': [
-        ("High Five Armwrestling - Day 1", "6:00 AM"),
-        ("Arnold Strongman Classic & Arnold Strongwoman Classic - Day 2", "7:00 AM"),
-        ("Animal Cage - Day 2", "7:00 AM"),
-        ("IFBB Pro Wheelchair Prejudging & Finals + Arnold Men's Physique & Bikini Prejudging", "7:00 AM"),
-        ("Angel Fashion Show", "9:15 AM"),
-        ("World's Strongest Firefighter", "10:15 AM"),
-        ("Joey Swoll hosted by Siddique Farooqui", "1:15 PM"),
-        ("Saturday Night Finals (Arnold Classic Men's Open, Men's Physique & Bikini)", "4:00 PM")
-    ],
-    'Sunday, March 8': [
-        ("Arnold Showcase", "6:30 AM"),
-        ("Animal Cage - Day 3", "7:00 AM"),
-        ("Amateur Strongman Finals", "7:00 AM"),
-        ("Sam Sulek", "9:30 AM"),
-        ("Amateur Strongman Finals", "10:00 AM")
-    ]
-}
-
-link_counter = 1
-for day_header, day_events in events_by_day.items():
-    # Day header row (colspan=2)
-    header_row = soup.new_tag('tr')
-    header_cell = soup.new_tag('td', colspan='2')
-    h3 = soup.new_tag('h3', day_header)
-    h3['style'] = 'color: pink; margin: 10px 0; text-align: center;'
-    header_cell.append(h3)
-    header_row.append(header_cell)
-    tbody.append(header_row)
+i = 1
+for day, events in schedule:
+    # Day header
+    hrow = soup.new_tag('tr')
+    hcell = soup.new_tag('td', colspan=2)
+    h3 = soup.new_tag('h3')
+    h3.string = day
+    h3['style'] = 'color:pink;margin:15px 0;text-align:center;font-size:1.2em;'
+    hcell.append(h3)
+    hrow.append(hcell)
+    tbody.append(hrow)
     
-    # Event rows
-    for event_name, time_part in day_events:
+    for name, start_time in events:
         row = soup.new_tag('tr')
         
-        a = soup.new_tag('a', href=f'https://roxiestreams.info/arnolds-{link_counter}')
-        a.string = event_name
-        td_event = soup.new_tag('td')
-        td_event.append(a)
+        a = soup.new_tag('a', href=f'https://roxiestreams.info/arnolds-{i}')
+        a.string = name
+        tde = soup.new_tag('td')
+        tde.append(a)
         
-        # Countdown
-        start_dt = f'March {day_header.split(",")[0].split()[-1]}, 2026 {time_part}:00 PST'
-        day_num = int(re.search(r'(\d+)', day_header).group(1))
-        end_dt = f'March {day_num+1}, 2026 {time_part}:00 PST'
+        # EXACT original date format for JS
+        start_full = f'{start_time}:00 PST'
+        day_num = int(re.search(r'(\d+)', start_time.split(',')[0]).group(1))
+        end_full = start_full.replace(f'March {day_num}', f'March {day_num+1}')
         
-        span = soup.new_tag('span', **{'class': 'countdown-timer', 'data-start': start_dt, 'data-end': end_dt})
-        td_count = soup.new_tag('td')
-        td_count.append(span)
+        span = soup.new_tag('span')
+        span['class'] = 'countdown-timer'
+        span['data-start'] = start_full
+        span['data-end'] = end_full
+        tdc = soup.new_tag('td')
+        tdc.append(span)
         
-        row.extend([td_event, td_count])
+        row.extend([tde, tdc])
         tbody.append(row)
-        link_counter += 1
+        i += 1
 
 with open('arnold_schedule.html', 'w', encoding='utf-8') as f:
     f.write(str(soup))
 
-print(f'✅ DONE! {link_counter-1} arnolds-X links, grouped by day, no time column.')
+print('✅ FIXED! Countdowns work (like original soccer), day headers, arnolds-1..16')
