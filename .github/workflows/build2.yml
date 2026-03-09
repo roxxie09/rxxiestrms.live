@@ -10,43 +10,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4  # Updated to latest version
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Set up SSH
-      uses: webfactory/ssh-agent@v0.9.0  # Updated to latest
-      with:
-        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEYT }}
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEYR }}
 
-    - name: Deploy to VPS
-      run: |
-        ssh -o StrictHostKeyChecking=no root@77.110.109.208 << 'EOF'
-          set -e  # Exit on any error
-          
-          # Create repo dir if missing and clone/pull
-          REPO_DIR="/root/roxxiestrms"
-          if [ ! -d "$REPO_DIR" ]; then
-            mkdir -p "$REPO_DIR"
-            cd "$REPO_DIR"
-            git clone https://github.com/roxxie09/rxxiestrms.live.git .
-            git checkout main
-          else
-            cd "$REPO_DIR"
+      - name: Deploy to VPS
+        run: |
+          ssh -o StrictHostKeyChecking=no root@185.132.53.186 << 'EOF'
+            cd /var/www/html/rxxiestrms.live
             git reset --hard
             git clean -fd
             git pull origin main
-          fi
-          
-          # Ensure web root exists
-          mkdir -p /var/www/html/roxxiestrms
-          
-          # Rsync repo contents to web root (matches Nginx root)
-          rsync -avz --delete "$REPO_DIR/" /var/www/html/roxxiestrms/
-          
-          # Set correct permissions for Nginx
-          chown -R www-data:www-data /var/www/html/roxxiestrms
-          chmod -R 755 /var/www/html/roxxiestrms
-          
-          # Restart Nginx
-          systemctl restart nginx
-        EOF
+            systemctl restart nginx
+          EOF
