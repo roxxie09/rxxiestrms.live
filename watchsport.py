@@ -260,19 +260,31 @@ def generate_full_js(team_map_js, roxie_js, nba_canonical_set):
       const urlInput = form.querySelector('input[name="url"]');
       const channelInput = form.querySelector('input[name="channel"]');
       const bitrateInput = form.querySelector('input[name="bitrate"]');
-      const adsSelect = form.querySelector('select[name="ads"]');
-      const fpsSelect = form.querySelector('select[name="fps"]');
+      const fpsInput = form.querySelector('input[name="fps"]');
 
-      if (siteInput) siteInput.value = 'RoxieStreams';
+      if (siteInput) siteInput.value = "RoxieStreams";
       if (urlInput) urlInput.value = streamUrl;
-      if (channelInput) channelInput.value = (channelName ? (channelName + ' (FHD)') : 'Main (FHD)');
-      if (bitrateInput) bitrateInput.value = '7000';
-      if (adsSelect) adsSelect.value = '0';
-      if (fpsSelect) fpsSelect.value = '60';
+      if (channelInput) channelInput.value = (channelName ? (channelName + " (FHD)") : "Main (FHD)");
+      if (bitrateInput) bitrateInput.value = "1080p";
+      if (fpsInput) fpsInput.value = "60";
 
-      form.querySelectorAll('input[type="checkbox"][name="Compatibility"]').forEach(cb => {{
+      // Click Ads segmented "0" button so their JS updates the hidden input
+      const adsGroup = form.querySelector(".seg-btns[data-target=\"ads\"]");
+      if (adsGroup) {
+        const zeroBtn = adsGroup.querySelector(".seg-btn[data-value=\"0\"]");
+        if (zeroBtn) zeroBtn.click();
+      }
+
+      // Ensure FPS segmented button for 60 is active as well (optional)
+      const fpsGroup = form.querySelector(".seg-btns[data-target=\"fps\"]");
+      if (fpsGroup) {
+        const fps60Btn = fpsGroup.querySelector(".seg-btn[data-value=\"60\"]");
+        if (fps60Btn) fps60Btn.click();
+      }
+
+      form.querySelectorAll("input[type=\"checkbox\"][name=\"Compatibility\"]").forEach(cb => {
         cb.checked = true;
-      }});
+      });
 
       console.log(`Autofilled URL: ${{streamUrl}} and channel: ${{channelName}} with bitrate 7000 and ads 0 for gameId ${{gameId}}`);
     }}, 300);
