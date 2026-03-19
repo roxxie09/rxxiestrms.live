@@ -169,7 +169,7 @@ def append_or_replace_schedule(html_file_path, new_games, new_date):
                     td_time = soup.new_tag('td')
                     td_time.string = game['time']
                     td_countdown = soup.new_tag('td')
-                    span = soup.new_tag('span', **{'class': 'countdown-timer'})
+                    span = soup.new_tag('span', class_='countdown-timer')
                     span['data-start'] = game['countdown_start']
                     span['data-end'] = game['countdown_end']
                     td_countdown.append(span)
@@ -202,7 +202,7 @@ def append_or_replace_schedule(html_file_path, new_games, new_date):
             td_time = soup.new_tag('td')
             td_time.string = game['time']
             td_countdown = soup.new_tag('td')
-            span = soup.new_tag('span', cls='countdown-timer')
+            span = soup.new_tag('span', class_='countdown-timer')
             span['data-start'] = game['countdown_start']
             span['data-end'] = game['countdown_end']
             td_countdown.append(span)
