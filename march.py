@@ -76,29 +76,43 @@ def fetch_march_madness_games_for_date_from_file(html_file_path, date=None):
             classes = row.get('class', [])
             print(f"Row {j} classes: {classes}")
 
-            # Skip pure note rows like:
-            # <tr ...><td colspan=7><div class="gameNote">...</div></td></tr>
+            # Skip pure note rows
             if row.find('div', class_='gameNote'):
                 continue
 
-            # Away team: in td.events__col > div.matchTeams > span.Table__Team.away
+            # Away team
             away_span = row.select_one('td.events__col div.matchTeams span.Table__Team.away')
-            # Home team: in td.colspan__col > div.local > last span.Table__Team
+            # Home team: last Table__Team in local
             home_span = None
             home_team_spans = row.select('td.colspan__col div.local span.Table__Team')
             if home_team_spans:
                 home_span = home_team_spans[-1]
 
-            # Time cell: td.date__col
+            # Time cell
             time_cell = row.find('td', class_='date__col')
             time_text = time_cell.get_text(strip=True) if time_cell else ''
+
+            # TV cell (broadcast column)
+            tv_cell = row.find('td', class_=lambda c: c and 'broadcast' in c)
+            channel = ''
+            if tv_cell:
+                name_div = tv_cell.find('div', class_='network-name')
+                if name_div:
+                    channel = name_div.get_text(strip=True)
+                else:
+                    img = tv_cell.find('img', alt=True)
+                    if img:
+                        channel = img['alt'].strip()
+                    else:
+                        channel = tv_cell.get_text(strip=True)
+
             print(
                 f"  Away: {away_span.get_text(strip=True) if away_span else 'MISS'} | "
                 f"Home: {home_span.get_text(strip=True) if home_span else 'MISS'} | "
-                f"Time raw: '{time_text}'"
+                f"Time raw: '{time_text}' | TV: '{channel}'"
             )
 
-            # Time can be "9:15 PM" or "LIVE" (no time). Only use rows with an actual time.
+            # Time can be "9:15 PM" or "LIVE"
             m = re.search(r'(\d+:\d+\s*[AP]M)', time_text)
             if not (away_span and home_span and m):
                 continue
@@ -111,8 +125,9 @@ def fetch_march_madness_games_for_date_from_file(html_file_path, date=None):
             games.append({
                 'event': f"{away_name} vs {home_name}",
                 'time': f"{date.strftime('%B %d, %Y')} {game_time_pst}",
-                'countdown_start': f"{date.strftime('%B %d, %Y')} {game_time_pst}:00",
-                'countdown_end': f"{(date + timedelta(days=1)).strftime('%B %d, %Y')} {game_time_pst}:00"
+                'channel': channel,
+                'countdown_start': f"{date.strftime('%B %d, %Y')} {game_time_pst}",
+                'countdown_end': f"{(date + timedelta(days=1)).strftime('%B %d, %Y')} {game_time_pst}",
             })
 
         print(f"Extracted {len(games)} games: {games}")
@@ -123,6 +138,26 @@ def fetch_march_madness_games_for_date_from_file(html_file_path, date=None):
 
 def append_or_replace_schedule(html_file_path, new_games, new_date):
     new_date_str = new_date.strftime('%B %d, %Y')
+
+    # Map each TV channel to a stable ncaa-streams index
+    channel_index = {}
+    next_index = 1
+
+    def get_href_for_game(game):
+        nonlocal next_index
+        ch = (game.get('channel') or '').strip().upper()
+        if not ch:
+            # No channel info: just give it its own index
+            idx = next_index
+            next_index += 1
+            return f"https://roxiestreams.info/ncaa-streams-{idx}"
+
+        if ch not in channel_index:
+            channel_index[ch] = next_index
+            next_index += 1
+
+        idx = channel_index[ch]
+        return f"https://roxiestreams.info/ncaa-streams-{idx}"
 
     with open(html_file_path, 'r', encoding='utf-8') as f:
         soup = BeautifulSoup(f, 'html.parser')
@@ -162,17 +197,23 @@ def append_or_replace_schedule(html_file_path, new_games, new_date):
                 # Build table rows...
                 for idx, game in enumerate(new_games, 1):
                     tr = soup.new_tag('tr')
+
                     td_event = soup.new_tag('td')
-                    a = soup.new_tag('a', href=f"https://roxiestreams.info/ncaa-streams-{idx}")
+                    href = get_href_for_game(game)
+                    a = soup.new_tag('a', href=href)
                     a.string = game['event']
                     td_event.append(a)
+
                     td_time = soup.new_tag('td')
                     td_time.string = game['time']
+
                     td_countdown = soup.new_tag('td')
-                    span = soup.new_tag('span', class_='countdown-timer')
+                    span = soup.new_tag('span')
+                    span['class'] = 'countdown-timer'
                     span['data-start'] = game['countdown_start']
                     span['data-end'] = game['countdown_end']
                     td_countdown.append(span)
+
                     tr.extend([td_event, td_time, td_countdown])
                     tbody.append(tr)
                 print(f"✅ Replaced {len(new_games)} games for {new_date_str}")
@@ -195,17 +236,23 @@ def append_or_replace_schedule(html_file_path, new_games, new_date):
         tbody = soup.new_tag('tbody')
         for idx, game in enumerate(new_games, 1):
             tr = soup.new_tag('tr')
+
             td_event = soup.new_tag('td')
-            a = soup.new_tag('a', href=f"https://roxiestreams.info/ncaa-streams-{idx}")
+            href = get_href_for_game(game)
+            a = soup.new_tag('a', href=href)
             a.string = game['event']
             td_event.append(a)
+
             td_time = soup.new_tag('td')
             td_time.string = game['time']
+
             td_countdown = soup.new_tag('td')
-            span = soup.new_tag('span', class_='countdown-timer')
+            span = soup.new_tag('span')
+            span['class'] = 'countdown-timer'
             span['data-start'] = game['countdown_start']
             span['data-end'] = game['countdown_end']
             td_countdown.append(span)
+
             tr.extend([td_event, td_time, td_countdown])
             tbody.append(tr)
         new_table.append(tbody)
@@ -241,17 +288,3 @@ if __name__ == '__main__':
         append_or_replace_schedule(march_html_path, new_schedule, input_date)
     else:
         print("❌ No games found")
-
-if __name__ == '__main__':
-    march_txt_path = 'march.txt'
-    if not os.path.exists(march_txt_path):
-        print(f"ERROR: {march_txt_path} not found! Save ESPN HTML there.")
-        exit(1)
-    
-    input_date = datetime(2026, 3, 18).date()  # Hardcode today
-    new_schedule = fetch_march_madness_games_for_date_from_file(march_txt_path, input_date)
-    
-    if new_schedule:
-        append_or_replace_schedule(march_html_path, new_schedule, input_date)
-    else:
-        print("No games extracted.")
