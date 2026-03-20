@@ -8,38 +8,37 @@ on:
 jobs:
   deploy-su:
     runs-on: ubuntu-latest
+    
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4  # Latest version
+        uses: actions/checkout@v4
 
       - name: Deploy to .su VPS
-        uses: webfactory/ssh-agent@v0.9.0  # Latest
+        uses: webfactory/ssh-agent@v0.9.0
         with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEYSU }}  # Fixed name (no 'KSU')
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEYSU }}
+        
+      - name: SSH Deploy Script
         env:
-          SERVER_IP: "185.132.53.80"  # Your .su IP
-          
+          SERVER_IP: "185.132.53.80"
         run: |
           ssh -o StrictHostKeyChecking=no root@$SERVER_IP << 'EOF'
-            set -e  # Exit on any error
+            set -e
             
             cd /var/www/html/roxxiestrms || { echo "Dir not found"; exit 1; }
             
-            # Hard reset + clean
             git fetch --all
             git reset --hard origin/main
             git clean -fd
             
-            # Fix .su links (domain-specific)
+            # Fix .su links
             find . -name '*.html' -exec sed -i 's|https://roxiestreams.info/|/|g' {} +
             find . -name '*.html' -exec sed -i 's|https://roxiestreams.info$|.|g' {} +
             
-            # Permissions
             chown -R www-data:www-data /var/www/html/roxxiestrms
             chmod -R 644 /var/www/html/roxxiestrms/*.html
             chmod 755 /var/www/html/roxxiestrms
             
-            # Restart nginx
             systemctl restart nginx
             
             echo "✅ .su deploy complete!"
