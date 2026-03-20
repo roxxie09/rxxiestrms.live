@@ -8,12 +8,13 @@ import re
 TEAM_NAME_MAP = {
     'Prairie View A&M': 'Prairie View A&M Panthers',
     'Lehigh': 'Lehigh Mountain Hawks',
-    'Miami OH': 'Miami (OH) RedHawks',
+    'Miami (OH)': 'Miami (OH) RedHawks',
     'SMU': 'SMU Mustangs',
 }
 
 def get_full_team_name(name):
-    clean_name = re.sub(r'^\d+\s*', '', name).strip('&M')
+    # Remove leading seed number like "16Prairie View A&M" -> "Prairie View A&M"
+    clean_name = re.sub(r'^\d+\s*', '', name).strip()
     return TEAM_NAME_MAP.get(clean_name, clean_name)
 
 def convert_et_to_pst(time_str, date_obj):
@@ -181,6 +182,25 @@ def append_or_replace_schedule(html_file_path, new_games, new_date):
         soup = BeautifulSoup(html, 'html.parser')
         container = soup.find('div', class_='container container-fluid pt-2 text-white')
 
+    # Remove any old date sections so only the current date remains
+    for header in container.find_all('h2'):
+        text = header.get_text(strip=True)
+
+        # 1) Always remove the original static "Upcoming March Madness Events" block
+        if text == 'Upcoming March Madness Events':
+            table = header.find_next_sibling('table')
+            if table:
+                table.decompose()
+            header.decompose()
+            continue
+
+        # 2) Remove any dated sections that are not for the new date
+        if text.startswith('March Madness Schedule for '):
+            if new_date_str not in text:
+                table = header.find_next_sibling('table')
+                if table:
+                    table.decompose()
+                header.decompose()
     # Rest of function exactly like your NBA version...
     existing_headers = container.find_all('h2')
     header_found = False
@@ -225,14 +245,16 @@ def append_or_replace_schedule(html_file_path, new_games, new_date):
         new_header = soup.new_tag('h2')
         new_header.string = f"March Madness Schedule for {new_date_str}"
         new_table = soup.new_tag('table', id='eventsTable')
+
         thead = soup.new_tag('thead')
         tr_head = soup.new_tag('tr')
-        for col in ['Event', 'Start Time', 'Countdown']:
+        for col in ['Event', ' Start Time', 'Countdown']:
             th = soup.new_tag('th')
             th.string = col
             tr_head.append(th)
         thead.append(tr_head)
         new_table.append(thead)
+
         tbody = soup.new_tag('tbody')
         for idx, game in enumerate(new_games, 1):
             tr = soup.new_tag('tr')
@@ -255,14 +277,18 @@ def append_or_replace_schedule(html_file_path, new_games, new_date):
 
             tr.extend([td_event, td_time, td_countdown])
             tbody.append(tr)
+
         new_table.append(tbody)
+
         footer = container.find('footer')
         if footer:
-            footer.insert_before(new_table)
+            # Insert header first, then table, so header appears above the table
             footer.insert_before(new_header)
+            footer.insert_before(new_table)
         else:
             container.append(new_header)
             container.append(new_table)
+
         print(f"✅ Added {len(new_games)} new games for {new_date_str}")
 
     with open(html_file_path, 'w', encoding='utf-8') as f:
