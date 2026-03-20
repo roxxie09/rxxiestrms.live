@@ -8,23 +8,39 @@ on:
 jobs:
   deploy-su:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Set up SSH
-        uses: webfactory/ssh-agent@v0.5.3
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEYSU }}  # New secret for .su
+        uses: actions/checkout@v4  # Latest version
 
       - name: Deploy to .su VPS
+        uses: webfactory/ssh-agent@v0.9.0  # Latest
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY_SU }}  # Fixed name (no 'KSU')
+        env:
+          SERVER_IP: "185.132.53.80"  # Your .su IP
+          
         run: |
-          ssh -o StrictHostKeyChecking=no root@185.132.53.80 << 'EOF'
-            cd /var/www/html/roxxiestrms
-            git reset --hard HEAD
+          ssh -o StrictHostKeyChecking=no root@$SERVER_IP << 'EOF'
+            set -e  # Exit on any error
+            
+            cd /var/www/html/roxxiestrms || { echo "Dir not found"; exit 1; }
+            
+            # Hard reset + clean
+            git fetch --all
+            git reset --hard origin/main
             git clean -fd
-            git pull origin main
+            
+            # Fix .su links (domain-specific)
+            find . -name '*.html' -exec sed -i 's|https://roxiestreams.info/|/|g' {} +
+            find . -name '*.html' -exec sed -i 's|https://roxiestreams.info$|.|g' {} +
+            
+            # Permissions
             chown -R www-data:www-data /var/www/html/roxxiestrms
+            chmod -R 644 /var/www/html/roxxiestrms/*.html
+            chmod 755 /var/www/html/roxxiestrms
+            
+            # Restart nginx
             systemctl restart nginx
+            
+            echo "✅ .su deploy complete!"
           EOF
