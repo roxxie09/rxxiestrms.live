@@ -1,0 +1,30 @@
+name: Deploy .su VPS
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy-su:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEYSU }}  # New secret for .su
+
+      - name: Deploy to .su VPS
+        run: |
+          ssh -o StrictHostKeyChecking=no root@185.132.53.80 << 'EOF'
+            cd /var/www/html/roxxiestrms
+            git reset --hard HEAD
+            git clean -fd
+            git pull origin main
+            chown -R www-data:www-data /var/www/html/roxxiestrms
+            systemctl restart nginx
+          EOF
