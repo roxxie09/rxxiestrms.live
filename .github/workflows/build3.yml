@@ -15,7 +15,7 @@ jobs:
       - name: Deploy to .su VPS
         uses: webfactory/ssh-agent@v0.9.0  # Latest
         with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY_SU }}  # Fixed name (no 'KSU')
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEYSU }}  # Fixed name (no 'KSU')
         env:
           SERVER_IP: "185.132.53.80"  # Your .su IP
           
