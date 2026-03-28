@@ -106,7 +106,7 @@
         <div class="fullplayer">
             <div id="playerContainer"></div>
 	<div class="streamchanger">
-	  <button class="streambutton" onclick="showPlayer('clappr', getRandomStream('ppv5.m3u8', 'daffodil'))">Stream 1</button>
+	  <button class="streambutton" onclick="showPlayer('clappr', getRandomStream('ppv5.m3u8', '601'))">Stream 1</button>
 	</div>
             <div class="embedchat">
                 <iframe src="https://www.youtube.com/live_chat?v=ZS9KXyH7Qjc&amp;embed_domain=roxiestreams.info"></iframe>
@@ -140,7 +140,7 @@ fetch('domainsd.txt')
 
 function getRandomStream(streamPath, subdomain = 'daffodil') {
   if (domains.length === 0) {
-    return `https://${subdomain}.shadow-ran.online/${streamPath}`; // Fallback
+    return `https://${subdomain}.601.premiumjh.shop/${streamPath}`; // Fallback
   }
   const randomDomain = domains[Math.floor(Math.random() * domains.length)];
   return `https://${subdomain}.${randomDomain}/${streamPath}`;
