@@ -3,20 +3,16 @@ import re
 import sys
 from pathlib import Path
 
-TARGET = "window.onload = function() {\nwindow.onload = function() {"
-REPLACEMENT = "window.onload = function() {"
+OLD_CSS_PATTERN = re.compile(
+    r"""\s*\.embedchat\s*\{\s*width:\s*30%;\s*height:\s*100%;\s*display:\s*flex;\s*justify-content:\s*center;\s*align-items:\s*flex-start;\s*margin-left:\s*10px;\s*\}\s*\.embedchat\s+iframe\s*\{\s*width:\s*100%;\s*height:\s*100%;\s*border:\s*none;\s*\}""",
+    re.MULTILINE
+)
 
 
 def patch_file(path: Path):
     text = path.read_text(encoding='utf-8', errors='ignore')
-
-    if 'id="toggleChat"' not in text:
-        return 'no_toggle'
-    if TARGET not in text:
-        return 'no_change'
-
-    new_text = text.replace(TARGET, REPLACEMENT, 1)
-    if new_text != text:
+    new_text, count = OLD_CSS_PATTERN.subn("\n", text, count=1)
+    if count:
         path.write_text(new_text, encoding='utf-8')
         return 'patched'
     return 'no_change'
