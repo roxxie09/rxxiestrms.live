@@ -3,17 +3,15 @@ import re
 import sys
 from pathlib import Path
 
-PATTERN = re.compile(
-    r"""window\.onload\s*=\s*function\(\)\s*\{\s*window\.onload\s*=\s*function\(\)\s*\{""",
+OLD_CSS_PATTERN = re.compile(
+    r"""\s*\.embedchat\s*\{\s*width:\s*30%;\s*height:\s*100%;\s*display:\s*flex;\s*justify-content:\s*center;\s*align-items:\s*flex-start;\s*margin-left:\s*10px;\s*\}\s*\.embedchat\s+iframe\s*\{\s*width:\s*100%;\s*height:\s*100%;\s*border:\s*none;\s*\}""",
     re.MULTILINE
 )
-
-REPLACEMENT = "window.onload = function() {"
 
 
 def patch_file(path: Path):
     text = path.read_text(encoding='utf-8', errors='ignore')
-    new_text, count = PATTERN.subn(REPLACEMENT, text, count=1)
+    new_text, count = OLD_CSS_PATTERN.subn("\n", text, count=1)
     if count:
         path.write_text(new_text, encoding='utf-8')
         return 'patched'
@@ -39,7 +37,7 @@ def main():
             unchanged += 1
             print(f'NOCHANGE {f}')
 
-    print(f'\nDone. patched={patched} unchanged={unchanged}')
+    print(f"\nDone. patched={patched} unchanged={unchanged}")
 
 
 if __name__ == '__main__':
