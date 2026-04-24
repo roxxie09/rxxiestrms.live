@@ -1,20 +1,21 @@
-from pathlib import Path
-import re
+import os
 
-pattern = re.compile(
-    r'\s*<li class="nav-item">\s*<a class="nav-link nav-link-march-madness"[^>]*>.*?<\/a>\s*<\/li>\s*',
-    re.DOTALL
-)
+# Get the current working directory
+folder = os.path.dirname(os.path.abspath(__file__))
 
-for file in Path(".").rglob("*.html"):
-    text = file.read_text(encoding="utf-8")
+# Loop through files in the current directory
+for filename in os.listdir(folder):
+    if filename.endswith(".html"):
+        filepath = os.path.join(folder, filename)
 
-    # remove the nav item cleanly
-    new_text = pattern.sub("", text)
+        with open(filepath, 'r', encoding='utf-8') as file:
+            content = file.read()
 
-    # normalize extra blank lines (fix leftover spacing)
-    new_text = re.sub(r'\n\s*\n\s*\n+', '\n\n', new_text)
+        # Replace all instances of "domainso" with "domainsp"
+        updated_content = content.replace("domainso", "domainsp")
 
-    file.write_text(new_text, encoding="utf-8")
+        # Write the changes back to the file
+        with open(filepath, 'w', encoding='utf-8') as file:
+            file.write(updated_content)
 
-print("Done cleaning navbars")
+        print(f"✅ Updated: {filename}")
