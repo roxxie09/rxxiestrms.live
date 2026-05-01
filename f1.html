@@ -131,9 +131,8 @@
         <div class="fullplayer">
             <div id="playerContainer"></div>
 	<div class="streamchanger">
-	  <button class="streambutton" onclick="showPlayer('clappr', getRandomStream('main.m3u8', '601'))">SKY</button>
-	  <button class="streambutton" onclick="showPlayer('clappr', getRandomStream('tsn.m3u8', '601'))">TSN</button>
-	  <button class="streambutton" onclick="showPlayer('clappr', getRandomStream('indycar.m3u8', '601'))">SKY F1</button>
+	  <button class="streambutton" onclick="showPlayer('clappr', getRandomStream('f1.m3u8', '601'))">Stream 1</button>
+	  <button class="streambutton" onclick="showPlayer('clappr', getRandomStream('main.m3u8', 'daffodil'))">Stream 2</button>
 	</div>
             <div class="embedchat">
                 <div class="chat-header">
@@ -166,7 +165,7 @@ fetch('domainsw.txt')
   .then(data => {
     domains = data.trim().split('\n').filter(d => d.trim());
     // Auto-load initial stream after domains load
-    setTimeout(() => showPlayer('clappr', getRandomStream('main.m3u8')), 500);
+    setTimeout(() => showPlayer('clappr', getRandomStream('f1.m3u8')), 500);
   })
   .catch(() => {
     console.error('Failed to load domainsw.txt');
