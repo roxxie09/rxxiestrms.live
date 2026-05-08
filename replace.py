@@ -11,8 +11,8 @@ for filename in os.listdir(folder):
         with open(filepath, 'r', encoding='utf-8') as file:
             content = file.read()
 
-        # Replace all instances of "domainsz1" with "domainsz2"
-        updated_content = content.replace("domainsz1", "domainsz2")
+        # Replace all instances of "domainsz2" with "domainsz3"
+        updated_content = content.replace("domainsz2", "domainsz3")
 
         # Write the changes back to the file
         with open(filepath, 'w', encoding='utf-8') as file:
