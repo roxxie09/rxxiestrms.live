@@ -1,4 +1,4 @@
-Date: May 08, 2026 Events
+Date: May 09, 2026 Events
 
 Soccer:
 Liverpool vs Chelsea: https://roxiestreams.info/soccer-streams-1
@@ -27,10 +27,8 @@ Nashville vs DC United: https://roxiestreams.info/soccer-streams-16
 Cruz Azul vs Atlas: https://roxiestreams.info/soccer-streams-17
 
 NBA:
-New York Knicks vs Philadelphia 76ers: https://roxiestreams.info/nba-streams-1
-San Antonio Spurs vs Minnesota Timberwolves: https://roxiestreams.info/nba-streams-2
-Oklahoma City Thunder vs Los Angeles Lakers: https://roxiestreams.info/nba-streams-1
-Detroit Pistons vs Cleveland Cavaliers: https://roxiestreams.info/nba-streams-2
+Detroit Pistons vs Cleveland Cavaliers: https://roxiestreams.info/nba-streams-1
+Oklahoma City Thunder vs Los Angeles Lakers: https://roxiestreams.info/nba-streams-2
 
 MLB:
 Los Angeles Angels vs Toronto Blue Jays: https://roxiestreams.info/mlb-streams-1
@@ -50,8 +48,6 @@ Pittsburgh Pirates vs San Francisco Giants: https://roxiestreams.info/mlb-stream
 Atlanta Braves vs Los Angeles Dodgers: https://roxiestreams.info/mlb-streams-15
 
 NHL:
-Montreal Canadiens vs Buffalo Sabres: https://roxiestreams.info/nhl-streams-1
-Vegas Golden Knights vs Anaheim Ducks: https://roxiestreams.info/nhl-streams-2
 Carolina Hurricanes vs Philadelphia Flyers: https://roxiestreams.info/nhl-streams-1
 Colorado Avalanche vs Minnesota Wild: https://roxiestreams.info/nhl-streams-2
 
@@ -59,6 +55,9 @@ Motorsports:
 MotoGP - Coverage: https://roxiestreams.info/motogp
 WEC - 6 Hours of Spa: https://roxiestreams.info/wec
 AMA Supercross - Qualifying: https://roxiestreams.info/supercross
+Indy NXT - Race: https://roxiestreams.info/indycar
+Indycar Series - Race: https://roxiestreams.info/indycar
+AMA Supercross - Heats & Races: https://roxiestreams.info/supercross
 
 Fighting:
 UFC 328: Chimaev vs Strickland: https://roxiestreams.info/ufc
