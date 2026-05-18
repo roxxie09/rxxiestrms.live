@@ -139,8 +139,9 @@
         <div class="fullplayer">
             <div id="playerContainer"></div>
 <div class="streamchanger">
-  <button id="btn-stream-1" class="streambutton" onclick="playStream1()">Stream 1</button>
-  <button id="btn-stream-2" class="streambutton" onclick="playStream2()">Stream 2</button>
+  <button id="btn-stream-1" class="streambutton" onclick="playStream1()">TSN</button>
+  <button id="btn-stream-2" class="streambutton" onclick="playStream2()">TSN 4</button>
+  <button id="btn-stream-3" class="streambutton" onclick="playStream3()">TSN 5</button>
 </div>
             <div class="embedchat">
                 <div class="chat-header">
@@ -167,6 +168,8 @@ var shakaUI;
 
 const dashStream1 = 'https://qw.live.pv-cdn.net/OTTB/lhr-nitro/live/clients/dash/enc/7janu55dwc/out/v1/69a2a7041395406b970598f61680e7cf/cenc.mpd';
 const dashStream2 = 'https://qw.live.pv-cdn.net/OTTB/lhr-nitro/live/clients/dash/enc/h9urpo3cwb/out/v1/fde190f369484bc6b6117cc16cd82a9f/cenc.mpd';
+const dashStream3 = 'https://otte.cache.aiv-cdn.net/bom-nitro/live/clients/dash/enc/jkcljgqbx8/out/v1/63bfa701559340f3a2a2cb1fccd24807/cenc.mpd';
+
 
 // Example structure only — use authorized values from your provider
 const dashKeys1 = {
@@ -177,12 +180,20 @@ const dashKeys2 = {
   'c4088f5f265f9de50cffd80bf89308b7': '2c4d2239d96d532b4ec2050653611003'
 };
 
+const dashKeys3 = {
+  'de2e2dbe818d78dfad07d6cd9a4c63d4': 'e853333da2c9196ea11374634231bc45'
+};
+
 function playStream1() {
   showPlayer(dashStream1, dashKeys1);
 }
 
 function playStream2() {
   showPlayer(dashStream2, dashKeys2);
+}
+
+function playStream3() {
+  showPlayer(dashStream3, dashKeys3);
 }
 
 async function initShaka(container, video, stream, drmConfig) {
