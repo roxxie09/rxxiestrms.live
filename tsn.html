@@ -162,26 +162,38 @@
     </footer>
 
 <script>
-var clapprPlayer;
-var currentChat = 'yt';
 var shakaPlayer;
 var shakaUI;
 
-// Replace these with your own authorized MPD URLs
-const dashStream1 = 'https://qw.live.pv-cdn.net/OTTB/lhr-nitro/live/clients/dash/enc/h9urpo3cwb/out/v1/fde190f369484bc6b6117cc16cd82a9f/cenc.mpd';
+const dashStream1 = 'https://qw.live.pv-cdn.net/OTTB/lhr-nitro/live/clients/dash/enc/7janu55dwc/out/v1/69a2a7041395406b970598f61680e7cf/cenc.mpd';
 const dashStream2 = 'https://qw.live.pv-cdn.net/OTTB/lhr-nitro/live/clients/dash/enc/h9urpo3cwb/out/v1/fde190f369484bc6b6117cc16cd82a9f/cenc.mpd';
 
+// Example structure only — use authorized values from your provider
+const dashKeys1 = {
+  'key-id-hex-1': 'c4088f5f265f9de50cffd80bf89308b7:2c4d2239d96d532b4ec2050653611003'
+};
+
+const dashKeys2 = {
+  'key-id-hex-2': 'e51aa21f2a0fef9aabc120dfb655b52f:a12a987fe725a40b6be95cd84b15f689'
+};
+
 function playStream1() {
-  showPlayer(dashStream1);
+  showPlayer(dashStream1, dashKeys1);
 }
 
 function playStream2() {
-  showPlayer(dashStream2);
+  showPlayer(dashStream2, dashKeys2);
 }
 
-async function initShaka(container, video, stream) {
+async function initShaka(container, video, stream, drmConfig) {
   const player = new shaka.Player(video);
   const ui = new shaka.ui.Overlay(player, container, video);
+
+  player.configure({
+    drm: {
+      clearKeys: drmConfig || {}
+    }
+  });
 
   try {
     await player.load(stream);
@@ -193,13 +205,9 @@ async function initShaka(container, video, stream) {
   return { player, ui };
 }
 
-function showPlayer(stream) {
+function showPlayer(stream, drmConfig) {
   const container = document.getElementById('playerContainer');
 
-  if (clapprPlayer) {
-    clapprPlayer.destroy();
-    clapprPlayer = null;
-  }
   if (shakaPlayer) {
     shakaPlayer.destroy();
     shakaPlayer = null;
@@ -218,7 +226,6 @@ function showPlayer(stream) {
 
   const video = document.createElement('video');
   video.setAttribute('data-shaka-player', '');
-  video.id = 'shaka-video';
   video.style.width = '100%';
   video.style.height = '100%';
   video.autoplay = true;
@@ -227,12 +234,12 @@ function showPlayer(stream) {
   videoWrapper.appendChild(video);
   container.appendChild(videoWrapper);
 
-  initShaka(videoWrapper, video, stream).then(res => {
+  initShaka(videoWrapper, video, stream, drmConfig).then(res => {
     shakaPlayer = res.player;
     shakaUI = res.ui;
   });
 }
-
+</script>
 window.onload = function() {
   playStream1();
 
