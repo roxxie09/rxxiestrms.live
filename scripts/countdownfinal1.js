@@ -1,13 +1,19 @@
 // PDT = -7, PST = -8. Change this in November when clocks fall back.
-const PST_OFFSET_HOURS = -7;
+const PST_OFFSET_HOURS = -7; // PDT = -7, PST = -8 in winter
 
 function parseAsPST(dateStr) {
-    // Parse the date string, then correct for the PST/PDT offset
-    var localDate = new Date(dateStr);
-    var offsetMs = (localDate.getTimezoneOffset() + (PST_OFFSET_HOURS * -60)) * 60000;
-    return new Date(localDate.getTime() - offsetMs);
+    var d = new Date(dateStr);
+    // Build an ISO string with the explicit offset so no shifting is needed
+    var year = d.getFullYear();
+    var month = String(d.getMonth() + 1).padStart(2, '0');
+    var day = String(d.getDate()).padStart(2, '0');
+    var hours = String(d.getHours()).padStart(2, '0');
+    var minutes = String(d.getMinutes()).padStart(2, '0');
+    var offset = PST_OFFSET_HOURS >= 0
+        ? '+' + String(PST_OFFSET_HOURS).padStart(2, '0') + ':00'
+        : '-' + String(Math.abs(PST_OFFSET_HOURS)).padStart(2, '0') + ':00';
+    return new Date(`${year}-${month}-${day}T${hours}:${minutes}:00${offset}`);
 }
-
 function initializeCountdowns() {
     document.querySelectorAll('.countdown-timer').forEach(function(timerElement) {
         // Find the sibling start-time <td> in the same row
