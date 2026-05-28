@@ -2,11 +2,10 @@
 const PST_OFFSET_HOURS = -7;
 
 function parseAsPST(dateStr) {
-    // Parse the plain text date as a PST/PDT time, not local time
-    var d = new Date(dateStr);
-    // Shift from UTC to get the intended PDT time, then back to UTC absolute
-    var utcMs = d.getTime() + (d.getTimezoneOffset() * 60000);
-    return new Date(utcMs - (PST_OFFSET_HOURS * 3600000));
+    // Parse the date string, then correct for the PST/PDT offset
+    var localDate = new Date(dateStr);
+    var offsetMs = (localDate.getTimezoneOffset() + (PST_OFFSET_HOURS * -60)) * 60000;
+    return new Date(localDate.getTime() - offsetMs);
 }
 
 function initializeCountdowns() {
