@@ -15,6 +15,7 @@
     <link href="/css/buttons.css" rel="stylesheet">
 <link href="imgs/iconn.png" rel="shortcut icon" type="x-icon"/>
 <script disable-devtool-auto src='https://cdn.jsdelivr.net/npm/disable-devtool/disable-devtool.min.js'></script>
+    <script src="https://cdn.jsdelivr.net/npm/clappr@latest/dist/clappr.min.js"></script>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-EQ3BHVQGMN"></script>
     <script>
   window.dataLayer = window.dataLayer || [];
@@ -46,7 +47,61 @@
             height: 80vh;
             margin-top: 50px;
         }
+        #playerContainer {
+            width: 100%;
+            height: 100%;
+        }
 
+        .embedchat {
+            width: 30%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            margin-left: 10px;
+            border: 1px solid rgba(255, 192, 203, 0.2);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .chat-header {
+            padding: 8px;
+            background: #1a1a1a;
+            border-bottom: 1px solid rgba(255, 192, 203, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .chat-toggle-btn {
+            background: rgba(255, 192, 203, 0.1);
+            border: 1px solid rgba(255, 192, 203, 0.3);
+            color: pink;
+            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+        .chat-toggle-btn:hover {
+            background: rgba(255, 192, 203, 0.2);
+        }
+        #chatContent {
+            flex: 1;
+            width: 100%;
+            height: 100%;
+        }
+        #chatContent iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .streamchanger {
+            position: absolute;
+            top: -40px;
+            left: 10px;
+            display: flex;
+            gap: 10px;
+        }
     </style>
 
 </head>
@@ -74,12 +129,10 @@
 
     <div class="container container-fluid pt-2 text-white">
         <div class="fullplayer">
-            <iframe 
-                src="https://dlstreams.top/stream/stream-153.php"
-                style="width: 100%; height: 100%; border: 0;"
-                allowfullscreen
-                loading="lazy">
-            </iframe>
+            <div id="playerContainer"></div>
+	<div class="streamchanger">
+	  <button class="streambutton" onclick="showPlayer('clappr', getRandomStream('ppv6.m3u8', '701'))">Stream 1</button>
+	</div>
             <div class="embedchat">
                 <div class="chat-header">
                     <span style="font-size: 10px; color: pink; font-weight: bold;">LIVE CHAT</span>
@@ -99,6 +152,100 @@
         <p class="mb-0 text-body-secondary text-center text-lg-start">Roxiestreams © 2026</p>
     </footer>
 
+<script>
+var clapprPlayer;
+var currentChat = 'yt';
+var domains = [];
+var subdomain = '701';  // Edit this per HTML file
+
+// Load domains from txt file
+fetch('domainsz29.txt')
+  .then(response => response.text())
+  .then(data => {
+    domains = data.trim().split('\n').filter(d => d.trim());
+    // Auto-load initial stream after domains load
+    setTimeout(() => showPlayer('clappr', getRandomStream('ppv6.m3u8')), 701);
+  })
+  .catch(() => {
+    console.error('Failed to load domainsz29.txt');
+  });
+
+function getRandomStream(streamPath, subdomain = '701') {
+  if (domains.length === 0) {
+    return `https://${subdomain}.701.formaturamaxi.com.br/${streamPath}`; // Fallback
+  }
+  const randomDomain = domains[Math.floor(Math.random() * domains.length)];
+  return `https://${subdomain}.${randomDomain}/${streamPath}`;
+}
+
+function showPlayer(playerType, stream) {
+  if (playerType === "clappr") {
+    if (clapprPlayer) {
+      clapprPlayer.destroy();
+    }
+    clapprPlayer = new Clappr.Player({
+      source: stream,
+      parentId: "#playerContainer",
+      height: '100%',
+      width: '100%',
+      autoPlay: true,
+    });
+  }
+}
+
+window.onload = function() {
+        var toggleBtn = document.getElementById('toggleChat');
+        var chatContent = document.getElementById('chatContent');
+
+        if (toggleBtn) {
+            toggleBtn.onclick = function() {
+                if (currentChat === 'yt') {
+                    chatContent.innerHTML = '';
+
+                    var script = document.createElement('script');
+                    script.id = 'cid0020000123456789012';
+                    script.async = true;
+                    script.src = 'https://st.chatango.com/js/gz/emb.js';
+
+                    var config = {
+                        handle: 'roxiestreams',
+                        arch: 'js',
+                        styles: {
+                            a: '1a1a1a',
+                            b: 100,
+                            c: 'ffffff',
+                            d: 'ffffff',
+                            e: '1a1a1a',
+                            f: '000000',
+                            g: 'ffffff',
+                            h: '000000',
+                            i: 100,
+                            j: 'ffffff',
+                            k: 'e573b5',
+                            l: '1a1a1a',
+                            m: 'ffffff',
+                            n: 'ffffff',
+                            q: '1a1a1a',
+                            r: 100,
+                            t: 0,
+                            v: 0,
+                            w: 0
+                        }
+                    };
+
+                    script.innerHTML = JSON.stringify(config);
+                    chatContent.appendChild(script);
+                    toggleBtn.innerText = 'Switch to YouTube';
+                    currentChat = 'chatango';
+                } else {
+                    chatContent.innerHTML = '<iframe src="https://www.youtube.com/live_chat?v=mpwfjhmyEzw&amp;embed_domain=roxiestreams.info"></iframe>';
+                    toggleBtn.innerText = 'Switch to Chatango';
+                    currentChat = 'yt';
+                }
+            };
+        }
+    };
+</script>
     <script>
         document.addEventListener('contextmenu', function (e) {
             e.preventDefault();
@@ -111,5 +258,11 @@
             }
         });
     </script>
-</body>
+    <script src="js/bootstrap.bundle.min.js"></script>
+
+<script type="text/javascript">
+aclib.runPop({
+zoneId: '10754426',
+});
+</script></body>
 </html>
