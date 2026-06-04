@@ -28,7 +28,6 @@
     .navbar-brand:hover { text-decoration: underline; }
     .navbar-nav .nav-link { padding-left: 5px; padding-right: 5px; }
 
-    /* Layout selector */
     #layoutSelector {
         display: flex;
         justify-content: center;
@@ -58,7 +57,6 @@
         border-color: pink;
     }
 
-    /* Grid */
     #multiGrid {
         display: grid;
         gap: 4px;
@@ -69,7 +67,6 @@
     .grid-3 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
     .grid-4 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
 
-    /* Panel */
     .stream-panel {
         position: relative;
         background: #111;
@@ -79,10 +76,7 @@
         display: flex;
         flex-direction: column;
     }
-    /* Make panel 3 span full width in 3-panel layout */
-    .grid-3 .stream-panel:nth-child(3) {
-        grid-column: 1 / -1;
-    }
+    .grid-3 .stream-panel:nth-child(3) { grid-column: 1 / -1; }
 
     .panel-toolbar {
         display: flex;
@@ -124,14 +118,8 @@
     }
     .load-btn:hover { background: rgba(255,192,203,0.3); }
 
-    .panel-player {
-        flex: 1;
-        position: relative;
-    }
-    .panel-player > div {
-        width: 100% !important;
-        height: 100% !important;
-    }
+    .panel-player { flex: 1; position: relative; }
+    .panel-player > div { width: 100% !important; height: 100% !important; }
 
     .panel-placeholder {
         width: 100%;
@@ -144,13 +132,8 @@
         font-family: 'Kanit', sans-serif;
         gap: 8px;
     }
-    .panel-placeholder svg {
-        opacity: 0.3;
-    }
-    .panel-placeholder p {
-        font-size: 13px;
-        margin: 0;
-    }
+    .panel-placeholder svg { opacity: 0.3; }
+    .panel-placeholder p { font-size: 13px; margin: 0; }
 </style>
 </head>
 <body>
@@ -175,7 +158,6 @@
 </div>
 </nav>
 
-<!-- Layout selector -->
 <div id="layoutSelector">
     <span>Panels:</span>
     <button class="layout-btn active" onclick="setLayout(2)">2 Streams</button>
@@ -183,68 +165,71 @@
     <button class="layout-btn" onclick="setLayout(4)">4 Streams</button>
 </div>
 
-<!-- Multi-panel grid -->
 <div id="multiGrid" class="grid-2"></div>
 
 <script src="js/bootstrap.bundle.min.js"></script>
 <script>
-// ============================================================
-// STREAMS LIST — add/remove streams here as needed
-// Format: { label: 'Display Name', subdomain: '601', path: 'cyrus.m3u8' }
-// ============================================================
 const STREAMS = [
-    { label: 'Soccer Stream 1',      subdomain: '601', path: 'cyrus.m3u8' },
-    { label: 'Soccer Stream 2',      subdomain: '601', path: 'cyrus.m3u8' },
-    { label: 'MLB Stream 1',         subdomain: '601', path: 'cyrus.m3u8' },
-    { label: 'MLB Stream 2',         subdomain: '601', path: 'cyrus.m3u8' },
-    { label: 'NBA Stream 1',         subdomain: '601', path: 'cyrus.m3u8' },
-    { label: 'NHL Stream 1',         subdomain: '601', path: 'cyrus.m3u8' },
-    { label: 'NFL Stream 1',         subdomain: '601', path: 'cyrus.m3u8' },
-    { label: 'Fighting Stream 1',    subdomain: '601', path: 'cyrus.m3u8' },
-    { label: 'Motorsports Stream 1', subdomain: '601', path: 'cyrus.m3u8' },
+    // Soccer
+    { label: 'Egypt vs Russia',                             subdomain: '601',      path: 'cyrus.m3u8',  txt: 'domainsz29.txt' },
+    { label: 'Ireland vs Qatar',                            subdomain: '601',      path: 'cyrus.m3u8',  txt: 'domainsz29.txt' },
+    { label: 'Cerro Porteno vs Sporting Cristal',           subdomain: '601',      path: 'cyrus.m3u8',  txt: 'domainsz29.txt' },
+    { label: 'Palmeiras vs Junior',                         subdomain: '601',      path: 'cyrus.m3u8',  txt: 'domainsz29.txt' },
+    { label: 'Cruzeiro vs Barcelona SC',                    subdomain: '601',      path: 'cyrus.m3u8',  txt: 'domainsz29.txt' },
+    { label: 'Boca Juniors vs Catolica',                    subdomain: '601',      path: 'cyrus.m3u8',  txt: 'domainsz29.txt' },
+    // MLB
+    { label: 'Padres vs Phillies',                          subdomain: '601',      path: 'mlb.m3u8',    txt: 'domainsz29.txt' },
+    { label: 'Orioles vs Red Sox',                          subdomain: '601',      path: 'mlb.m3u8',    txt: 'domainsz29.txt' },
+    { label: 'Guardians vs Yankees',                        subdomain: '601',      path: 'mlb2.m3u8',   txt: 'domainsz29.txt' },
+    { label: 'Giants vs Brewers',                           subdomain: '601',      path: 'mlb2.m3u8',   txt: 'domainsz29.txt' },
+    { label: 'Blue Jays vs Braves',                         hardcoded: 'https://601.formaturamaxi.com.br/mlb5.m3u8' },
+    { label: 'Royals vs Twins',                             hardcoded: 'https://601.formaturamaxi.com.br/mlb5.m3u8' },
+    { label: 'Athletics vs Cubs',                           hardcoded: 'https://601.formaturamaxi.com.br/mlb5.m3u8' },
+    { label: 'Pirates vs Astros',                           subdomain: '601',      path: 'mlb.m3u8',    txt: 'domainsz29.txt' },
+    { label: 'Dodgers vs Diamondbacks',                     subdomain: '601',      path: 'mlb.m3u8',    txt: 'domainsz29.txt' },
+    // NBA
+    { label: 'NY Knicks vs San Antonio Spurs',              subdomain: 'daffodil', path: 'nba.m3u8',    txt: 'domainsz29.txt' },
+    // NHL
+    { label: 'Vegas Golden Knights vs Carolina Hurricanes', subdomain: '601',      path: 'nhl.m3u8',    txt: 'domainsz29.txt' },
+    // Fighting
+    { label: 'WWE Smackdown',                               subdomain: 'daffodil', path: 'wwe.m3u8',    txt: 'domainsz29.txt' },
+    // Motorsports
+    { label: 'Isle of Man TT - Coverage',                   subdomain: '601',      path: 'tt.m3u8',     txt: 'domainsz29.txt' },
 ];
 
-let domains = [];
-let players = {}; // panelIndex -> Clappr instance
-let currentLayout = 2;
+let domains = {};
+let players = {};
 
-// Load domains
-fetch('domainsz29.txt')
-    .then(r => r.text())
-    .then(data => {
-        domains = data.trim().split('\n').filter(d => d.trim());
-    })
-    .catch(() => console.error('Failed to load domainsz29.txt'));
+const uniqueTxts = [...new Set(STREAMS.filter(s => s.txt).map(s => s.txt))];
+Promise.all(uniqueTxts.map(txt =>
+    fetch(txt).then(r => r.text()).then(data => {
+        domains[txt] = data.trim().split('\n').filter(d => d.trim());
+    }).catch(() => { domains[txt] = []; })
+));
 
-function getStreamUrl(subdomain, path) {
-    if (domains.length === 0) {
-        return `https://${subdomain}.shadow-ran.online/${path}`;
+function getStreamUrl(stream) {
+    if (stream.hardcoded) return stream.hardcoded;
+    const domainList = domains[stream.txt] || [];
+    if (domainList.length === 0) {
+        return `https://${stream.subdomain}.shadow-ran.online/${stream.path}`;
     }
-    const randomDomain = domains[Math.floor(Math.random() * domains.length)];
-    return `https://${subdomain}.${randomDomain}/${path}`;
+    const randomDomain = domainList[Math.floor(Math.random() * domainList.length)];
+    return `https://${stream.subdomain}.${randomDomain}/${stream.path}`;
 }
 
 function buildStreamOptions() {
-    return STREAMS.map((s, i) =>
-        `<option value="${i}">${s.label}</option>`
-    ).join('');
+    return STREAMS.map((s, i) => `<option value="${i}">${s.label}</option>`).join('');
 }
 
 function setLayout(count) {
-    // Destroy all existing players
     Object.values(players).forEach(p => { try { p.destroy(); } catch(e){} });
     players = {};
-
-    currentLayout = count;
     const grid = document.getElementById('multiGrid');
     grid.className = `grid-${count}`;
     grid.innerHTML = '';
-
-    // Update button states
     document.querySelectorAll('.layout-btn').forEach(btn => {
         btn.classList.toggle('active', btn.textContent.trim().startsWith(count));
     });
-
     for (let i = 0; i < count; i++) {
         const panel = document.createElement('div');
         panel.className = 'stream-panel';
@@ -264,8 +249,7 @@ function setLayout(count) {
                     </svg>
                     <p>Select a stream and press Load</p>
                 </div>
-            </div>
-        `;
+            </div>`;
         grid.appendChild(panel);
     }
 }
@@ -274,36 +258,29 @@ function loadStream(panelIndex) {
     const select = document.getElementById(`select-${panelIndex}`);
     const streamIndex = select.value;
     if (streamIndex === '') return;
-
     const stream = STREAMS[streamIndex];
-    const url = getStreamUrl(stream.subdomain, stream.path);
+    const url = getStreamUrl(stream);
     const container = document.getElementById(`player-${panelIndex}`);
-
-    // Destroy old player if exists
     if (players[panelIndex]) {
         try { players[panelIndex].destroy(); } catch(e) {}
         delete players[panelIndex];
     }
-
-    // Clear container and create a new div for Clappr
     container.innerHTML = '';
     const playerDiv = document.createElement('div');
     playerDiv.id = `clappr-${panelIndex}`;
     playerDiv.style.width = '100%';
     playerDiv.style.height = '100%';
     container.appendChild(playerDiv);
-
     players[panelIndex] = new Clappr.Player({
         source: url,
         parentId: `#clappr-${panelIndex}`,
         height: '100%',
         width: '100%',
         autoPlay: true,
-        mute: panelIndex > 0, // only first panel has audio by default
+        mute: panelIndex > 0,
     });
 }
 
-// Init with 2 panels on load
 setLayout(2);
 </script>
 </body>
