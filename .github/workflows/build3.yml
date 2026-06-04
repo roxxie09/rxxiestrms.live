@@ -8,29 +8,13 @@ on:
 jobs:
   deploy-su:
     runs-on: ubuntu-latest
+    needs: deploy  # wait for build2 to finish first
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
-
-      - name: Install dependencies
-        run: pip install beautifulsoup4
-
-      - name: Update multiview.html
-        run: python multi.py
-
-      - name: Commit updated multiview.html
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add multiview.html
-          git diff --staged --quiet || git commit -m "Auto-update multiview.html [skip ci]"
-          git push
+          ref: main  # always pulls latest including build2's commit
 
       - name: Deploy to .su VPS
         uses: webfactory/ssh-agent@v0.9.0
