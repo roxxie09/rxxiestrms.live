@@ -3,6 +3,7 @@ import os
 from bs4 import BeautifulSoup
 from datetime import datetime, timedelta
 import pytz
+import sys
 
 TEAM_NAME_MAP = {
     'Atlanta': 'Atlanta Hawks',
@@ -42,7 +43,7 @@ TEAM_NAME_MAP = {
 def get_full_team_name(name):
     return TEAM_NAME_MAP.get(name, name)
 
-def convert_et_to_pst(time_str, date_obj):
+def convert_et_to_pdt(time_str, date_obj):
     eastern = pytz.timezone('US/Eastern')
     pacific = pytz.timezone('US/Pacific')
     dt_str = f"{date_obj.strftime('%Y-%m-%d')} {time_str}"
@@ -73,7 +74,7 @@ def fetch_nba_games_for_date_from_file(html_file_path, date=None):
                 return []
             schedule_table = tables[0]
             games = []
-            rows = schedule_table.find_all('tr')[1:]  # skip header
+            rows = schedule_table.find_all('tr')[1:]
             for row in rows:
                 away_span = row.select_one('span.Table__Team.away')
                 home_span = None
@@ -87,105 +88,57 @@ def fetch_nba_games_for_date_from_file(html_file_path, date=None):
                     away_name = get_full_team_name(away_span.get_text(strip=True))
                     home_name = get_full_team_name(home_span.get_text(strip=True))
                     game_time_et = time_cell.get_text(strip=True)
-                    game_time_pst = convert_et_to_pst(game_time_et, date)
+                    game_time_pdt = convert_et_to_pdt(game_time_et, date)
+                    display_time = f"{date.strftime('%B %#d, %Y')} {game_time_pdt}"
                     games.append({
                         'event': f"{away_name} vs {home_name}",
-                        'time': f"{date.strftime('%B %d, %Y')} {game_time_pst}",
-                        'countdown_start': f"{date.strftime('%B %d, %Y')} {game_time_pst}:00",
-                        'countdown_end': f"{(date + timedelta(days=1)).strftime('%B %d, %Y')} {game_time_pst}:00"
+                        'display_time': display_time,
                     })
             return games
     return []
 
-def append_or_replace_schedule(html_file_path, new_games, new_date):
-    new_date_str = new_date.strftime('%B %d, %Y')
-
-    with open(html_file_path, encoding='utf-8') as f:
+def update_games_in_html(html_path, new_games):
+    with open(html_path, encoding='utf-8') as f:
         soup = BeautifulSoup(f, 'html.parser')
 
-    container = soup.find('div', class_='container container-fluid pt-2 text-white')
+    table = soup.find('table', id='eventsTable')
+    if table is None:
+        print("Could not find table with id='eventsTable'")
+        return
+    tbody = table.find('tbody')
+    if tbody is None:
+        print("Could not find <tbody> under eventsTable")
+        return
 
-    existing_headers = container.find_all('h2')
-    for header in existing_headers:
-        if new_date_str in header.text:
-            next_table = header.find_next_sibling('table')
-            if next_table:
-                tbody = next_table.find('tbody')
-                tbody.clear()
-                for idx, game in enumerate(new_games, 1):
-                    tr = soup.new_tag('tr')
+    for tr in list(tbody.find_all('tr')):
+        tr.decompose()
 
-                    td_event = soup.new_tag('td')
-                    a = soup.new_tag('a', href=f"https://roxiestreams.info/nba-streams-{idx}")
-                    a.string = game['event']
-                    td_event.append(a)
+    for idx, game in enumerate(new_games, 1):
+        tr = soup.new_tag('tr')
 
-                    td_time = soup.new_tag('td')
-                    td_time.string = game['time']
+        td_event = soup.new_tag('td')
+        a = soup.new_tag('a', href=f"https://roxiestreams.info/nba-streams-{idx}")
+        a.string = game['event']
+        td_event.append(a)
+        tr.append(td_event)
 
-                    td_countdown = soup.new_tag('td')
-                    span = soup.new_tag('span', **{'class': 'countdown-timer'})
-                    span['data-start'] = game['countdown_start']
-                    span['data-end'] = game['countdown_end']
-                    td_countdown.append(span)
+        td_time = soup.new_tag('td')
+        td_time['class'] = 'event-start-time'
+        td_time.string = game['display_time']
+        tr.append(td_time)
 
-                    tr.extend([td_event, td_time, td_countdown])
-                    tbody.append(tr)
-                print(f"Replaced schedule for {new_date_str} in the HTML file.")
-                break
-    else:
-        # Insert new section before footer
-        new_header = soup.new_tag('h2')
-        new_header.string = f"NBA Schedule for {new_date_str}"
+        td_countdown = soup.new_tag('td')
+        span = soup.new_tag('span', **{'class': 'countdown-timer'})
+        td_countdown.append(span)
+        tr.append(td_countdown)
 
-        new_table = soup.new_tag('table', id='eventsTable')
-        thead = soup.new_tag('thead')
-        tr_head = soup.new_tag('tr')
-        for col in ['Event', 'Start Time', 'Countdown']:
-            th = soup.new_tag('th')
-            th.string = col
-            tr_head.append(th)
-        thead.append(tr_head)
-        new_table.append(thead)
+        tbody.append(tr)
 
-        tbody = soup.new_tag('tbody')
-        for idx, game in enumerate(new_games, 1):
-            tr = soup.new_tag('tr')
-
-            td_event = soup.new_tag('td')
-            a = soup.new_tag('a', href=f"https://roxiestreams.info/nba-streams-{idx}")
-            a.string = game['event']
-            td_event.append(a)
-
-            td_time = soup.new_tag('td')
-            td_time.string = game['time']
-
-            td_countdown = soup.new_tag('td')
-            span = soup.new_tag('span', **{'class': 'countdown-timer'})
-            span['data-start'] = game['countdown_start']
-            span['data-end'] = game['countdown_end']
-            td_countdown.append(span)
-
-            tr.extend([td_event, td_time, td_countdown])
-            tbody.append(tr)
-        new_table.append(tbody)
-
-        footer = container.find('footer')
-        if footer:
-            footer.insert_before(new_header)
-            new_header.insert_after(new_table)
-        else:
-            container.append(new_header)
-            container.append(new_table)
-
-        print(f"Appended new schedule for {new_date_str} above the footer in the HTML file.")
-
-    with open(html_file_path, 'w', encoding='utf-8') as f:
-        f.write(str(soup.prettify()))
+    with open(html_path, 'w', encoding='utf-8') as f:
+        f.write(str(soup.prettify(formatter="minimal")))
+    print(f"Updated NBA games in {html_path}")
 
 if __name__ == '__main__':
-    import sys
-
     nba_html_path = r"G:\MY LEGIT EVERYTRHING FOLDER\RANDOM\rxxiestrms.live\nba.html"
 
     if len(sys.argv) > 1:
@@ -207,6 +160,6 @@ if __name__ == '__main__':
     new_schedule = fetch_nba_games_for_date_from_file('nba.txt', input_date)
 
     if new_schedule:
-        append_or_replace_schedule(nba_html_path, new_schedule, input_date)
+        update_games_in_html(nba_html_path, new_schedule)
     else:
         print(f"No NBA games found for {input_date.strftime('%B %d, %Y')}.")
