@@ -6,7 +6,7 @@ import os
 # CONFIG -- update BASE_DIR if you move your site folder
 # ============================================================
 BASE_DIR = r"G:\MY LEGIT EVERYTRHING FOLDER\RANDOM\rxxiestrms.live"
-MULTISTREAM_HTML = os.path.join(BASE_DIR, "multistream.html")
+MULTISTREAM_HTML = os.path.join(BASE_DIR, "multiview.html")
 
 SCHEDULE_STREAM_MAP = {
     "soccer.html":      {"pattern": "soccer-streams-{n}.html",  "default": {"subdomain": "601",      "path": "cyrus.m3u8",   "txt": "domainsz29.txt"}},
