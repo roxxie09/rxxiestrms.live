@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Roxiestreams - Multistream</title>
+<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="css/mainn.css">
+<link href="imgs/iconn.png" rel="shortcut icon" type="x-icon"/>
+<script src="https://cdn.jsdelivr.net/npm/clappr@latest/dist/clappr.min.js"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-EQ3BHVQGMN"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-EQ3BHVQGMN');
+</script>
+<style>
+    body { background: #000; }
+    .navbar-brand {
+        color: pink;
+        font-size: 1.3rem;
+        text-decoration: none;
+        margin-top: -3px;
+        font-family: 'Kanit', sans-serif;
+        font-weight: bold;
+    }
+    .navbar-brand:hover { text-decoration: underline; }
+    .navbar-nav .nav-link { padding-left: 5px; padding-right: 5px; }
+
+    /* Layout selector */
+    #layoutSelector {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 12px;
+        padding: 16px;
+        flex-wrap: wrap;
+    }
+    #layoutSelector span {
+        color: pink;
+        font-weight: bold;
+        font-family: 'Kanit', sans-serif;
+        font-size: 1rem;
+    }
+    .layout-btn {
+        background: #1a1a1a;
+        border: 2px solid rgba(255,192,203,0.3);
+        color: pink;
+        padding: 8px 20px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: all 0.2s;
+    }
+    .layout-btn:hover, .layout-btn.active {
+        background: rgba(255,192,203,0.15);
+        border-color: pink;
+    }
+
+    /* Grid */
+    #multiGrid {
+        display: grid;
+        gap: 4px;
+        padding: 0 8px 8px;
+        height: calc(100vh - 130px);
+    }
+    .grid-2 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr; }
+    .grid-3 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
+    .grid-4 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
+
+    /* Panel */
+    .stream-panel {
+        position: relative;
+        background: #111;
+        border: 1px solid rgba(255,192,203,0.15);
+        border-radius: 6px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+    }
+    /* Make panel 3 span full width in 3-panel layout */
+    .grid-3 .stream-panel:nth-child(3) {
+        grid-column: 1 / -1;
+    }
+
+    .panel-toolbar {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 5px 8px;
+        background: #1a1a1a;
+        border-bottom: 1px solid rgba(255,192,203,0.1);
+        flex-shrink: 0;
+        flex-wrap: wrap;
+    }
+    .panel-label {
+        color: pink;
+        font-size: 11px;
+        font-weight: bold;
+        font-family: 'Kanit', sans-serif;
+        white-space: nowrap;
+    }
+    .stream-select {
+        flex: 1;
+        min-width: 120px;
+        background: #2a2a2a;
+        color: white;
+        border: 1px solid rgba(255,192,203,0.3);
+        border-radius: 4px;
+        padding: 3px 6px;
+        font-size: 11px;
+    }
+    .load-btn {
+        background: rgba(255,192,203,0.15);
+        border: 1px solid rgba(255,192,203,0.4);
+        color: pink;
+        padding: 3px 10px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 11px;
+        font-weight: bold;
+        white-space: nowrap;
+    }
+    .load-btn:hover { background: rgba(255,192,203,0.3); }
+
+    .panel-player {
+        flex: 1;
+        position: relative;
+    }
+    .panel-player > div {
+        width: 100% !important;
+        height: 100% !important;
+    }
+
+    .panel-placeholder {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: rgba(255,192,203,0.4);
+        font-family: 'Kanit', sans-serif;
+        gap: 8px;
+    }
+    .panel-placeholder svg {
+        opacity: 0.3;
+    }
+    .panel-placeholder p {
+        font-size: 13px;
+        margin: 0;
+    }
+</style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg bg-black">
+<div class="container-fluid">
+<a class="navbar-brand" href="https://roxiestreams.info/">RoxieStreams</a>
+<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
+<span class="navbar-toggler-icon"></span>
+</button>
+<div class="collapse navbar-collapse" id="navbarSupportedContent">
+<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+<li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/soccer">Soccer</a></li>
+<li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/mlb">MLB</a></li>
+<li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/nba">NBA</a></li>
+<li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/nfl">NFL</a></li>
+<li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/nhl">NHL</a></li>
+<li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/fighting">Fighting</a></li>
+<li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/motorsports">Motorsports</a></li>
+<li class="nav-item"><a class="nav-link" href="https://discord.gg/JhkVmejRmn">Stream Request (Discord)</a></li>
+</ul>
+</div>
+</div>
+</nav>
+
+<!-- Layout selector -->
+<div id="layoutSelector">
+    <span>Panels:</span>
+    <button class="layout-btn active" onclick="setLayout(2)">2 Streams</button>
+    <button class="layout-btn" onclick="setLayout(3)">3 Streams</button>
+    <button class="layout-btn" onclick="setLayout(4)">4 Streams</button>
+</div>
+
+<!-- Multi-panel grid -->
+<div id="multiGrid" class="grid-2"></div>
+
+<script src="js/bootstrap.bundle.min.js"></script>
+<script>
+// ============================================================
+// STREAMS LIST — add/remove streams here as needed
+// Format: { label: 'Display Name', subdomain: '601', path: 'cyrus.m3u8' }
+// ============================================================
+const STREAMS = [
+    { label: 'Soccer Stream 1',      subdomain: '601', path: 'cyrus.m3u8' },
+    { label: 'Soccer Stream 2',      subdomain: '601', path: 'cyrus.m3u8' },
+    { label: 'MLB Stream 1',         subdomain: '601', path: 'cyrus.m3u8' },
+    { label: 'MLB Stream 2',         subdomain: '601', path: 'cyrus.m3u8' },
+    { label: 'NBA Stream 1',         subdomain: '601', path: 'cyrus.m3u8' },
+    { label: 'NHL Stream 1',         subdomain: '601', path: 'cyrus.m3u8' },
+    { label: 'NFL Stream 1',         subdomain: '601', path: 'cyrus.m3u8' },
+    { label: 'Fighting Stream 1',    subdomain: '601', path: 'cyrus.m3u8' },
+    { label: 'Motorsports Stream 1', subdomain: '601', path: 'cyrus.m3u8' },
+];
+
+let domains = [];
+let players = {}; // panelIndex -> Clappr instance
+let currentLayout = 2;
+
+// Load domains
+fetch('domainsz29.txt')
+    .then(r => r.text())
+    .then(data => {
+        domains = data.trim().split('\n').filter(d => d.trim());
+    })
+    .catch(() => console.error('Failed to load domainsz29.txt'));
+
+function getStreamUrl(subdomain, path) {
+    if (domains.length === 0) {
+        return `https://${subdomain}.shadow-ran.online/${path}`;
+    }
+    const randomDomain = domains[Math.floor(Math.random() * domains.length)];
+    return `https://${subdomain}.${randomDomain}/${path}`;
+}
+
+function buildStreamOptions() {
+    return STREAMS.map((s, i) =>
+        `<option value="${i}">${s.label}</option>`
+    ).join('');
+}
+
+function setLayout(count) {
+    // Destroy all existing players
+    Object.values(players).forEach(p => { try { p.destroy(); } catch(e){} });
+    players = {};
+
+    currentLayout = count;
+    const grid = document.getElementById('multiGrid');
+    grid.className = `grid-${count}`;
+    grid.innerHTML = '';
+
+    // Update button states
+    document.querySelectorAll('.layout-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.textContent.trim().startsWith(count));
+    });
+
+    for (let i = 0; i < count; i++) {
+        const panel = document.createElement('div');
+        panel.className = 'stream-panel';
+        panel.innerHTML = `
+            <div class="panel-toolbar">
+                <span class="panel-label">Panel ${i + 1}</span>
+                <select class="stream-select" id="select-${i}">
+                    <option value="">— Select a stream —</option>
+                    ${buildStreamOptions()}
+                </select>
+                <button class="load-btn" onclick="loadStream(${i})">Load</button>
+            </div>
+            <div class="panel-player" id="player-${i}">
+                <div class="panel-placeholder">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="pink" stroke-width="1.5">
+                        <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                    </svg>
+                    <p>Select a stream and press Load</p>
+                </div>
+            </div>
+        `;
+        grid.appendChild(panel);
+    }
+}
+
+function loadStream(panelIndex) {
+    const select = document.getElementById(`select-${panelIndex}`);
+    const streamIndex = select.value;
+    if (streamIndex === '') return;
+
+    const stream = STREAMS[streamIndex];
+    const url = getStreamUrl(stream.subdomain, stream.path);
+    const container = document.getElementById(`player-${panelIndex}`);
+
+    // Destroy old player if exists
+    if (players[panelIndex]) {
+        try { players[panelIndex].destroy(); } catch(e) {}
+        delete players[panelIndex];
+    }
+
+    // Clear container and create a new div for Clappr
+    container.innerHTML = '';
+    const playerDiv = document.createElement('div');
+    playerDiv.id = `clappr-${panelIndex}`;
+    playerDiv.style.width = '100%';
+    playerDiv.style.height = '100%';
+    container.appendChild(playerDiv);
+
+    players[panelIndex] = new Clappr.Player({
+        source: url,
+        parentId: `#clappr-${panelIndex}`,
+        height: '100%',
+        width: '100%',
+        autoPlay: true,
+        mute: panelIndex > 0, // only first panel has audio by default
+    });
+}
+
+// Init with 2 panels on load
+setLayout(2);
+</script>
+</body>
+</html>
