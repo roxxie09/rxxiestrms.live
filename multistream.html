@@ -322,6 +322,18 @@ function loadStream(panelIndex) {
 }
 
 setLayout(2);
+    <script>
+        document.addEventListener('contextmenu', function (e) {
+            e.preventDefault();
+        });
+        document.addEventListener('keydown', function (e) {
+            if ((e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'C'))) ||
+                (e.ctrlKey && e.shiftKey && e.key === 'J')) {
+                e.preventDefault();
+            }
+        });
+    </script>
+    <script src="js/bootstrap.bundle.min.js"></script>
 </script>
 </body>
 </html>
