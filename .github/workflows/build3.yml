@@ -8,13 +8,12 @@ on:
 jobs:
   deploy-su:
     runs-on: ubuntu-latest
-    needs: deploy  # wait for build2 to finish first
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          ref: main  # always pulls latest including build2's commit
+          ref: main
 
       - name: Deploy to .su VPS
         uses: webfactory/ssh-agent@v0.9.0
