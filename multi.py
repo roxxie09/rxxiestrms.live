@@ -108,8 +108,8 @@ def streams_to_js(streams):
     lines.append("];")
     return "\n".join(lines)
 
-def update_multistream(streams_js):
-    with open(MULTISTREAM_HTML, encoding="utf-8") as f:
+def update_multiview(streams_js):
+    with open(MULTIVIEW_HTML, encoding="utf-8") as f:
         content = f.read()
     new_content = re.sub(
         r"const STREAMS = \[.*?\];",
@@ -120,7 +120,7 @@ def update_multistream(streams_js):
     if new_content == content:
         print("  WARNING: STREAMS block not found in multistream.html")
         return
-    with open(MULTISTREAM_HTML, "w", encoding="utf-8") as f:
+    with open(MULTIVIEW_HTML, "w", encoding="utf-8") as f:
         f.write(new_content)
     print("  multistream.html updated successfully!")
 
@@ -132,5 +132,5 @@ if __name__ == "__main__":
     print(f"\nTotal streams: {len(streams)}")
     js = streams_to_js(streams)
     print("\nInjecting into multistream.html...")
-    update_multistream(js)
+    update_multiview(js)
     print("Done!")
