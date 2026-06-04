@@ -22,7 +22,7 @@ jobs:
         run: pip install beautifulsoup4
 
       - name: Update multiview.html
-        run: python update_multi.py
+        run: python multi.py
 
       - name: Deploy to .su VPS
         uses: webfactory/ssh-agent@v0.9.0
