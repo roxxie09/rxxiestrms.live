@@ -13,6 +13,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install beautifulsoup4
+
+      - name: Update multiview.html
+        run: python update_multiview.py
+
       - name: Set up SSH
         uses: webfactory/ssh-agent@v0.5.3
         with:
@@ -21,10 +32,10 @@ jobs:
       - name: Deploy to VPS
         run: |
           ssh -o StrictHostKeyChecking=no root@185.132.53.186 << 'EOF'
-            cd ~/roxxiestrms
-            git reset --hard
-            git clean -fd
-            git pull origin main
-            rsync -avz --delete ./ /var/www/html/roxxiestrms/
-            systemctl restart nginx
+          cd ~/roxxiestrms
+          git reset --hard
+          git clean -fd
+          git pull origin main
+          rsync -avz --delete ./ /var/www/html/roxxiestrms/
+          systemctl restart nginx
           EOF

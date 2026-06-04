@@ -8,38 +8,42 @@ on:
 jobs:
   deploy-su:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install beautifulsoup4
+
+      - name: Update multiview.html
+        run: python update_multiview.py
 
       - name: Deploy to .su VPS
         uses: webfactory/ssh-agent@v0.9.0
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEYSU }}
-        
+
       - name: SSH Deploy Script
         env:
           SERVER_IP: "185.132.53.80"
         run: |
           ssh -o StrictHostKeyChecking=no root@$SERVER_IP << 'EOF'
-            set -e
-            
-            cd /var/www/html/roxxiestrms || { echo "Dir not found"; exit 1; }
-            
-            git fetch --all
-            git reset --hard origin/main
-            git clean -fd
-            
-            # Fix .su links
-            find . -name '*.html' -exec sed -i 's|https://roxiestreams.info/|/|g' {} +
-            find . -name '*.html' -exec sed -i 's|https://roxiestreams.info$|.|g' {} +
-            
-            chown -R www-data:www-data /var/www/html/roxxiestrms
-            chmod -R 644 /var/www/html/roxxiestrms/*.html
-            chmod 755 /var/www/html/roxxiestrms
-            
-            systemctl restart nginx
-            
-            echo "✅ .su deploy complete!"
+          set -e
+          cd /var/www/html/roxxiestrms || { echo "Dir not found"; exit 1; }
+          git fetch --all
+          git reset --hard origin/main
+          git clean -fd
+          find . -name '*.html' -exec sed -i 's|https://roxiestreams.info/|/|g' {} +
+          find . -name '*.html' -exec sed -i 's|https://roxiestreams.info$|.|g' {} +
+          chown -R www-data:www-data /var/www/html/roxxiestrms
+          chmod -R 644 /var/www/html/roxxiestrms/*.html
+          chmod 755 /var/www/html/roxxiestrms
+          systemctl restart nginx
+          echo "✅ .su deploy complete!"
           EOF
