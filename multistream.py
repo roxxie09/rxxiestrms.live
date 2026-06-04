@@ -101,13 +101,13 @@ def streams_to_js(streams):
         sport = s.get("sport", "")
         if sport != current_sport:
             label = SPORT_LABELS.get(sport, sport.upper())
-            lines.append(f"    // ── {label} ──")
+            lines.append(f"    // \u2500\u2500 {label} \u2500\u2500")
             current_sport = sport
         name = s["label"].replace("'", "\\'")
         if "hardcoded" in s:
-            lines.append("    { label: '" + name + "', hardcoded: '" + s["hardcoded"] + "' },")
+            lines.append("    { label: '" + name + "', sport: '" + sport + "', hardcoded: '" + s["hardcoded"] + "' },")
         else:
-            lines.append("    { label: '" + name + "', subdomain: '" + s["subdomain"] + "', path: '" + s["path"] + "', txt: '" + s["txt"] + "' },")
+            lines.append("    { label: '" + name + "', sport: '" + sport + "', subdomain: '" + s["subdomain"] + "', path: '" + s["path"] + "', txt: '" + s["txt"] + "' },")
     lines.append("];")
     return "\n".join(lines)
 
