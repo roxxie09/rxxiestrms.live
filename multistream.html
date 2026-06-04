@@ -32,8 +32,8 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        gap: 12px;
-        padding: 16px;
+        gap: 10px;
+        padding: 14px;
         flex-wrap: wrap;
     }
     #layoutSelector span {
@@ -46,25 +46,35 @@
         background: #1a1a1a;
         border: 2px solid rgba(255,192,203,0.3);
         color: pink;
-        padding: 8px 20px;
+        padding: 6px 16px;
         border-radius: 6px;
         cursor: pointer;
         font-weight: bold;
+        font-size: 0.9rem;
         transition: all 0.2s;
     }
     .layout-btn:hover, .layout-btn.active {
         background: rgba(255,192,203,0.15);
         border-color: pink;
     }
+
     #multiGrid {
         display: grid;
         gap: 4px;
         padding: 0 8px 8px;
-        height: calc(100vh - 130px);
+        height: calc(100vh - 120px);
     }
     .grid-2 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr; }
     .grid-3 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
     .grid-4 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
+    .grid-5 { grid-template-columns: 1fr 1fr 1fr; grid-template-rows: 1fr 1fr; }
+    .grid-6 { grid-template-columns: 1fr 1fr 1fr; grid-template-rows: 1fr 1fr; }
+
+    .grid-3 .stream-panel:nth-child(3),
+    .grid-5 .stream-panel:nth-child(5) {
+        grid-column: 1 / -1;
+    }
+
     .stream-panel {
         position: relative;
         background: #111;
@@ -74,7 +84,7 @@
         display: flex;
         flex-direction: column;
     }
-    .grid-3 .stream-panel:nth-child(3) { grid-column: 1 / -1; }
+
     .panel-toolbar {
         display: flex;
         align-items: center;
@@ -84,13 +94,6 @@
         border-bottom: 1px solid rgba(255,192,203,0.1);
         flex-shrink: 0;
         flex-wrap: wrap;
-    }
-    .panel-label {
-        color: pink;
-        font-size: 11px;
-        font-weight: bold;
-        font-family: 'Kanit', sans-serif;
-        white-space: nowrap;
     }
     .stream-select {
         flex: 1;
@@ -124,8 +127,10 @@
         white-space: nowrap;
     }
     .load-btn:hover { background: rgba(255,192,203,0.3); }
+
     .panel-player { flex: 1; position: relative; }
     .panel-player > div { width: 100% !important; height: 100% !important; }
+
     .panel-placeholder {
         width: 100%;
         height: 100%;
@@ -164,10 +169,12 @@
 </nav>
 
 <div id="layoutSelector">
-    <span>Panels:</span>
-    <button class="layout-btn active" onclick="setLayout(2)">2 Streams</button>
-    <button class="layout-btn" onclick="setLayout(3)">3 Streams</button>
-    <button class="layout-btn" onclick="setLayout(4)">4 Streams</button>
+    <span>Streams:</span>
+    <button class="layout-btn active" onclick="setLayout(2)">2</button>
+    <button class="layout-btn" onclick="setLayout(3)">3</button>
+    <button class="layout-btn" onclick="setLayout(4)">4</button>
+    <button class="layout-btn" onclick="setLayout(5)">5</button>
+    <button class="layout-btn" onclick="setLayout(6)">6</button>
 </div>
 
 <div id="multiGrid" class="grid-2"></div>
@@ -176,31 +183,31 @@
 <script>
 const STREAMS = [
     // ── Soccer ──
-    { label: 'Slovenia vs Cyprus', sport: 'soccer', subdomain: '601', path: 'cyrus.m3u8', txt: 'domainsz29.txt' },
-    { label: 'Sweden vs Greece', sport: 'soccer', subdomain: 'daffodil', path: 'fubo.m3u8', txt: 'domainsz29.txt' },
-    { label: 'Andorra vs Liechtenstein', sport: 'soccer', subdomain: 'daffodil', path: 'fsp.m3u8', txt: 'domainsz29.txt' },
-    { label: 'Spain vs Iraq', sport: 'soccer', subdomain: 'daffodil', path: 'byu.m3u8', txt: 'domainsz29.txt' },
-    { label: 'France vs Cote D\'Ivoire', sport: 'soccer', subdomain: 'daffodil', path: 'tnt.m3u8', txt: 'domainsz29.txt' },
-    { label: 'Czech Republic vs Guatemala', sport: 'soccer', subdomain: 'daffodil', path: 'sportv.m3u8', txt: 'domainsz29.txt' },
-    { label: 'Mexico vs Serbia', sport: 'soccer', subdomain: '601', path: 'fana2.m3u8', txt: 'domainsz29.txt' },
+    { label: 'Slovenia vs Cyprus',                          sport: 'soccer',      subdomain: '601',      path: 'cyrus.m3u8',   txt: 'domainsz29.txt' },
+    { label: 'Sweden vs Greece',                            sport: 'soccer',      subdomain: 'daffodil', path: 'fubo.m3u8',    txt: 'domainsz29.txt' },
+    { label: 'Andorra vs Liechtenstein',                    sport: 'soccer',      subdomain: 'daffodil', path: 'fsp.m3u8',     txt: 'domainsz29.txt' },
+    { label: 'Spain vs Iraq',                               sport: 'soccer',      subdomain: 'daffodil', path: 'byu.m3u8',     txt: 'domainsz29.txt' },
+    { label: "France vs Cote D'Ivoire",                     sport: 'soccer',      subdomain: 'daffodil', path: 'tnt.m3u8',     txt: 'domainsz29.txt' },
+    { label: 'Czech Republic vs Guatemala',                 sport: 'soccer',      subdomain: 'daffodil', path: 'sportv.m3u8',  txt: 'domainsz29.txt' },
+    { label: 'Mexico vs Serbia',                            sport: 'soccer',      subdomain: '601',      path: 'fana2.m3u8',   txt: 'domainsz29.txt' },
     // ── MLB ──
-    { label: 'San Diego Padres vs Philadelphia Phillies', sport: 'mlb', subdomain: '601', path: 'mlb.m3u8', txt: 'domainsz29.txt' },
-    { label: 'Baltimore Orioles vs Boston Red Sox', sport: 'mlb', subdomain: '601', path: 'mlb2.m3u8', txt: 'domainsz29.txt' },
-    { label: 'Cleveland Guardians vs New York Yankees', sport: 'mlb', hardcoded: 'https://601.formaturamaxi.com.br/mlb3.m3u8' },
-    { label: 'San Francisco Giants vs Milwaukee Brewers', sport: 'mlb', subdomain: '601', path: 'mlb4.m3u8', txt: 'domainsz29.txt' },
-    { label: 'Toronto Blue Jays vs Atlanta Braves', sport: 'mlb', hardcoded: 'https://601.formaturamaxi.com.br/mlb5.m3u8' },
-    { label: 'Kansas City Royals vs Minnesota Twins', sport: 'mlb', hardcoded: 'https://601.formaturamaxi.com.br/mlb6.m3u8' },
-    { label: 'Athletics vs Chicago Cubs', sport: 'mlb', hardcoded: 'https://601.formaturamaxi.com.br/mlb7.m3u8' },
-    { label: 'Pittsburgh Pirates vs Houston Astros', sport: 'mlb', hardcoded: 'https://601.formaturamaxi.com.br/mlb8.m3u8' },
-    { label: 'Los Angeles Dodgers vs Arizona Diamondbacks', sport: 'mlb', hardcoded: 'https://601.formaturamaxi.com.br/mlb9.m3u8' },
+    { label: 'San Diego Padres vs Philadelphia Phillies',   sport: 'mlb',         subdomain: '601',      path: 'mlb.m3u8',     txt: 'domainsz29.txt' },
+    { label: 'Baltimore Orioles vs Boston Red Sox',         sport: 'mlb',         subdomain: '601',      path: 'mlb2.m3u8',    txt: 'domainsz29.txt' },
+    { label: 'Cleveland Guardians vs New York Yankees',     sport: 'mlb',         hardcoded: 'https://601.formaturamaxi.com.br/mlb3.m3u8' },
+    { label: 'San Francisco Giants vs Milwaukee Brewers',   sport: 'mlb',         subdomain: '601',      path: 'mlb4.m3u8',    txt: 'domainsz29.txt' },
+    { label: 'Toronto Blue Jays vs Atlanta Braves',         sport: 'mlb',         hardcoded: 'https://601.formaturamaxi.com.br/mlb5.m3u8' },
+    { label: 'Kansas City Royals vs Minnesota Twins',       sport: 'mlb',         hardcoded: 'https://601.formaturamaxi.com.br/mlb6.m3u8' },
+    { label: 'Athletics vs Chicago Cubs',                   sport: 'mlb',         hardcoded: 'https://601.formaturamaxi.com.br/mlb7.m3u8' },
+    { label: 'Pittsburgh Pirates vs Houston Astros',        sport: 'mlb',         hardcoded: 'https://601.formaturamaxi.com.br/mlb8.m3u8' },
+    { label: 'Los Angeles Dodgers vs Arizona Diamondbacks', sport: 'mlb',         hardcoded: 'https://601.formaturamaxi.com.br/mlb9.m3u8' },
     // ── NBA ──
-    { label: 'New York Knicks vs San Antonio Spurs', sport: 'nba', subdomain: 'daffodil', path: 'nba.m3u8', txt: 'domainsz29.txt' },
+    { label: 'New York Knicks vs San Antonio Spurs',        sport: 'nba',         subdomain: 'daffodil', path: 'nba.m3u8',     txt: 'domainsz29.txt' },
     // ── NHL ──
-    { label: 'Vegas Golden Knights vs Carolina Hurricanes', sport: 'nhl', subdomain: '601', path: 'nhl.m3u8', txt: 'domainsz29.txt' },
+    { label: 'Vegas Golden Knights vs Carolina Hurricanes', sport: 'nhl',         subdomain: '601',      path: 'nhl.m3u8',     txt: 'domainsz29.txt' },
     // ── Fighting ──
-    { label: 'WWE Smackdown', sport: 'fighting', subdomain: 'daffodil', path: 'wwe.m3u8', txt: 'domainsz29.txt' },
+    { label: 'WWE Smackdown',                               sport: 'fighting',    subdomain: 'daffodil', path: 'wwe.m3u8',     txt: 'domainsz29.txt' },
     // ── Motorsports ──
-    { label: 'Isle of Man TT - Coverage', sport: 'motorsports', subdomain: '601', path: 'tt.m3u8', txt: 'domainsz29.txt' },
+    { label: 'Isle of Man TT - Coverage',                   sport: 'motorsports', subdomain: '601',      path: 'tt.m3u8',      txt: 'domainsz29.txt' },
 ];
 
 const SPORT_LABELS = {
@@ -255,14 +262,13 @@ function setLayout(count) {
     grid.className = `grid-${count}`;
     grid.innerHTML = '';
     document.querySelectorAll('.layout-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.textContent.trim().startsWith(count));
+        btn.classList.toggle('active', btn.textContent.trim() == count);
     });
     for (let i = 0; i < count; i++) {
         const panel = document.createElement('div');
         panel.className = 'stream-panel';
         panel.innerHTML = `
             <div class="panel-toolbar">
-                <span class="panel-label">Panel ${i + 1}</span>
                 <select class="stream-select" id="select-${i}">
                     ${buildStreamOptions()}
                 </select>
