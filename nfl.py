@@ -37,7 +37,7 @@ NFL_TEAM_NAME_MAP = {
     "Washington": "Washington Commanders",
 }
 
-def convert_et_to_pst(time_str, date_obj):
+def convert_et_to_pdt(time_str, date_obj):
     eastern = pytz.timezone('US/Eastern')
     pacific = pytz.timezone('US/Pacific')
     dt_str = f"{date_obj.strftime('%Y-%m-%d')} {time_str}"
@@ -49,8 +49,7 @@ def convert_et_to_pst(time_str, date_obj):
 def format_date_cli_to_verbose(date_str):
     try:
         dt = datetime.strptime(date_str, '%Y-%m-%d')
-        day = dt.day
-        return dt.strftime(f'%A, %B {day}, %Y')
+        return dt.strftime('%A, %B %d, %Y')
     except Exception:
         print("Invalid date format. Please use YYYY-MM-DD.")
         sys.exit(1)
@@ -75,110 +74,91 @@ def fetch_nfl_games_for_date(html_file_path, target_date_verbose):
                     game_time_et = cols[2].text.strip()
                     try:
                         date_obj = datetime.strptime(target_date_verbose, '%A, %B %d, %Y')
-                        game_time_pst = convert_et_to_pst(game_time_et, date_obj)
+                        game_time_pdt = convert_et_to_pdt(game_time_et, date_obj)
                     except:
-                        game_time_pst = game_time_et
+                        game_time_pdt = game_time_et
+                        date_obj = datetime.now()
 
                     away_full = NFL_TEAM_NAME_MAP.get(away_short, away_short)
                     home_full = NFL_TEAM_NAME_MAP.get(home_short, home_short)
 
+                    # Plain text PDT time — JS will localize for each viewer
+                    display_time = f"{date_obj.strftime('%B %#d, %Y')} {game_time_pdt}"
+
                     games.append({
                         'event': f"{away_full} vs {home_full}",
-                        'time': f"{date_obj.strftime('%B %d, %Y')} {game_time_pst}",
-                        'countdown_start': f"{date_obj.strftime('%B %d, %Y')} {game_time_pst}:00",
-                        'countdown_end': f"{(date_obj + timedelta(days=1)).strftime('%B %d, %Y')} {game_time_pst}:00"
+                        'display_time': display_time,
                     })
             return games
     return []
 
-def append_or_replace_schedule(html_file_path, new_games, new_date_str):
+def update_games_in_html(html_file_path, new_games):
     with open(html_file_path, encoding='utf-8') as f:
         soup = BeautifulSoup(f, 'html.parser')
 
-    container = soup.find('div', class_='container container-fluid pt-2 text-white')
-    existing_headers = container.find_all('h2')
+    table = soup.find('table', id='eventsTable')
+    if table is None:
+        print("Could not find table with id='eventsTable'")
+        return
+    tbody = table.find('tbody')
+    if tbody is None:
+        print("Could not find <tbody> under eventsTable")
+        return
 
-    for header in existing_headers:
-        if new_date_str in header.text:
-            table = header.find_next_sibling('table')
-            if table:
-                tbody = table.find('tbody')
-                tbody.clear()
-                for idx, game in enumerate(new_games, 1):
-                    tr = soup.new_tag('tr')
+    # Clear existing rows
+    for tr in list(tbody.find_all('tr')):
+        tr.decompose()
 
-                    td_event = soup.new_tag('td')
-                    a = soup.new_tag('a', href=f"https://roxiestreams.info/nfl-streams-{idx}")
-                    a.string = game['event']
-                    td_event.append(a)
+    for idx, game in enumerate(new_games, 1):
+        tr = soup.new_tag('tr')
 
-                    td_time = soup.new_tag('td')
-                    td_time.string = game['time']
+        td_event = soup.new_tag('td')
+        a = soup.new_tag('a', href=f"https://roxiestreams.info/nfl-streams-{idx}")
+        a.string = game['event']
+        td_event.append(a)
+        tr.append(td_event)
 
-                    td_countdown = soup.new_tag('td')
-                    span = soup.new_tag('span', **{'class': 'countdown-timer'})
-                    span['data-start'] = game['countdown_start']
-                    span['data-end'] = game['countdown_end']
-                    td_countdown.append(span)
+        td_time = soup.new_tag('td')
+        td_time['class'] = 'event-start-time'
+        td_time.string = game['display_time']
+        tr.append(td_time)
 
-                    tr.extend([td_event, td_time, td_countdown])
-                    tbody.append(tr)
-                print(f"Replaced schedule for {new_date_str}")
-                break
-    else:
-        new_header = soup.new_tag('h2')
-        new_header.string = f"NFL Schedule for {new_date_str}"
-        new_table = soup.new_tag('table', id='eventsTable')
-        thead = soup.new_tag('thead')
-        tr_head = soup.new_tag('tr')
-        for col in ['Event', 'Start Time', 'Countdown']:
-            th = soup.new_tag('th')
-            th.string = col
-            tr_head.append(th)
-        thead.append(tr_head)
-        new_table.append(thead)
-        tbody = soup.new_tag('tbody')
-        for idx, game in enumerate(new_games, 1):
-            tr = soup.new_tag('tr')
-            td_event = soup.new_tag('td')
-            a = soup.new_tag('a', href=f"https://roxiestreams.info/nfl-streams-{idx}")
-            a.string = game['event']
-            td_event.append(a)
-            td_time = soup.new_tag('td')
-            td_time.string = game['time']
-            td_countdown = soup.new_tag('td')
-            span = soup.new_tag('span', **{'class': 'countdown-timer'})
-            span['data-start'] = game['countdown_start']
-            span['data-end'] = game['countdown_end']
-            td_countdown.append(span)
-            tr.extend([td_event, td_time, td_countdown])
-            tbody.append(tr)
-        new_table.append(tbody)
+        td_countdown = soup.new_tag('td')
+        span = soup.new_tag('span', **{'class': 'countdown-timer'})
+        td_countdown.append(span)
+        tr.append(td_countdown)
 
-        footer = soup.find('footer', class_='container-fluid')
-        if footer:
-            footer.insert_before(new_header)
-            footer.insert_before(new_table)
-        else:
-            container.append(new_header)
-            container.append(new_table)
-        print(f"Appended schedule for {new_date_str}")
+        tbody.append(tr)
 
     with open(html_file_path, 'w', encoding='utf-8') as f:
-        f.write(str(soup.prettify()))
+        f.write(str(soup.prettify(formatter="minimal")))
+    print(f"Updated NFL games in {html_file_path}")
 
 if __name__ == '__main__':
+    # Update this path to wherever your nfl.html lives
     nfl_html_path = r"G:\MY LEGIT EVERYTRHING FOLDER\RANDOM\rxxiestrms.live\nfl.html"
 
     if len(sys.argv) > 1:
-        date_arg = format_date_cli_to_verbose(sys.argv[1])
+        date_str = sys.argv[1]
+        date_formats = ['%Y-%m-%d', '%m-%d-%y', '%m-%d-%Y']
+        input_date_str = None
+        for fmt in date_formats:
+            try:
+                dt = datetime.strptime(date_str, fmt)
+                input_date_str = dt.strftime('%Y-%m-%d')
+                break
+            except ValueError:
+                pass
+        if input_date_str is None:
+            print("Invalid date format. Defaulting to today.")
+            input_date_str = datetime.now().strftime('%Y-%m-%d')
     else:
-        now = datetime.now()
-        day = now.day
-        date_arg = now.strftime(f'%A, %B {day}, %Y')
+        input_date_str = datetime.now().strftime('%Y-%m-%d')
 
-    new_games = fetch_nfl_games_for_date('nfl.txt', date_arg)
-    if new_games:
-        append_or_replace_schedule(nfl_html_path, new_games, date_arg)
+    target_date_verbose = format_date_cli_to_verbose(input_date_str)
+    new_schedule = fetch_nfl_games_for_date('nfl.txt', target_date_verbose)
+
+    if new_schedule:
+        update_games_in_html(nfl_html_path, new_schedule)
     else:
-        print(f"No NFL games found for {date_arg}")
+        print(f"No NFL games found for {target_date_verbose}.")
