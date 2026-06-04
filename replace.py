@@ -11,8 +11,8 @@ for filename in os.listdir(folder):
         with open(filepath, 'r', encoding='utf-8') as file:
             content = file.read()
 
-        # Replace all instances of "701" with "601"
-        updated_content = content.replace("701", "601")
+        # Replace all instances of "700" with "601"
+        updated_content = content.replace("700", "601")
 
         # Write the changes back to the file
         with open(filepath, 'w', encoding='utf-8') as file:
