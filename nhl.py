@@ -2,9 +2,7 @@ import requests
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 import sys
-import os
-import re
-import subprocess
+from bs4 import BeautifulSoup
 
 PACIFIC_TZ = ZoneInfo("America/Los_Angeles")
 HTML_PATH = r"G:\MY LEGIT EVERYTRHING FOLDER\RANDOM\rxxiestrms.live\nhl.html"
@@ -56,100 +54,69 @@ def get_nhl_games(date_ymd):
             else:
                 dt_utc = datetime.fromisoformat(start_str)
             dt_pacific = dt_utc.astimezone(PACIFIC_TZ)
-
-            start_display = dt_pacific.strftime("%B %d, %Y %I:%M %p")
-            start_pst_formatted = dt_pacific.strftime("%Y-%m-%d %H:%M:%S")
-            end_pst = dt_pacific + timedelta(days=1)
-            end_pst_formatted = end_pst.strftime("%Y-%m-%d %H:%M:%S")
+            # Plain text PDT time — JS will localize for each viewer
+            display_time = dt_pacific.strftime("%B %#d, %Y %I:%M %p")
         except Exception as e:
             print(f"Time parse error for {away_team} vs {home_team}: {e}")
-            start_display = "TBD"
-            start_pst_formatted = end_pst_formatted = ""
+            display_time = "TBD"
 
         games.append({
             "matchup": f"{away_team} vs {home_team}",
-            "time_display": start_display,
-            "start_pst": start_pst_formatted,
-            "end_pst": end_pst_formatted
+            "display_time": display_time,
         })
     return games
 
-def update_nhl_date_section(html_content, games, target_date_str):
-    if not games:
-        return html_content, False
+def update_games_in_html(html_path, games):
+    with open(html_path, encoding='utf-8') as f:
+        soup = BeautifulSoup(f, 'html.parser')
 
-    pretty_date = datetime.strptime(target_date_str, "%Y%m%d").strftime("%A, %B %d, %Y")
-    date_header_text = pretty_date.replace(",", r"\,").replace(" ", r"\s+")
+    table = soup.find('table', id='eventsTable')
+    if table is None:
+        print("Could not find table with id='eventsTable'")
+        return
+    tbody = table.find('tbody')
+    if tbody is None:
+        print("Could not find <tbody> under eventsTable")
+        return
 
-    # If this date already exists, skip any changes
-    if re.search(rf'<td colspan="3"><strong>{date_header_text}</strong></td>', html_content, re.IGNORECASE):
-        print(f"⚠️  Date '{pretty_date}' already exists - skipping NHL changes.")
-        return html_content, False
+    # Clear existing rows
+    for tr in list(tbody.find_all('tr')):
+        tr.decompose()
 
-    # Find tbody
-    tbody_match = re.search(r'(<tbody[^>]*>)(.*?)(</tbody>)', html_content, re.DOTALL | re.IGNORECASE)
-    if not tbody_match:
-        return html_content, False
+    for idx, game in enumerate(games, 1):
+        tr = soup.new_tag('tr')
 
-    before = html_content[:tbody_match.start(2)]
-    tbody_content = tbody_match.group(2)
-    after = html_content[tbody_match.end(2):]
+        # Event name cell
+        td_event = soup.new_tag('td')
+        a = soup.new_tag('a', href=f"https://roxiestreams.info/nhl-streams-{idx}")
+        a.string = game['matchup']
+        td_event.append(a)
+        tr.append(td_event)
 
-    # Build new section for this date
-    date_header = f'''
-        <tr style="background-color: #333; color: white;">
-            <td colspan="3"><strong>{pretty_date}</strong></td>
-        </tr>'''
+        # Start time cell — class="event-start-time", plain text, JS localizes it
+        td_time = soup.new_tag('td')
+        td_time['class'] = 'event-start-time'
+        td_time.string = game['display_time']
+        tr.append(td_time)
 
-    new_rows = ""
-    for i, game in enumerate(games, 1):
-        new_rows += f'''
-        <tr>
-            <td><a href="https://roxiestreams.info/nhl-streams-{i}">{game["matchup"]}</a></td>
-            <td>{game["time_display"]}</td>
-            <td><span class="countdown-timer" data-end="{game["end_pst"]}" data-start="{game["start_pst"]}"></span></td>
-        </tr>'''
+        # Countdown cell — empty span, JS reads time from sibling td
+        td_countdown = soup.new_tag('td')
+        span = soup.new_tag('span', **{'class': 'countdown-timer'})
+        td_countdown.append(span)
+        tr.append(td_countdown)
 
-    # Append to end of tbody
-    new_section = date_header + new_rows
-    tbody_content = tbody_content + new_section
+        tbody.append(tr)
 
-    html_content = before + tbody_content + after
-    return html_content, True
+    with open(html_path, 'w', encoding='utf-8') as f:
+        f.write(str(soup.prettify(formatter="minimal")))
+    print(f"Updated NHL games in {html_path}")
 
-if __name__ == "__main__":
-    date_input = sys.argv[1] if len(sys.argv) > 1 else None
-    api_date = parse_date_arg(date_input)
-    pretty_date = datetime.strptime(api_date, "%Y%m%d").strftime("%m-%d-%Y")
+if __name__ == '__main__':
+    date_arg = sys.argv[1] if len(sys.argv) > 1 else None
+    date_ymd = parse_date_arg(date_arg)
+    games = get_nhl_games(date_ymd)
 
-    print(f"Fetching NHL games for {pretty_date}...")
-    games = get_nhl_games(api_date)
-
-    if not os.path.exists(HTML_PATH):
-        print(f"Error: {HTML_PATH} not found!")
-        sys.exit(1)
-
-    with open(HTML_PATH, "r", encoding="utf-8") as f:
-        content = f.read()
-
-    updated_content, changed = update_nhl_date_section(content, games, api_date)
-
-    if changed and games:
-        with open(HTML_PATH, "w", encoding="utf-8") as f:
-            f.write(updated_content)
-        print(f"✓ Updated {len(games)} NHL games for {pretty_date}")
-        print(f"  Links fixed: nhl-streams-1 through nhl-streams-{len(games)}")
+    if games:
+        update_games_in_html(HTML_PATH, games)
     else:
-        print("No NHL changes needed")
-
-    try:
-        script_dir = os.path.dirname(os.path.abspath(__file__))
-        nba_script = os.path.join(script_dir, "nba.py")
-        nba_cmd = ["python", nba_script]
-        if date_input:
-            nba_cmd.append(date_input)
-
-        print("\nRunning NBA script...")
-        subprocess.run(nba_cmd, check=False)
-    except Exception as e:
-        print(f"Could not run nba.py: {e}")
+        print(f"No NHL games found for {date_ymd}.")
