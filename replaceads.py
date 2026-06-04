@@ -1,73 +1,46 @@
-#!/usr/bin/env python3
-import os
-import re
+from bs4 import BeautifulSoup
 import glob
-from pathlib import Path
+import os
 
-def remove_winter_olympics_nav(html_content):
-    """Remove the Winter Olympics <li> from navbar using regex"""
-    # Match the exact Winter Olympics li element
-    pattern = r'<li class="nav-item"><a class="nav-link nav-link-winter-blue" href="https://roxiestreams\.info/olympics">Winter Olympics</a></li>'
-    
-    # Remove the line (including any whitespace/newlines around it)
-    cleaned = re.sub(pattern + r'\s*\n?', '', html_content, flags=re.MULTILINE)
-    
-    # Also handle if there are extra newlines left behind
-    cleaned = re.sub(r'\n\s*\n\s*\n', '\n\n', cleaned)
-    
-    return cleaned
+MULTIVIEW_LI = '''<ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+<li class="nav-item">
+    <a class="nav-link d-flex align-items-center gap-1" href="https://roxiestreams.info/multiview">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M0 1.5A1.5 1.5 0 0 1 1.5 0h13A1.5 1.5 0 0 1 16 1.5v13a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 14.5v-13zM1.5 1a.5.5 0 0 0-.5.5V7h6V1H1.5zM7 8H1v6.5a.5.5 0 0 0 .5.5H7V8zm1 0v7h6.5a.5.5 0 0 0 .5-.5V8H8zm0-1h7V1.5a.5.5 0 0 0-.5-.5H8v6z"/>
+        </svg>
+        MultiView (NEW)
+    </a>
+</li>
+</ul>'''
 
-def process_html_files(directory='.'):
-    """Process all HTML files in the specified directory"""
-    html_files = glob.glob(os.path.join(directory, '**/*.html'), recursive=True)
-    
-    if not html_files:
-        print("No HTML files found in the directory.")
-        return
-    
-    print(f"Found {len(html_files)} HTML files to process...\n")
-    
-    backup_dir = Path(directory) / "backups"
-    backup_dir.mkdir(exist_ok=True)
-    
-    modified_count = 0
-    
-    for html_file in html_files:
-        try:
-            # Read original file
-            with open(html_file, 'r', encoding='utf-8') as f:
-                content = f.read()
-            
-            # Check if Winter Olympics nav item exists
-            if 'nav-link-winter-blue' not in content:
-                print(f"✓ {os.path.basename(html_file)} - No Winter Olympics item found")
-                continue
-            
-            # Create backup
-            backup_path = backup_dir / os.path.basename(html_file)
-            with open(backup_path, 'w', encoding='utf-8') as f:
-                f.write(content)
-            
-            # Remove Winter Olympics item
-            new_content = remove_winter_olympics_nav(content)
-            
-            # Write cleaned file
-            with open(html_file, 'w', encoding='utf-8') as f:
-                f.write(new_content)
-            
-            modified_count += 1
-            print(f"✓ {os.path.basename(html_file)} - Winter Olympics removed (backup created)")
-            
-        except Exception as e:
-            print(f"✗ Error processing {html_file}: {e}")
-    
-    print(f"\n✅ Completed! Modified {modified_count} files.")
-    print(f"📁 Backups saved in: {backup_dir}")
+html_files = glob.glob("*.html")
+updated = []
+skipped = []
 
-if __name__ == "__main__":
-    # Change this to your HTML files directory
-    target_directory = input("Enter directory containing HTML files (press Enter for current directory): ").strip()
-    if not target_directory:
-        target_directory = '.'
-    
-    process_html_files(target_directory)
+for filepath in html_files:
+    with open(filepath, "r", encoding="utf-8") as f:
+        content = f.read()
+
+    soup = BeautifulSoup(content, "html.parser")
+
+    # Skip if already injected
+    if soup.find("a", href="https://roxiestreams.info/multiview"):
+        skipped.append(filepath)
+        continue
+
+    # Find the navbar-collapse div and insert after the main ul
+    main_ul = soup.find("ul", class_=lambda c: c and "navbar-nav" in c and "me-auto" in c)
+    if not main_ul:
+        skipped.append(filepath)
+        continue
+
+    new_ul = BeautifulSoup(MULTIVIEW_LI, "html.parser")
+    main_ul.insert_after(new_ul)
+
+    with open(filepath, "w", encoding="utf-8") as f:
+        f.write(str(soup))
+
+    updated.append(filepath)
+
+print(f"Updated ({len(updated)}): {updated}")
+print(f"Skipped ({len(skipped)}): {skipped}")
