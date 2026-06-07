@@ -136,7 +136,7 @@ def streams_to_js(streams):
     return "\n".join(lines)
 
 def update_multiview(streams_js):
-    with open(MULTIVIEW_HTML, encoding="utf-8") as f:
+    with open(MULTIVIEW_HTML, "r", encoding="utf-8", newline="") as f:
         content = f.read()
     new_content = re.sub(
         r"const STREAMS = \[[\s\S]*?\];",
@@ -146,12 +146,11 @@ def update_multiview(streams_js):
     if new_content == content:
         print("  WARNING: STREAMS block not found in multiview.html")
         return
-    with open(MULTIVIEW_HTML, "w", encoding="utf-8") as f:
+    with open(MULTIVIEW_HTML, "w", encoding="utf-8", newline="") as f:
         f.write(new_content)
     print("  multiview.html updated successfully!")
-    print(f"Writing to: {MULTIVIEW_HTML}")  # ADD THIS
-    print("=" * 50)
 if __name__ == "__main__":
+    print(f"Writing to: {MULTIVIEW_HTML}")  # DEBUG
     print("=" * 50)
     print("Updating multistream.html STREAMS list...")
     print("=" * 50)
