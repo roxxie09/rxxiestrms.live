@@ -21,14 +21,6 @@ SCHEDULE_STREAM_MAP = {
 }
 
 STREAM_OVERRIDES = {
-    "Liechtenstein vs Cyprus":  {"subdomain": "daffodil", "path": "fs2.m3u8",     "txt": "domainsz29.txt"},
-    "Denmark vs Ukraine":       {"subdomain": "daffodil", "path": "fubo.m3u8",    "txt": "domainsz29.txt"},
-    "Croatia vs Slovenia":      {"subdomain": "601",      "path": "colo.m3u8",    "txt": "domainsz29.txt"},
-    "Greece vs Italy":          {"subdomain": "daffodil", "path": "dep.m3u8",     "txt": "domainsz29.txt"},
-    "Huachipato vs Colo Colo":  {"subdomain": "601",      "path": "tru.m3u8",     "txt": "domainsz29.txt"},
-    "Morocco vs Norway":        {"subdomain": "601",      "path": "sky2.m3u8",    "txt": "domainsz29.txt"},
-    "Ecuador vs Guatemala":     {"subdomain": "601",      "path": "england.m3u8", "txt": "domainsz29.txt"},
-    "Colombia vs Jordan":       {"subdomain": "601",      "path": "espn.m3u8",    "txt": "domainsz29.txt"},
 }
 
 SPORT_LABELS = {
