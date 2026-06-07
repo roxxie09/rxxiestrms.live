@@ -20,6 +20,17 @@ SCHEDULE_STREAM_MAP = {
     "motorsports.html": {"pattern": "ppv-streams-{n}.html",     "default": {"subdomain": "601",      "path": "tt.m3u8",      "txt": "domainsz29.txt"}},
 }
 
+STREAM_OVERRIDES = {
+    "Liechtenstein vs Cyprus":  {"subdomain": "daffodil", "path": "fs2.m3u8",     "txt": "domainsz29.txt"},
+    "Denmark vs Ukraine":       {"subdomain": "daffodil", "path": "fubo.m3u8",    "txt": "domainsz29.txt"},
+    "Croatia vs Slovenia":      {"subdomain": "601",      "path": "colo.m3u8",    "txt": "domainsz29.txt"},
+    "Greece vs Italy":          {"subdomain": "daffodil", "path": "dep.m3u8",     "txt": "domainsz29.txt"},
+    "Huachipato vs Colo Colo":  {"subdomain": "601",      "path": "tru.m3u8",     "txt": "domainsz29.txt"},
+    "Morocco vs Norway":        {"subdomain": "601",      "path": "sky2.m3u8",    "txt": "domainsz29.txt"},
+    "Ecuador vs Guatemala":     {"subdomain": "601",      "path": "england.m3u8", "txt": "domainsz29.txt"},
+    "Colombia vs Jordan":       {"subdomain": "601",      "path": "espn.m3u8",    "txt": "domainsz29.txt"},
+}
+
 SPORT_LABELS = {
     "soccer": "Soccer", "mlb": "MLB", "nba": "NBA",
     "nhl": "NHL", "fighting": "Fighting", "motorsports": "Motorsports"
@@ -69,26 +80,42 @@ def build_streams_list():
         events = get_events_from_schedule(schedule_path)
         sport_key = schedule_file.replace(".html", "")
         print(f"  {schedule_file}: {len(events)} events found")
+
         for i, event in enumerate(events, 1):
             info = None
-            if config.get("pattern"):
-                stream_filename = config["pattern"].replace("{n}", str(i))
+
+            # 1. Check label override first
+            if event["name"] in STREAM_OVERRIDES:
+                info = STREAM_OVERRIDES[event["name"]].copy()
+                print(f"    [{i}] {event['name']} -> OVERRIDE")
+
+            # 2. Try reading from stream HTML file
+            if info is None and config.get("pattern"):
+                match = re.search(r'-(\d+)/?$', event["url"].rstrip("/"))
+                n = match.group(1) if match else str(i)
+                stream_filename = config["pattern"].replace("{n}", n)
                 stream_path = os.path.join(BASE_DIR, stream_filename)
                 info = extract_stream_info(stream_path)
                 if info:
                     print(f"    [{i}] {event['name']} -> {stream_filename}")
+
+            # 3. Try slug map
             if info is None and "slug_map" in config:
                 for slug, slug_info in config["slug_map"].items():
                     if slug in event["url"]:
                         info = slug_info
                         print(f"    [{i}] {event['name']} -> slug:{slug}")
                         break
+
+            # 4. Fall back to default
             if info is None:
                 info = config["default"].copy()
                 print(f"    [{i}] {event['name']} -> DEFAULT")
+
             entry = {"label": event["name"], "sport": sport_key}
             entry.update(info)
             all_streams.append(entry)
+
     return all_streams
 
 def streams_to_js(streams):
@@ -112,18 +139,18 @@ def update_multiview(streams_js):
     with open(MULTIVIEW_HTML, encoding="utf-8") as f:
         content = f.read()
     new_content = re.sub(
-        r"const STREAMS = \[.*?\];",
+        r"const STREAMS = \[[\s\S]*?\];",
         streams_js,
-        content,
-        flags=re.DOTALL
+        content
     )
     if new_content == content:
-        print("  WARNING: STREAMS block not found in multistream.html")
+        print("  WARNING: STREAMS block not found in multiview.html")
         return
     with open(MULTIVIEW_HTML, "w", encoding="utf-8") as f:
         f.write(new_content)
-    print("  multistream.html updated successfully!")
-
+    print("  multiview.html updated successfully!")
+    print(f"Writing to: {MULTIVIEW_HTML}")  # ADD THIS
+    print("=" * 50)
 if __name__ == "__main__":
     print("=" * 50)
     print("Updating multistream.html STREAMS list...")
