@@ -17,10 +17,18 @@ SCHEDULE_STREAM_MAP = {
                              "ufc": {"subdomain": "601",      "path": "ataide.m3u8", "txt": "domainsz29.txt"},
                              "ppv": {"subdomain": "601",      "path": "tt.m3u8",     "txt": "domainsz29.txt"},
                          }},
-    "motorsports.html": {"pattern": "ppv-streams-{n}.html",     "default": {"subdomain": "601",      "path": "tt.m3u8",      "txt": "domainsz29.txt"}},
+    "motorsports.html": {"pattern": "ppv-streams-{n}.html",
+                         "default": {"subdomain": "601", "path": "tt.m3u8", "txt": "domainsz29.txt"},
+                         "slug_map": {
+                             "f1":      {"subdomain": "daffodil", "path": "f1.m3u8",  "txt": "domainsz29.txt"},
+                             "indycar": {"subdomain": "daffodil", "path": "f1.m3u8",  "txt": "domainsz29.txt"},
+                         }},
 }
 
 STREAM_OVERRIDES = {
+    # Add entries here only when a game needs a different m3u8 than what's in its stream HTML file
+    # Example:
+    # "Game Name": {"subdomain": "601", "path": "custom.m3u8", "txt": "domainsz29.txt"},
 }
 
 SPORT_LABELS = {
@@ -81,7 +89,15 @@ def build_streams_list():
                 info = STREAM_OVERRIDES[event["name"]].copy()
                 print(f"    [{i}] {event['name']} -> OVERRIDE")
 
-            # 2. Try reading from stream HTML file
+            # 2. Slug map (before pattern, catches custom URLs like /f1 /indycar /wwe)
+            if info is None and "slug_map" in config:
+                for slug, slug_info in config["slug_map"].items():
+                    if slug in event["url"]:
+                        info = slug_info.copy()
+                        print(f"    [{i}] {event['name']} -> slug:{slug}")
+                        break
+
+            # 3. Pattern-based stream file
             if info is None and config.get("pattern"):
                 match = re.search(r'-(\d+)/?$', event["url"].rstrip("/"))
                 n = match.group(1) if match else str(i)
@@ -90,14 +106,6 @@ def build_streams_list():
                 info = extract_stream_info(stream_path)
                 if info:
                     print(f"    [{i}] {event['name']} -> {stream_filename}")
-
-            # 3. Try slug map
-            if info is None and "slug_map" in config:
-                for slug, slug_info in config["slug_map"].items():
-                    if slug in event["url"]:
-                        info = slug_info
-                        print(f"    [{i}] {event['name']} -> slug:{slug}")
-                        break
 
             # 4. Fall back to default
             if info is None:
@@ -141,8 +149,9 @@ def update_multiview(streams_js):
     with open(MULTIVIEW_HTML, "w", encoding="utf-8", newline="") as f:
         f.write(new_content)
     print("  multiview.html updated successfully!")
+
 if __name__ == "__main__":
-    print(f"Writing to: {MULTIVIEW_HTML}")  # DEBUG
+    print(f"Writing to: {MULTIVIEW_HTML}")
     print("=" * 50)
     print("Updating multistream.html STREAMS list...")
     print("=" * 50)
