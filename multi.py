@@ -20,8 +20,10 @@ SCHEDULE_STREAM_MAP = {
     "motorsports.html": {"pattern": "ppv-streams-{n}.html",
                          "default": {"subdomain": "601", "path": "tt.m3u8", "txt": "domainsz29.txt"},
                          "slug_map": {
-                             "f1":      {"subdomain": "daffodil", "path": "f1.m3u8",  "txt": "domainsz29.txt"},
-                             "indycar": {"subdomain": "daffodil", "path": "f1.m3u8",  "txt": "domainsz29.txt"},
+                             "motogp":  {"file": "motogp.html"},
+                             "mxgp":    {"file": "mxgp.html"},
+                             "f1":      {"file": "f1.html"},
+                             "indycar": {"file": "indycar.html"},
                          }},
 }
 
@@ -49,6 +51,10 @@ def extract_stream_info(html_path):
     path = re.search(r"getRandomStream\(['\"](.+?)['\"]", content)
     if sub and txt and path:
         return {"subdomain": sub.group(1), "path": path.group(1), "txt": txt.group(1)}
+    # Also catch getRandomStream calls without a var subdomain (inline subdomain)
+    inline = re.search(r"getRandomStream\(['\"](.+?)['\"],\s*['\"](.+?)['\"]", content)
+    if inline and txt:
+        return {"path": inline.group(1), "subdomain": inline.group(2), "txt": txt.group(1)}
     return None
 
 def get_events_from_schedule(schedule_path):
@@ -89,12 +95,21 @@ def build_streams_list():
                 info = STREAM_OVERRIDES[event["name"]].copy()
                 print(f"    [{i}] {event['name']} -> OVERRIDE")
 
-            # 2. Slug map (before pattern, catches custom URLs like /f1 /indycar /wwe)
+            # 2. Slug map (before pattern, catches custom URLs like /motogp /f1 /wwe)
             if info is None and "slug_map" in config:
                 for slug, slug_info in config["slug_map"].items():
                     if slug in event["url"]:
-                        info = slug_info.copy()
-                        print(f"    [{i}] {event['name']} -> slug:{slug}")
+                        if "file" in slug_info:
+                            # Dynamically read m3u8 from the slug's own HTML file
+                            slug_file_path = os.path.join(BASE_DIR, slug_info["file"])
+                            info = extract_stream_info(slug_file_path)
+                            if info:
+                                print(f"    [{i}] {event['name']} -> slug:{slug} ({slug_info['file']})")
+                            else:
+                                print(f"    [{i}] {event['name']} -> slug:{slug} (file not found, falling through)")
+                        else:
+                            info = slug_info.copy()
+                            print(f"    [{i}] {event['name']} -> slug:{slug}")
                         break
 
             # 3. Pattern-based stream file
