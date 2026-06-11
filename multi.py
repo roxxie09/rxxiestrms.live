@@ -43,18 +43,30 @@ def extract_stream_info(html_path):
         return None
     with open(html_path, encoding="utf-8") as f:
         content = f.read()
+
+    # 1. Hardcoded showPlayer call
     hardcoded = re.search(r"showPlayer\('clappr',\s*'(https?://[^']+\.m3u8[^']*)'\)", content)
     if hardcoded:
         return {"hardcoded": hardcoded.group(1)}
+
+    # 2. var subdomain + fetch + getRandomStream (old style)
     sub  = re.search(r"var subdomain\s*=\s*['\"](.+?)['\"]", content)
     txt  = re.search(r"fetch\(['\"](.+?\.txt)['\"]", content)
     path = re.search(r"getRandomStream\(['\"](.+?)['\"]", content)
     if sub and txt and path:
         return {"subdomain": sub.group(1), "path": path.group(1), "txt": txt.group(1)}
-    # Also catch getRandomStream calls without a var subdomain (inline subdomain)
-    inline = re.search(r"getRandomStream\(['\"](.+?)['\"],\s*['\"](.+?)['\"]", content)
+
+    # 3. Inline getRandomStream('path', 'subdomain') with fetch (new style)
+    inline = re.search(r"getRandomStream\(['\"](.+?\.m3u8)['\"],\s*['\"](.+?)['\"]", content)
     if inline and txt:
         return {"path": inline.group(1), "subdomain": inline.group(2), "txt": txt.group(1)}
+
+    # 4. playStream5 fallback — mobile stream when desktop uses DASH
+    #    Look for getRandomStream inside playStream5 function
+    stream5 = re.search(r"function playStream5\(\)[\s\S]*?getRandomStream\(['\"](.+?\.m3u8)['\"],\s*['\"](.+?)['\"]", content)
+    if stream5 and txt:
+        return {"path": stream5.group(1), "subdomain": stream5.group(2), "txt": txt.group(1)}
+
     return None
 
 def get_events_from_schedule(schedule_path):
