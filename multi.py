@@ -153,16 +153,26 @@ def streams_to_js(streams):
 def update_multiview(streams_js):
     with open(MULTIVIEW_HTML, "r", encoding="utf-8", newline="") as f:
         content = f.read()
-    new_content = re.sub(
-        r"const STREAMS = \[[\s\S]*?\];",
-        streams_js,
-        content
-    )
-    if new_content == content:
-        print("  WARNING: STREAMS block not found in multiview.html")
+
+    start_marker = "const STREAMS = ["
+    end_marker = "];"
+
+    start = content.find(start_marker)
+    if start == -1:
+        print("  WARNING: STREAMS start marker not found in multiview.html")
         return
+
+    end = content.find(end_marker, start)
+    if end == -1:
+        print("  WARNING: STREAMS end marker not found in multiview.html")
+        return
+    end += len(end_marker)
+
+    new_content = content[:start] + streams_js + content[end:]
+
     with open(MULTIVIEW_HTML, "w", encoding="utf-8", newline="") as f:
         f.write(new_content)
+
     print("  multiview.html updated successfully!")
 
 if __name__ == "__main__":
