@@ -128,19 +128,18 @@ a.card-text:hover {
     filter: invert(1);
 }
 
-/* Soccer nav link – slow wavy mostly gold with hints of pink */
 .nav-link-soccer {
     font-weight: bold;
     background: linear-gradient(
         90deg,
-        #ffd700,   /* gold */
-        #ffcc00,   /* warm gold */
-        #ffc94d,   /* soft gold */
-        #ffb347,   /* golden amber */
-        #ffadd6,   /* light pink hint */
-        #ffd700,   /* back to gold */
-        #ffcc00,   /* warm gold */
-        #ffc94d    /* soft gold loop */
+        #ffd700,
+        #ffcc00,
+        #ffc94d,
+        #ffb347,
+        #ffadd6,
+        #ffd700,
+        #ffcc00,
+        #ffc94d
     );
     background-size: 400% auto;
     -webkit-background-clip: text;
