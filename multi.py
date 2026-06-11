@@ -28,9 +28,6 @@ SCHEDULE_STREAM_MAP = {
 }
 
 STREAM_OVERRIDES = {
-    # Add entries here only when a game needs a different m3u8 than what's in its stream HTML file
-    # Example:
-    # "Game Name": {"subdomain": "601", "path": "custom.m3u8", "txt": "domainsz29.txt"},
 }
 
 SPORT_LABELS = {
@@ -41,34 +38,35 @@ SPORT_LABELS = {
 def extract_stream_info(html_path):
     if not os.path.exists(html_path):
         return None
+
     with open(html_path, encoding="utf-8") as f:
         content = f.read()
 
-    # 1. Hardcoded showPlayer call
-    hardcoded = re.search(r"showPlayer\('clappr',\s*'(https?://[^']+\.m3u8[^']*)'\)", content)
+    hardcoded = re.search(r"showPlayer\('clappr',\s*'(https?://[^']+\.(?:m3u8|mpd)[^']*)'\)", content)
     if hardcoded:
         return {"hardcoded": hardcoded.group(1)}
 
-    # 2. var subdomain + fetch + getRandomStream (old style)
-    sub  = re.search(r"var subdomain\s*=\s*['\"](.+?)['\"]", content)
-    txt  = re.search(r"fetch\(['\"](.+?\.txt)['\"]", content)
-    path = re.search(r"getRandomStream\(['\"](.+?)['\"]", content)
-    if sub and txt and path:
-        return {"subdomain": sub.group(1), "path": path.group(1), "txt": txt.group(1)}
+    txt = re.search(r"fetch\(['\"](.+?\.txt)['\"]", content)
+    txt_file = txt.group(1) if txt else "domainsz29.txt"
 
-    # 3. Inline getRandomStream('path', 'subdomain') with fetch (new style)
-    inline = re.search(r"getRandomStream\(['\"](.+?\.m3u8)['\"],\s*['\"](.+?)['\"]", content)
-    if inline and txt:
-        return {"path": inline.group(1), "subdomain": inline.group(2), "txt": txt.group(1)}
-
-    # 4. playStream5 fallback — mobile stream when desktop uses DASH
-    #    Look for getRandomStream inside playStream5 function
     stream5 = re.search(r"function playStream5\(\)[\s\S]*?getRandomStream\(['\"](.+?\.m3u8)['\"],\s*['\"](.+?)['\"]", content)
-    if stream5 and txt:
-        return {"path": stream5.group(1), "subdomain": stream5.group(2), "txt": txt.group(1)}
+    if stream5:
+        return {"path": stream5.group(1), "subdomain": stream5.group(2), "txt": txt_file}
+
+    stream1 = re.search(r"function playStream1\(\)[\s\S]*?getRandomStream\(['\"](.+?\.m3u8)['\"],\s*['\"](.+?)['\"]", content)
+    if stream1:
+        return {"path": stream1.group(1), "subdomain": stream1.group(2), "txt": txt_file}
+
+    inline = re.search(r"getRandomStream\(['\"](.+?\.m3u8)['\"],\s*['\"](.+?)['\"]", content)
+    if inline:
+        return {"path": inline.group(1), "subdomain": inline.group(2), "txt": txt_file}
+
+    sub = re.search(r"var subdomain\s*=\s*['\"](.+?)['\"]", content)
+    path = re.search(r"getRandomStream\(['\"](.+?)['\"]", content)
+    if sub and path:
+        return {"subdomain": sub.group(1), "path": path.group(1), "txt": txt_file}
 
     return None
-
 def get_events_from_schedule(schedule_path):
     with open(schedule_path, encoding="utf-8") as f:
         soup = BeautifulSoup(f, "html.parser")
@@ -102,17 +100,14 @@ def build_streams_list():
         for i, event in enumerate(events, 1):
             info = None
 
-            # 1. Check label override first
             if event["name"] in STREAM_OVERRIDES:
                 info = STREAM_OVERRIDES[event["name"]].copy()
                 print(f"    [{i}] {event['name']} -> OVERRIDE")
 
-            # 2. Slug map (before pattern, catches custom URLs like /motogp /f1 /wwe)
             if info is None and "slug_map" in config:
                 for slug, slug_info in config["slug_map"].items():
                     if slug in event["url"]:
                         if "file" in slug_info:
-                            # Dynamically read m3u8 from the slug's own HTML file
                             slug_file_path = os.path.join(BASE_DIR, slug_info["file"])
                             info = extract_stream_info(slug_file_path)
                             if info:
@@ -124,7 +119,6 @@ def build_streams_list():
                             print(f"    [{i}] {event['name']} -> slug:{slug}")
                         break
 
-            # 3. Pattern-based stream file
             if info is None and config.get("pattern"):
                 match = re.search(r'-(\d+)/?$', event["url"].rstrip("/"))
                 n = match.group(1) if match else str(i)
@@ -134,7 +128,6 @@ def build_streams_list():
                 if info:
                     print(f"    [{i}] {event['name']} -> {stream_filename}")
 
-            # 4. Fall back to default
             if info is None:
                 info = config["default"].copy()
                 print(f"    [{i}] {event['name']} -> DEFAULT")
