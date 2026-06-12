@@ -334,6 +334,10 @@ function loadStream(panelIndex) {
         height: '100%',
         width: '100%',
         autoPlay: true,
+        playback: {
+          playInline: true,
+          recycleVideo: true
+        },
         mute: panelIndex > 0,
     });
 }
