@@ -10,13 +10,13 @@ SCHEDULE_STREAM_MAP = {
     "mlb.html":         {"pattern": "mlb-streams-{n}.html",     "default": {"subdomain": "601",      "path": "mlb.m3u8",     "txt": "domainsz29.txt"}},
     "nba.html":         {"pattern": "nba-streams-{n}.html",     "default": {"subdomain": "daffodil", "path": "nba.m3u8",     "txt": "domainsz29.txt"}},
     "nhl.html":         {"pattern": "nhl-streams-{n}.html",     "default": {"subdomain": "601",      "path": "nhl.m3u8",     "txt": "domainsz29.txt"}},
-    "fighting.html":    {"pattern": None,
-                         "default": {"subdomain": "daffodil", "path": "wwe.m3u8", "txt": "domainsz29.txt"},
-                         "slug_map": {
-                             "wwe": {"subdomain": "daffodil", "path": "wwe.m3u8",    "txt": "domainsz29.txt"},
-                             "ufc": {"subdomain": "601",      "path": "ataide.m3u8", "txt": "domainsz29.txt"},
-                             "ppv": {"subdomain": "601",      "path": "tt.m3u8",     "txt": "domainsz29.txt"},
-                         }},
+"fighting.html":    {"pattern": None,
+                     "default": {"subdomain": "daffodil", "path": "wwe.m3u8", "txt": "domainsz29.txt"},
+                     "slug_map": {
+                         "wwe": {"subdomain": "daffodil", "path": "wwe.m3u8",    "txt": "domainsz29.txt"},
+                         "ufc": {"file": "ufc.html"},
+                         "ppv": {"file": "ppv.html"},
+                     }},
     "motorsports.html": {"pattern": "ppv-streams-{n}.html",
                          "default": {"subdomain": "601", "path": "tt.m3u8", "txt": "domainsz29.txt"},
                          "slug_map": {
