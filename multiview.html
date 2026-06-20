@@ -204,16 +204,16 @@
 <script>
 const STREAMS = [
     // ── Soccer ──
-    { label: 'Netherlands vs Sweden', sport: 'soccer', subdomain: 'ataide0', path: 'tsn.m3u8', txt: 'domainsz32.txt' },
-    { label: 'Almería vs Malaga', sport: 'soccer', subdomain: 'ataide0', path: 'tsn.m3u8', txt: 'domainsz32.txt' },
-    { label: 'Germany vs Ivory Coast', sport: 'soccer', subdomain: 'ataide0', path: 'tsn.m3u8', txt: 'domainsz32.txt' },
-    { label: 'Ecuador vs Curacao', sport: 'soccer', subdomain: 'ataide0', path: 'tsn.m3u8', txt: 'domainsz32.txt' },
-    { label: 'Tunisia vs Japan', sport: 'soccer', subdomain: 'ataide0', path: 'tsn.m3u8', txt: 'domainsz32.txt' },
+    { label: 'Netherlands vs Sweden', sport: 'soccer', subdomain: 'ataide0', path: 'tsn.m3u8', txt: 'domainsz33.txt' },
+    { label: 'Almería vs Malaga', sport: 'soccer', subdomain: 'ataide0', path: 'tsn.m3u8', txt: 'domainsz33.txt' },
+    { label: 'Germany vs Ivory Coast', sport: 'soccer', subdomain: 'ataide0', path: 'tsn.m3u8', txt: 'domainsz33.txt' },
+    { label: 'Ecuador vs Curacao', sport: 'soccer', subdomain: 'ataide0', path: 'tsn.m3u8', txt: 'domainsz33.txt' },
+    { label: 'Tunisia vs Japan', sport: 'soccer', subdomain: 'ataide0', path: 'tsn.m3u8', txt: 'domainsz33.txt' },
     // ── MLB ──
-    { label: 'Chicago White Sox vs Detroit Tigers', sport: 'mlb', subdomain: '601', path: 'mlb.m3u8', txt: 'domainsz32.txt' },
-    { label: 'Cincinnati Reds vs New York Yankees', sport: 'mlb', subdomain: '601', path: 'mlb2.m3u8', txt: 'domainsz32.txt' },
+    { label: 'Chicago White Sox vs Detroit Tigers', sport: 'mlb', subdomain: '601', path: 'mlb.m3u8', txt: 'domainsz33.txt' },
+    { label: 'Cincinnati Reds vs New York Yankees', sport: 'mlb', subdomain: '601', path: 'mlb2.m3u8', txt: 'domainsz33.txt' },
     { label: 'Toronto Blue Jays vs Chicago Cubs', sport: 'mlb', hardcoded: 'https://601.formaturamaxi.com.br/mlb3.m3u8' },
-    { label: 'San Diego Padres vs Texas Rangers', sport: 'mlb', subdomain: '601', path: 'mlb4.m3u8', txt: 'domainsz32.txt' },
+    { label: 'San Diego Padres vs Texas Rangers', sport: 'mlb', subdomain: '601', path: 'mlb4.m3u8', txt: 'domainsz33.txt' },
     { label: 'Washington Nationals vs Tampa Bay Rays', sport: 'mlb', hardcoded: 'https://601.formaturamaxi.com.br/mlb5.m3u8' },
     { label: 'San Francisco Giants vs Miami Marlins', sport: 'mlb', hardcoded: 'https://601.formaturamaxi.com.br/mlb6.m3u8' },
     { label: 'Milwaukee Brewers vs Atlanta Braves', sport: 'mlb', hardcoded: 'https://601.formaturamaxi.com.br/mlb7.m3u8' },
@@ -226,14 +226,14 @@ const STREAMS = [
     { label: 'Minnesota Twins vs Arizona Diamondbacks', sport: 'mlb', hardcoded: 'https://601.formaturamaxi.com.br/mlb14.m3u8' },
     // ── Fighting ──
     { label: 'Garner vs. Magnesi', sport: 'fighting', subdomain: 'daffodil', path: 'wwe.m3u8', txt: 'domainsz29.txt' },
-    { label: 'UFC FN: Kape vs. Horiguchi 2', sport: 'fighting', subdomain: '602', path: 'happybirthdayabb.m3u8', txt: 'domainsz32.txt' },
+    { label: 'UFC FN: Kape vs. Horiguchi 2', sport: 'fighting', subdomain: '602', path: 'happybirthdayabb.m3u8', txt: 'domainsz33.txt' },
     // ── Motorsports ──
-    { label: 'MotoGP - Coverage', sport: 'motorsports', subdomain: '601', path: 'tnt2.m3u8', txt: 'domainsz32.txt' },
-    { label: 'AMA Motocross - Qualifying', sport: 'motorsports', subdomain: '601', path: 'ppv2.m3u8', txt: 'domainsz32.txt' },
-    { label: 'Indycar Series - Coverage', sport: 'motorsports', subdomain: '601', path: 'indy.m3u8', txt: 'domainsz32.txt' },
-    { label: 'AMA Motocross - Races', sport: 'motorsports', subdomain: '601', path: 'ppv4.m3u8', txt: 'domainsz32.txt' },
-    { label: 'NASCAR O\'Reilly Auto Parts - Race', sport: 'motorsports', subdomain: '601', path: 'ppv5.m3u8', txt: 'domainsz32.txt' },
-    { label: 'ARCA Menards Series - Race', sport: 'motorsports', subdomain: '601', path: 'ppv6.m3u8', txt: 'domainsz32.txt' },
+    { label: 'MotoGP - Coverage', sport: 'motorsports', subdomain: '601', path: 'tnt2.m3u8', txt: 'domainsz33.txt' },
+    { label: 'AMA Motocross - Qualifying', sport: 'motorsports', subdomain: '601', path: 'ppv2.m3u8', txt: 'domainsz33.txt' },
+    { label: 'Indycar Series - Coverage', sport: 'motorsports', subdomain: '601', path: 'indy.m3u8', txt: 'domainsz33.txt' },
+    { label: 'AMA Motocross - Races', sport: 'motorsports', subdomain: '601', path: 'ppv4.m3u8', txt: 'domainsz33.txt' },
+    { label: 'NASCAR O\'Reilly Auto Parts - Race', sport: 'motorsports', subdomain: '601', path: 'ppv5.m3u8', txt: 'domainsz33.txt' },
+    { label: 'ARCA Menards Series - Race', sport: 'motorsports', subdomain: '601', path: 'ppv6.m3u8', txt: 'domainsz33.txt' },
 ];
 
 const SPORT_LABELS = {
