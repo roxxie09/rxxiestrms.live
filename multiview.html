@@ -204,34 +204,36 @@
 <script>
 const STREAMS = [
     // ── Soccer ──
-    { label: 'Curaçao vs Ivory Coast', sport: 'soccer', subdomain: '602', path: 'tsn.m3u8', txt: 'domainsz37.txt' },
-    { label: 'Ecuador vs Germany', sport: 'soccer', subdomain: 'ataide0', path: 'tsn.m3u8', txt: 'domainsz37.txt' },
-    { label: 'Tunisia vs Netherlands', sport: 'soccer', subdomain: 'ataide0', path: 'tsn.m3u8', txt: 'domainsz37.txt' },
-    { label: 'Japan vs Sweden', sport: 'soccer', subdomain: '602', path: 'tsn.m3u8', txt: 'domainsz37.txt' },
-    { label: 'Paraguay vs Australia', sport: 'soccer', subdomain: '602', path: 'tsn.m3u8', txt: 'domainsz37.txt' },
-    { label: 'Turkey vs USA', sport: 'soccer', subdomain: 'ataide0', path: 'tsn.m3u8', txt: 'domainsz37.txt' },
+    { label: 'Norway vs France', sport: 'soccer', subdomain: 'ataide0', path: 'tsn.m3u8', txt: 'domainsz37.txt' },
+    { label: 'Senegal vs Iraq', sport: 'soccer', subdomain: '602', path: 'tsn.m3u8', txt: 'domainsz37.txt' },
+    { label: 'Uruguay vs Spain', sport: 'soccer', subdomain: 'ataide0', path: 'tsn.m3u8', txt: 'domainsz37.txt' },
+    { label: 'Cape Verde vs Saudi Araba', sport: 'soccer', subdomain: '602', path: 'tsn.m3u8', txt: 'domainsz37.txt' },
+    { label: 'New Zealand vs Belgium', sport: 'soccer', subdomain: 'ataide0', path: 'tsn.m3u8', txt: 'domainsz37.txt' },
+    { label: 'Egypt vs Iran', sport: 'soccer', subdomain: '602', path: 'tsn.m3u8', txt: 'domainsz37.txt' },
     // ── MLB ──
-    { label: 'Kansas City Royals vs Tampa Bay Rays', sport: 'mlb', subdomain: '602', path: 'mlb.m3u8', txt: 'domainsz37.txt' },
-    { label: 'Seattle Mariners vs Pittsburgh Pirates', sport: 'mlb', subdomain: '602', path: 'mlb2.m3u8', txt: 'domainsz37.txt' },
-    { label: 'Athletics vs San Francisco Giants', sport: 'mlb', hardcoded: 'https://602.formaturamaxi.com.br/mlb3.m3u8' },
-    { label: 'Houston Astros vs Detroit Tigers', sport: 'mlb', subdomain: '602', path: 'mlb4.m3u8', txt: 'domainsz37.txt' },
-    { label: 'Philadelphia Phillies vs Washington Nationals', sport: 'mlb', hardcoded: 'https://602.formaturamaxi.com.br/mlb5.m3u8' },
-    { label: 'Texas Rangers vs Toronto Blue Jays', sport: 'mlb', hardcoded: 'https://602.formaturamaxi.com.br/mlb6.m3u8' },
-    { label: 'Chicago Cubs vs New York Mets', sport: 'mlb', hardcoded: 'https://602.formaturamaxi.com.br/mlb7.m3u8' },
+    { label: 'Houston Astros vs Detroit Tigers', sport: 'mlb', subdomain: '602', path: 'mlb.m3u8', txt: 'domainsz37.txt' },
+    { label: 'Cincinnati Reds vs Pittsburgh Pirates', sport: 'mlb', subdomain: '602', path: 'mlb2.m3u8', txt: 'domainsz37.txt' },
+    { label: 'Washington Nationals vs Baltimore Orioles', sport: 'mlb', hardcoded: 'https://602.formaturamaxi.com.br/mlb3.m3u8' },
+    { label: 'Texas Rangers vs Toronto Blue Jays', sport: 'mlb', subdomain: '602', path: 'mlb4.m3u8', txt: 'domainsz37.txt' },
+    { label: 'Seattle Mariners vs Cleveland Guardians', sport: 'mlb', hardcoded: 'https://602.formaturamaxi.com.br/mlb5.m3u8' },
+    { label: 'Arizona Diamondbacks vs Tampa Bay Rays', sport: 'mlb', hardcoded: 'https://602.formaturamaxi.com.br/mlb6.m3u8' },
+    { label: 'Philadelphia Phillies vs New York Mets', sport: 'mlb', hardcoded: 'https://602.formaturamaxi.com.br/mlb7.m3u8' },
     { label: 'New York Yankees vs Boston Red Sox', sport: 'mlb', hardcoded: 'https://602.formaturamaxi.com.br/mlb8.m3u8' },
-    { label: 'Arizona Diamondbacks vs St. Louis Cardinals', sport: 'mlb', hardcoded: 'https://602.formaturamaxi.com.br/mlb9.m3u8' },
+    { label: 'Kansas City Royals vs Chicago White Sox', sport: 'mlb', hardcoded: 'https://602.formaturamaxi.com.br/mlb9.m3u8' },
+    { label: 'Chicago Cubs vs Milwaukee Brewers', sport: 'mlb', hardcoded: 'https://602.formaturamaxi.com.br/mlb10.m3u8' },
+    { label: 'Colorado Rockies vs Minnesota Twins', sport: 'mlb', hardcoded: 'https://602.formaturamaxi.com.br/mlb11.m3u8' },
+    { label: 'Miami Marlins vs St. Louis Cardinals', sport: 'mlb', hardcoded: 'https://602.formaturamaxi.com.br/mlb12.m3u8' },
+    { label: 'Athletics vs Los Angeles Angels', sport: 'mlb', hardcoded: 'https://602.formaturamaxi.com.br/mlb13.m3u8' },
+    { label: 'Los Angeles Dodgers vs San Diego Padres', sport: 'mlb', hardcoded: 'https://602.formaturamaxi.com.br/mlb14.m3u8' },
+    { label: 'Atlanta Braves vs San Francisco Giants', sport: 'mlb', hardcoded: 'https://602.formaturamaxi.com.br/mlb15.m3u8' },
     // ── NHL ──
     { label: 'NHL Draft 2026', sport: 'nhl', subdomain: '602', path: 'nhl.m3u8', txt: 'domainsz37.txt' },
     // ── Fighting ──
     { label: 'WWE Smackdown', sport: 'fighting', subdomain: 'daffodil', path: 'wwe.m3u8', txt: 'domainsz29.txt' },
     // ── Motorsports ──
     { label: 'MotoGP - Coverage', sport: 'motorsports', hardcoded: 'https://customer-rqx2ncfj15h2he6q.cloudflarestream.com/92f6cbdfdbed488c94405d1c605bc403/manifest/video.m3u8' },
-    { label: 'MXGP (MX2) - Race', sport: 'motorsports', hardcoded: 'https://602.formaturamaxi.com.br/mxgp.m3u8' },
-    { label: 'MotoGP - Czechia Grand Prix', sport: 'motorsports', subdomain: '602', path: 'ppv3.m3u8', txt: 'domainsz37.txt' },
-    { label: 'MXGP - Race', sport: 'motorsports', hardcoded: 'https://602.formaturamaxi.com.br/mxgp.m3u8' },
-    { label: 'Indy NXT - Race', sport: 'motorsports', subdomain: '602', path: 'ppv5.m3u8', txt: 'domainsz37.txt' },
-    { label: 'Indycar Series - XPEDL Grand Prix', sport: 'motorsports', subdomain: '602', path: 'indy.m3u8', txt: 'domainsz37.txt' },
-    { label: 'NASCAR Cup Series - Race', sport: 'motorsports', subdomain: '601', path: 'tt.m3u8', txt: 'domainsz29.txt' },
+    { label: 'Formula 1 - Free Practice', sport: 'motorsports', subdomain: '602', path: 'f1.m3u8', txt: 'domainsz37.txt' },
+    { label: 'Formula 1 - Free Practice 2', sport: 'motorsports', subdomain: '602', path: 'f1.m3u8', txt: 'domainsz37.txt' },
 ];
 
 const SPORT_LABELS = {
