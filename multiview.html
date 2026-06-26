@@ -1,244 +1,173 @@
 <!DOCTYPE html>
-
 <html data-bs-theme="dark" lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1" name="viewport"/>
-<title>Roxiestreams - Watch Live Sports, F1, UFC, NFL, TV</title>
-<meta content="Free PPV UFC, TV, NBA, NFL, and F1 streams" name="description"/>
-<meta content="Roxiestreams, ppv, boxing, dazn, f1, ufc, nba, for, stream, online, free, mrgamingstreams, f1, tv, nfl" name="keywords"/>
-<link href="https://fonts.googleapis.com" rel="preconnect"/>
-<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-<link href="css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
-<link href="css/main2.css" rel="stylesheet" type="text/css"/>
-<link href="/css/buttons.css" rel="stylesheet"/>
-<link href="imgs/iconn.png" rel="shortcut icon" type="x-icon">
-<script disable-devtool-auto="" src="https://cdn.jsdelivr.net/npm/disable-devtool/disable-devtool.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/clappr@latest/dist/clappr.min.js"></script>
-<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-EQ3BHVQGMN"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Roxiestreams - Watch Live Sports, F1, UFC, NFL, TV</title>
+    <meta name="description" content="Free PPV UFC, TV, NBA, NFL, and F1 streams">
+    <meta name="keywords" content="Roxiestreams, ppv, boxing, dazn, f1, ufc, nba, for, stream, online, free, mrgamingstreams, f1, tv, nfl">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/main2.css">
+    <link href="/css/buttons.css" rel="stylesheet">
+    <link href="imgs/iconn.png" rel="shortcut icon" type="x-icon"/>
+    <script disable-devtool-auto src='https://cdn.jsdelivr.net/npm/disable-devtool/disable-devtool.min.js'></script>
+    <script src="https://cdn.jsdelivr.net/npm/clappr@latest/dist/clappr.min.js"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-EQ3BHVQGMN"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-EQ3BHVQGMN');
+    </script>
+    <style>
+        body { background: #000; }
+        .navbar-brand {
+            color: pink; font-size: 1.3rem; text-decoration: none;
+            margin-top: -3px; font-family: 'Kanit', sans-serif; font-weight: bold;
+        }
+        .navbar-brand:hover { text-decoration: underline; }
+        .navbar-nav .nav-link { padding-left: 5px; padding-right: 5px; }
 
-  gtag('config', 'G-EQ3BHVQGMN');
-</script>
-<style>
-    body { background: #000; }
-    .navbar-brand {
-        color: pink;
-        font-size: 1.3rem;
-        text-decoration: none;
-        margin-top: -3px;
-        font-family: 'Kanit', sans-serif;
-        font-weight: bold;
-    }
-    .navbar-brand:hover { text-decoration: underline; }
-    .navbar-nav .nav-link { padding-left: 5px; padding-right: 5px; }
+        #layoutSelector {
+            display: flex; justify-content: center; align-items: center;
+            gap: 10px; padding: 14px; flex-wrap: wrap;
+        }
+        #layoutSelector span { color: pink; font-weight: bold; font-family: 'Kanit', sans-serif; font-size: 1rem; }
+        .layout-btn {
+            background: #1a1a1a; border: 2px solid rgba(255,192,203,0.3);
+            color: pink; padding: 6px 16px; border-radius: 6px;
+            cursor: pointer; font-weight: bold; font-size: 0.9rem; transition: all 0.2s;
+        }
+        .layout-btn:hover, .layout-btn.active { background: rgba(255,192,203,0.15); border-color: pink; }
 
-    #layoutSelector {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 10px;
-        padding: 14px;
-        flex-wrap: wrap;
-    }
-    #layoutSelector span {
-        color: pink;
-        font-weight: bold;
-        font-family: 'Kanit', sans-serif;
-        font-size: 1rem;
-    }
-    .layout-btn {
-        background: #1a1a1a;
-        border: 2px solid rgba(255,192,203,0.3);
-        color: pink;
-        padding: 6px 16px;
-        border-radius: 6px;
-        cursor: pointer;
-        font-weight: bold;
-        font-size: 0.9rem;
-        transition: all 0.2s;
-    }
-    .layout-btn:hover, .layout-btn.active {
-        background: rgba(255,192,203,0.15);
-        border-color: pink;
-    }
+        #multiGrid {
+            display: grid; gap: 4px; padding: 0 8px 8px;
+            height: calc(100vh - 120px);
+        }
+        .grid-2 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr; }
+        .grid-3 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
+        .grid-4 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
+        .grid-5 { grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr; grid-template-rows: 1fr 1fr; }
+        .grid-6 { grid-template-columns: 1fr 1fr 1fr; grid-template-rows: 1fr 1fr; }
+        .grid-3 .stream-panel:nth-child(3) { grid-column: 1 / -1; }
+        .grid-5 .stream-panel:nth-child(1) { grid-column: 1 / 3; }
+        .grid-5 .stream-panel:nth-child(2) { grid-column: 3 / 5; }
+        .grid-5 .stream-panel:nth-child(3) { grid-column: 5 / 7; }
+        .grid-5 .stream-panel:nth-child(4) { grid-column: 2 / 4; }
+        .grid-5 .stream-panel:nth-child(5) { grid-column: 4 / 6; }
 
-#multiGrid {
-    display: grid;
-    gap: 4px;
-    padding: 0 8px 8px;
-    height: calc(100vh - 120px);
-}
-.grid-2 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr; }
-.grid-3 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
-.grid-4 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
-.grid-5 {
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
-    grid-template-rows: 1fr 1fr;
-}
-.grid-6 { grid-template-columns: 1fr 1fr 1fr; grid-template-rows: 1fr 1fr; }
+        .stream-panel {
+            position: relative; background: #111;
+            border: 1px solid rgba(255,192,203,0.15);
+            border-radius: 6px; overflow: hidden;
+            display: flex; flex-direction: column;
+        }
+        .panel-toolbar {
+            display: flex; align-items: center; gap: 6px;
+            padding: 5px 8px; background: #1a1a1a;
+            border-bottom: 1px solid rgba(255,192,203,0.1);
+            flex-shrink: 0; flex-wrap: wrap; position: relative;
+        }
+        .stream-select {
+            flex: 1; min-width: 120px; background: #2a2a2a; color: white;
+            border: 1px solid rgba(255,192,203,0.3); border-radius: 4px;
+            padding: 3px 6px; font-size: 11px;
+        }
+        .stream-select optgroup { color: pink; font-weight: bold; background: #1a1a1a; }
+        .stream-select option { color: white; background: #2a2a2a; font-weight: normal; }
+        .load-btn {
+            background: rgba(255,192,203,0.15); border: 1px solid rgba(255,192,203,0.4);
+            color: pink; padding: 3px 10px; border-radius: 4px;
+            cursor: pointer; font-size: 11px; font-weight: bold; white-space: nowrap;
+        }
+        .load-btn:hover { background: rgba(255,192,203,0.3); }
 
-.grid-3 .stream-panel:nth-child(3) {
-    grid-column: 1 / -1;
-}
-.grid-5 .stream-panel:nth-child(1) { grid-column: 1 / 3; }
-.grid-5 .stream-panel:nth-child(2) { grid-column: 3 / 5; }
-.grid-5 .stream-panel:nth-child(3) { grid-column: 5 / 7; }
-.grid-5 .stream-panel:nth-child(4) { grid-column: 2 / 4; }
-.grid-5 .stream-panel:nth-child(5) { grid-column: 4 / 6; }
+        /* ▾ Source switcher button */
+        .src-btn {
+            background: rgba(255,192,203,0.15); border: 1px solid rgba(255,192,203,0.4);
+            color: pink; padding: 3px 8px; border-radius: 4px;
+            cursor: pointer; font-size: 13px; font-weight: bold; white-space: nowrap;
+            display: none;
+        }
+        .src-btn:hover { background: rgba(255,192,203,0.3); }
+        .src-menu {
+            display: none; position: absolute; top: 34px; left: 8px;
+            background: #1a1a1a; border: 1px solid rgba(255,192,203,0.35);
+            border-radius: 6px; z-index: 200; min-width: 170px; padding: 4px 0;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.6);
+        }
+        .src-menu button {
+            display: block; width: 100%; background: none; border: none;
+            color: white; padding: 7px 14px; text-align: left;
+            cursor: pointer; font-size: 12px;
+        }
+        .src-menu button:hover { background: rgba(255,192,203,0.15); color: pink; }
+        .src-menu button.active-src { color: pink; font-weight: bold; }
 
-    .stream-panel {
-        position: relative;
-        background: #111;
-        border: 1px solid rgba(255,192,203,0.15);
-        border-radius: 6px;
-        overflow: hidden;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .panel-toolbar {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        padding: 5px 8px;
-        background: #1a1a1a;
-        border-bottom: 1px solid rgba(255,192,203,0.1);
-        flex-shrink: 0;
-        flex-wrap: wrap;
-    }
-    .stream-select {
-        flex: 1;
-        min-width: 120px;
-        background: #2a2a2a;
-        color: white;
-        border: 1px solid rgba(255,192,203,0.3);
-        border-radius: 4px;
-        padding: 3px 6px;
-        font-size: 11px;
-    }
-    .stream-select optgroup {
-        color: pink;
-        font-weight: bold;
-        background: #1a1a1a;
-    }
-    .stream-select option {
-        color: white;
-        background: #2a2a2a;
-        font-weight: normal;
-    }
-    .load-btn {
-        background: rgba(255,192,203,0.15);
-        border: 1px solid rgba(255,192,203,0.4);
-        color: pink;
-        padding: 3px 10px;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 11px;
-        font-weight: bold;
-        white-space: nowrap;
-    }
-    .load-btn:hover { background: rgba(255,192,203,0.3); }
-
-    .panel-player { flex: 1; position: relative; }
-    .panel-player > div { width: 100% !important; height: 100% !important; }
-
-    .panel-placeholder {
-        width: 100%;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        color: rgba(255,192,203,0.4);
-        font-family: 'Kanit', sans-serif;
-        gap: 8px;
-    }
-    .panel-placeholder svg { opacity: 0.3; }
-    .panel-placeholder p { font-size: 13px; margin: 0; }
-</style>
-</link></head>
+        .panel-player { flex: 1; position: relative; }
+        .panel-player div { width: 100% !important; height: 100% !important; }
+        .panel-placeholder {
+            width: 100%; height: 100%; display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            color: rgba(255,192,203,0.4); font-family: 'Kanit', sans-serif; gap: 8px;
+        }
+        .panel-placeholder svg { opacity: 0.3; }
+        .panel-placeholder p { font-size: 13px; margin: 0; }
+    </style>
+</head>
 <body>
-<nav class="navbar navbar-expand-lg bg-black">
-<div class="container-fluid">
-<a class="navbar-brand" href="https://roxiestreams.info/">RoxieStreams</a>
-<button class="navbar-toggler" data-bs-target="#navbarSupportedContent" data-bs-toggle="collapse" type="button">
-<span class="navbar-toggler-icon"></span>
-</button>
-<div class="collapse navbar-collapse" id="navbarSupportedContent">
-<ul class="navbar-nav me-auto mb-2 mb-lg-0">
-<li class="nav-item"><a class="nav-link nav-link-soccer" href="https://roxiestreams.info/soccer">Soccer (WC 2026)</a></li>
-<li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/mlb">MLB</a></li>
-<li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/nba">NBA</a></li>
-<li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/nfl">NFL</a></li>
-<li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/nhl">NHL</a></li>
-<li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/fighting">Fighting</a></li>
-<li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/motorsports">Motorsports</a></li>
-<li class="nav-item"><a class="nav-link" href="https://discord.gg/JhkVmejRmn">Stream Request (Discord)</a></li>
-</ul><ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-<li class="nav-item">
-<a class="nav-link d-flex align-items-center gap-1" href="https://roxiestreams.info/multiview">
-<svg fill="currentColor" height="16" viewbox="0 0 16 16" width="16" xmlns="http://www.w3.org/2000/svg">
-<path d="M0 1.5A1.5 1.5 0 0 1 1.5 0h13A1.5 1.5 0 0 1 16 1.5v13a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 14.5v-13zM1.5 1a.5.5 0 0 0-.5.5V7h6V1H1.5zM7 8H1v6.5a.5.5 0 0 0 .5.5H7V8zm1 0v7h6.5a.5.5 0 0 0 .5-.5V8H8zm0-1h7V1.5a.5.5 0 0 0-.5-.5H8v6z"></path>
-</svg>
-        MultiView (NEW)
-    </a>
-</li>
-</ul>
-</div>
-</div>
-</nav>
-<div id="layoutSelector">
-<span>Streams:</span>
-<button class="layout-btn active" onclick="setLayout(2)">2</button>
-<button class="layout-btn" onclick="setLayout(3)">3</button>
-<button class="layout-btn" onclick="setLayout(4)">4</button>
-<button class="layout-btn" onclick="setLayout(5)">5</button>
-<button class="layout-btn" onclick="setLayout(6)">6</button>
-</div>
-<div class="grid-2" id="multiGrid"></div>
-<script src="js/bootstrap.bundle.min.js"></script>
-<script>
+    <nav class="navbar navbar-expand-lg bg-black">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="https://roxiestreams.info/">RoxieStreams</a>
+            <button class="navbar-toggler" data-bs-target="#navbarSupportedContent" data-bs-toggle="collapse" type="button">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link nav-link-soccer" href="https://roxiestreams.info/soccer">Soccer WC 2026</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/mlb">MLB</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/nba">NBA</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/nfl">NFL</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/nhl">NHL</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/fighting">Fighting</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/motorsports">Motorsports</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://discord.gg/JhkVmejRmn">Stream Request (Discord)</a></li>
+                </ul>
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center gap-1" href="https://roxiestreams.info/multiview">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M0 1.5A1.5 1.5 0 0 1 1.5 0h13A1.5 1.5 0 0 1 16 1.5v13a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 14.5v-13zM1.5 1a.5.5 0 0 0-.5.5V7h6V1H1.5zM7 8H1v6.5a.5.5 0 0 0 .5.5H7V8zm1 0v7h6.5a.5.5 0 0 0 .5-.5V8H8zm0-1h7V1.5a.5.5 0 0 0-.5-.5H8v6z"/>
+                            </svg>
+                            MultiView (NEW)
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div id="layoutSelector">
+        <span>Streams:</span>
+        <button class="layout-btn active" onclick="setLayout(2)">2</button>
+        <button class="layout-btn" onclick="setLayout(3)">3</button>
+        <button class="layout-btn" onclick="setLayout(4)">4</button>
+        <button class="layout-btn" onclick="setLayout(5)">5</button>
+        <button class="layout-btn" onclick="setLayout(6)">6</button>
+    </div>
+
+    <div class="grid-2" id="multiGrid"></div>
+
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <script>
 const STREAMS = [
-    // ── Soccer ──
-    { label: 'Norway vs France', sport: 'soccer', subdomain: 'ataide0', path: 'tsn.m3u8', txt: 'domainsz37.txt' },
-    { label: 'Senegal vs Iraq', sport: 'soccer', subdomain: '602', path: 'tsn.m3u8', txt: 'domainsz37.txt' },
-    { label: 'Uruguay vs Spain', sport: 'soccer', subdomain: 'ataide0', path: 'tsn.m3u8', txt: 'domainsz37.txt' },
-    { label: 'Cape Verde vs Saudi Araba', sport: 'soccer', subdomain: '602', path: 'tsn.m3u8', txt: 'domainsz37.txt' },
-    { label: 'New Zealand vs Belgium', sport: 'soccer', subdomain: 'ataide0', path: 'tsn.m3u8', txt: 'domainsz37.txt' },
-    { label: 'Egypt vs Iran', sport: 'soccer', subdomain: '602', path: 'tsn.m3u8', txt: 'domainsz37.txt' },
-    // ── MLB ──
-    { label: 'Houston Astros vs Detroit Tigers', sport: 'mlb', subdomain: '602', path: 'mlb.m3u8', txt: 'domainsz37.txt' },
-    { label: 'Cincinnati Reds vs Pittsburgh Pirates', sport: 'mlb', subdomain: '602', path: 'mlb2.m3u8', txt: 'domainsz37.txt' },
-    { label: 'Washington Nationals vs Baltimore Orioles', sport: 'mlb', hardcoded: 'https://602.formaturamaxi.com.br/mlb3.m3u8' },
-    { label: 'Texas Rangers vs Toronto Blue Jays', sport: 'mlb', subdomain: '602', path: 'mlb4.m3u8', txt: 'domainsz37.txt' },
-    { label: 'Seattle Mariners vs Cleveland Guardians', sport: 'mlb', hardcoded: 'https://602.formaturamaxi.com.br/mlb5.m3u8' },
-    { label: 'Arizona Diamondbacks vs Tampa Bay Rays', sport: 'mlb', hardcoded: 'https://602.formaturamaxi.com.br/mlb6.m3u8' },
-    { label: 'Philadelphia Phillies vs New York Mets', sport: 'mlb', hardcoded: 'https://602.formaturamaxi.com.br/mlb7.m3u8' },
-    { label: 'New York Yankees vs Boston Red Sox', sport: 'mlb', hardcoded: 'https://602.formaturamaxi.com.br/mlb8.m3u8' },
-    { label: 'Kansas City Royals vs Chicago White Sox', sport: 'mlb', hardcoded: 'https://602.formaturamaxi.com.br/mlb9.m3u8' },
-    { label: 'Chicago Cubs vs Milwaukee Brewers', sport: 'mlb', hardcoded: 'https://602.formaturamaxi.com.br/mlb10.m3u8' },
-    { label: 'Colorado Rockies vs Minnesota Twins', sport: 'mlb', hardcoded: 'https://602.formaturamaxi.com.br/mlb11.m3u8' },
-    { label: 'Miami Marlins vs St. Louis Cardinals', sport: 'mlb', hardcoded: 'https://602.formaturamaxi.com.br/mlb12.m3u8' },
-    { label: 'Athletics vs Los Angeles Angels', sport: 'mlb', hardcoded: 'https://602.formaturamaxi.com.br/mlb13.m3u8' },
-    { label: 'Los Angeles Dodgers vs San Diego Padres', sport: 'mlb', hardcoded: 'https://602.formaturamaxi.com.br/mlb14.m3u8' },
-    { label: 'Atlanta Braves vs San Francisco Giants', sport: 'mlb', hardcoded: 'https://602.formaturamaxi.com.br/mlb15.m3u8' },
-    // ── NHL ──
-    { label: 'NHL Draft 2026', sport: 'nhl', subdomain: '602', path: 'nhl.m3u8', txt: 'domainsz37.txt' },
-    // ── Fighting ──
-    { label: 'WWE Smackdown', sport: 'fighting', subdomain: 'daffodil', path: 'wwe.m3u8', txt: 'domainsz29.txt' },
-    // ── Motorsports ──
-    { label: 'MotoGP - Coverage', sport: 'motorsports', subdomain: '602', path: 'tnt2.m3u8', txt: 'domainsz37.txt' },
-    { label: 'Formula 1 - Free Practice', sport: 'motorsports', subdomain: '601', path: 'f1.m3u8', txt: 'domainsz37.txt' },
-    { label: 'Formula 1 - Free Practice 2', sport: 'motorsports', subdomain: '601', path: 'f1.m3u8', txt: 'domainsz37.txt' },
 ];
 
 const SPORT_LABELS = {
     soccer: '⚽ Soccer (WC 2026)', mlb: '⚾ MLB', nba: '🏀 NBA',
-    nhl: '🏒 NHL', fighting: '🥊 Fighting', motorsports: '🏎️ Motorsports'
+    nhl: '🏒 NHL', fighting: '🥊 Fighting', motorsports: '🏎 Motorsports'
 };
 
 let domains = {};
@@ -254,11 +183,16 @@ Promise.all(uniqueTxts.map(txt =>
 function getStreamUrl(stream) {
     if (stream.hardcoded) return stream.hardcoded;
     const domainList = domains[stream.txt] || [];
-    if (domainList.length === 0) {
-        return `https://${stream.subdomain}.shadow-ran.online/${stream.path}`;
-    }
+    if (domainList.length === 0) return `https://${stream.subdomain}.shadow-ran.online/${stream.path}`;
     const randomDomain = domainList[Math.floor(Math.random() * domainList.length)];
     return `https://${stream.subdomain}.${randomDomain}/${stream.path}`;
+}
+
+function getUrlFromParts(subdomain, path, txt) {
+    const domainList = domains[txt] || [];
+    if (domainList.length === 0) return `https://${subdomain}.shadow-ran.online/${path}`;
+    const randomDomain = domainList[Math.floor(Math.random() * domainList.length)];
+    return `https://${subdomain}.${randomDomain}/${path}`;
 }
 
 function buildStreamOptions() {
@@ -282,7 +216,7 @@ function buildStreamOptions() {
 }
 
 function setLayout(count) {
-    Object.values(players).forEach(p => { try { p.destroy(); } catch(e){} });
+    Object.values(players).forEach(p => { try { p.destroy(); } catch(e) {} });
     players = {};
     const grid = document.getElementById('multiGrid');
     grid.className = `grid-${count}`;
@@ -295,68 +229,104 @@ function setLayout(count) {
         panel.className = 'stream-panel';
         panel.innerHTML = `
             <div class="panel-toolbar">
-                <select class="stream-select" id="select-${i}">
-                    ${buildStreamOptions()}
-                </select>
+                <select class="stream-select" id="select-${i}">${buildStreamOptions()}</select>
                 <button class="load-btn" onclick="loadStream(${i})">Load</button>
+                <button class="src-btn" id="src-btn-${i}" title="Switch source">▾</button>
+                <div class="src-menu" id="src-menu-${i}"></div>
             </div>
             <div class="panel-player" id="player-${i}">
                 <div class="panel-placeholder">
                     <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="pink" stroke-width="1.5">
-                        <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                        <polygon points="5 3 19 12 5 21 5 3"/>
                     </svg>
                     <p>Select a stream and press Load</p>
                 </div>
             </div>`;
         grid.appendChild(panel);
+
+        // Wire up src-btn toggle after panel is in DOM
+        document.getElementById(`src-btn-${i}`).addEventListener('click', function(e) {
+            e.stopPropagation();
+            const menu = document.getElementById(`src-menu-${i}`);
+            const isOpen = menu.style.display === 'block';
+            // Close all other open menus
+            document.querySelectorAll('.src-menu').forEach(m => m.style.display = 'none');
+            menu.style.display = isOpen ? 'none' : 'block';
+        });
     }
+
+    // Close menus when clicking outside
+    document.addEventListener('click', () => {
+        document.querySelectorAll('.src-menu').forEach(m => m.style.display = 'none');
+    });
 }
 
-function loadStream(panelIndex) {
+function loadStream(panelIndex, overrideSubdomain, overridePath, overrideTxt) {
     const select = document.getElementById(`select-${panelIndex}`);
     const streamIndex = select.value;
     if (streamIndex === '') return;
+
     const stream = STREAMS[streamIndex];
-    const url = getStreamUrl(stream);
+    const url = (overridePath)
+        ? getUrlFromParts(overrideSubdomain, overridePath, overrideTxt)
+        : getStreamUrl(stream);
+
+    // Build the ▾ source menu if stream has alts
+    const srcBtn = document.getElementById(`src-btn-${panelIndex}`);
+    const srcMenu = document.getElementById(`src-menu-${panelIndex}`);
+
+    if (!overridePath && stream.alts && stream.alts.length > 0) {
+        srcBtn.style.display = 'inline-block';
+        // Default option (first/main stream)
+        const defaultLabel = stream.label.split(' ')[0];
+        let menuHtml = `<button class="active-src" onclick="loadStream(${panelIndex});document.getElementById('src-menu-${panelIndex}').style.display='none'">✔ Default</button>`;
+        stream.alts.forEach(alt => {
+            menuHtml += `<button onclick="loadStream(${panelIndex},'${alt.subdomain}','${alt.path}','${alt.txt}');document.getElementById('src-menu-${panelIndex}').style.display='none'">${alt.label}</button>`;
+        });
+        srcMenu.innerHTML = menuHtml;
+    } else if (!overridePath) {
+        srcBtn.style.display = 'none';
+        srcMenu.innerHTML = '';
+    }
+
+    // Mark the active source in menu when an alt is picked
+    if (overridePath) {
+        srcMenu.querySelectorAll('button').forEach(btn => btn.classList.remove('active-src'));
+        event && event.target && event.target.classList.add('active-src');
+    }
+
+    // Destroy old player and load new one
     const container = document.getElementById(`player-${panelIndex}`);
     if (players[panelIndex]) {
         try { players[panelIndex].destroy(); } catch(e) {}
         delete players[panelIndex];
     }
     container.innerHTML = '';
+
     const playerDiv = document.createElement('div');
     playerDiv.id = `clappr-${panelIndex}`;
     playerDiv.style.width = '100%';
     playerDiv.style.height = '100%';
     container.appendChild(playerDiv);
+
     players[panelIndex] = new Clappr.Player({
         source: url,
         parentId: `#clappr-${panelIndex}`,
         height: '100%',
         width: '100%',
         autoPlay: true,
-        playback: {
-          playInline: true,
-          recycleVideo: true
-        },
-        mute: panelIndex > 0,
+        mute: panelIndex !== 0,
     });
 }
 
 setLayout(2);
-    setLayout(2);
-</script>
-<script>
-    document.addEventListener('contextmenu', function (e) {
-        e.preventDefault();
-    });
-    document.addEventListener('keydown', function (e) {
-        if ((e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'C'))) ||
-            (e.ctrlKey && e.shiftKey && e.key === 'J')) {
-            e.preventDefault();
-        }
-    });
-</script>
-<script src="js/bootstrap.bundle.min.js"></script>
+    </script>
+    <script>
+        document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'C' || e.key === 'J')))
+                e.preventDefault();
+        });
+    </script>
 </body>
 </html>
