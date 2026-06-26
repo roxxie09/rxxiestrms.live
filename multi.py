@@ -42,31 +42,43 @@ def extract_stream_info(html_path):
     with open(html_path, encoding="utf-8") as f:
         content = f.read()
 
-    hardcoded = re.search(r"showPlayer\('clappr',\s*'(https?://[^']+\.(?:m3u8|mpd)[^']*)'\)", content)
-    if hardcoded:
-        return {"hardcoded": hardcoded.group(1)}
-
     txt = re.search(r"fetch\(['\"](.+?\.txt)['\"]", content)
     txt_file = txt.group(1) if txt else "domainsz29.txt"
 
-    stream5 = re.search(r"function playStream5\(\)[\s\S]*?getRandomStream\(['\"](.+?\.m3u8)['\"],\s*['\"](.+?)['\"]", content)
-    if stream5:
-        return {"path": stream5.group(1), "subdomain": stream5.group(2), "txt": txt_file}
+    # Collect all m3u8 streams from buttons with labels
+    button_streams = re.findall(
+        r"<button[^>]*>([^<]+)</button>[^<]*(?:onclick=[^>]*)?.*?getRandomStream\(['\"](.+?\.m3u8)['\"],\s*['\"](.+?)['\"]",
+        content, re.DOTALL
+    )
 
-    stream1 = re.search(r"function playStream1\(\)[\s\S]*?getRandomStream\(['\"](.+?\.m3u8)['\"],\s*['\"](.+?)['\"]", content)
-    if stream1:
-        return {"path": stream1.group(1), "subdomain": stream1.group(2), "txt": txt_file}
+    # Better pattern: find onclick getRandomStream calls with nearby button text
+    all_streams = []
+    buttons = re.findall(
+        r'<button[^>]+onclick=["\']showPlayer\(\'clappr\',\s*getRandomStream\(\'(.+?\.m3u8)\',\s*\'(.+?)\'[^"\']*\)["\'][^>]*>([^<]+)</button>',
+        content
+    )
+    for path, subdomain, label in buttons:
+        label = label.strip()
+        all_streams.append({"label": label, "path": path, "subdomain": subdomain, "txt": txt_file})
 
-    inline = re.search(r"getRandomStream\(['\"](.+?\.m3u8)['\"],\s*['\"](.+?)['\"]", content)
-    if inline:
-        return {"path": inline.group(1), "subdomain": inline.group(2), "txt": txt_file}
+    if not all_streams:
+        # Fall back to playStream5 then playStream1 then inline
+        stream5 = re.search(r"function playStream5\(\)[\s\S]*?getRandomStream\(['\"](.+?\.m3u8)['\"],\s*['\"](.+?)['\"]", content)
+        if stream5:
+            return {"path": stream5.group(1), "subdomain": stream5.group(2), "txt": txt_file}
+        stream1 = re.search(r"function playStream1\(\)[\s\S]*?getRandomStream\(['\"](.+?\.m3u8)['\"],\s*['\"](.+?)['\"]", content)
+        if stream1:
+            return {"path": stream1.group(1), "subdomain": stream1.group(2), "txt": txt_file}
+        inline = re.search(r"getRandomStream\(['\"](.+?\.m3u8)['\"],\s*['\"](.+?)['\"]", content)
+        if inline:
+            return {"path": inline.group(1), "subdomain": inline.group(2), "txt": txt_file}
+        return None
 
-    sub = re.search(r"var subdomain\s*=\s*['\"](.+?)['\"]", content)
-    path = re.search(r"getRandomStream\(['\"](.+?)['\"]", content)
-    if sub and path:
-        return {"subdomain": sub.group(1), "path": path.group(1), "txt": txt_file}
-
-    return None
+    # Return first as default, rest as alternates
+    result = {"path": all_streams[0]["path"], "subdomain": all_streams[0]["subdomain"], "txt": txt_file}
+    if len(all_streams) > 1:
+        result["alts"] = all_streams[1:]
+    return result
 def get_events_from_schedule(schedule_path):
     with open(schedule_path, encoding="utf-8") as f:
         soup = BeautifulSoup(f, "html.parser")
@@ -151,7 +163,13 @@ def streams_to_js(streams):
         if "hardcoded" in s:
             lines.append("    { label: '" + name + "', sport: '" + sport + "', hardcoded: '" + s["hardcoded"] + "' },")
         else:
-            lines.append("    { label: '" + name + "', sport: '" + sport + "', subdomain: '" + s["subdomain"] + "', path: '" + s["path"] + "', txt: '" + s["txt"] + "' },")
+            alts_js = ""
+            if "alts" in s:
+                alts_parts = []
+                for alt in s["alts"]:
+                    alts_parts.append("{ label: '" + alt["label"].replace("'", "\\'") + "', subdomain: '" + alt["subdomain"] + "', path: '" + alt["path"] + "', txt: '" + alt["txt"] + "' }")
+                alts_js = ", alts: [" + ", ".join(alts_parts) + "]"
+            lines.append("    { label: '" + name + "', sport: '" + sport + "', subdomain: '" + s["subdomain"] + "', path: '" + s["path"] + "', txt: '" + s["txt"] + "'" + alts_js + " },")
     lines.append("];")
     return "\n".join(lines)
 
