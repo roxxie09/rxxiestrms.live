@@ -285,14 +285,7 @@ function setLayout(count) {
                 <button class="src-btn" id="src-btn-${i}" title="Switch source">▾</button>
                 <div class="src-menu" id="src-menu-${i}"></div>
             </div>
-            <div class="panel-player" id="player-${i}">
-                <div class="panel-placeholder">
-                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="pink" stroke-width="1.5">
-                        <polygon points="5 3 19 12 5 21 5 3"/>
-                    </svg>
-                    <p>Select a stream and press Load</p>
-                </div>
-            </div>`;
+<div class="panel-player" id="player-${i}"></div>
         grid.appendChild(panel);
 
         document.getElementById(`src-btn-${i}`).addEventListener('click', function(e) {
