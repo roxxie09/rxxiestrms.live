@@ -109,24 +109,25 @@
             position: relative;
             min-height: 0;
         }
-        .panel-player,
-        .panel-player > div,
-        .panel-player div,
-        .panel-player div > div,
-        .panel-player video {
-            width: 100% !important;
-            height: 100% !important;
-        }
-        [data-player] {
-            width: 100% !important;
-            height: 100% !important;
-        }
-
-        .panel-placeholder {
-            width: 100%; height: 100%; display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
-            color: rgba(255,192,203,0.4); font-family: 'Kanit', sans-serif; gap: 8px;
-        }
+/* Force Clappr internals transparent so video shows through */
+.panel-player [data-player] { background: transparent !important; }
+.panel-player [data-player] > div { background: transparent !important; }
+.panel-player .player-poster,
+.panel-player .clappr-poster-plugin,
+.panel-player [data-poster],
+.panel-player .background-container { display: none !important; }
+.panel-player canvas { display: none !important; }
+.panel-player video {
+    position: absolute !important;
+    top: 0 !important; left: 0 !important;
+    width: 100% !important; height: 100% !important;
+    z-index: 1;
+}
+.panel-player [data-player] {
+    position: absolute !important;
+    top: 0 !important; left: 0 !important;
+    width: 100% !important; height: 100% !important;
+}
         .panel-placeholder svg { opacity: 0.3; }
         .panel-placeholder p { font-size: 13px; margin: 0; }
     </style>
