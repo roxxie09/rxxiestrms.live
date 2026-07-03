@@ -215,7 +215,6 @@
             </div>
 
             <div class="streamchanger">
-                <button id="btn-tsn" class="streambutton" onclick="showPlayer('clappr', tsnStream)">TSN</button>
                 <button class="streambutton" onclick="showPlayer('clappr', getRandomStream('foxalt.m3u8', '602'))">FOX (ALT)</button>
                 <button class="streambutton" onclick="showPlayer('clappr', getRandomStream('fox.m3u8', '602'))">FOX (FHD)</button>
                 <button class="streambutton" onclick="showPlayer('clappr', getRandomStream('tele.m3u8', 'daffodil'))">TELEMUNDO</button>
@@ -251,9 +250,6 @@ var shakaPlayer;
 var shakaUI;
 var domains = [];
 var subdomain = '602';
-
-const tsnStream = 'https://customer-k7esp6o17le0nad2.cloudflarestream.com/6fcc2bb9e6c42c36aa777ca52ec5de1e/manifest/video.m3u8';
-
 function isDesktop() {
   return !(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
 }
