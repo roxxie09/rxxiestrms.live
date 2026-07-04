@@ -1,9 +1,9 @@
-import subprocess
 import os
-from bs4 import BeautifulSoup
-from datetime import datetime, timedelta
-import pytz
 import sys
+from datetime import datetime
+
+import pytz
+from bs4 import BeautifulSoup
 
 TEAM_NAME_MAP = {
     'Atlanta': 'Atlanta Hawks',
@@ -61,40 +61,45 @@ def fetch_nba_games_for_date_from_file(html_file_path, date=None):
     with open(html_file_path, encoding='utf-8') as f:
         soup = BeautifulSoup(f, 'html.parser')
 
-    schedule_sections = soup.find_all('div', class_='ScheduleTables--nba')
+    # ESPN now tags the Summer League tables as ScheduleTables--nba-summer-league,
+    # so match on the base ScheduleTables container instead of a specific modifier.
+    schedule_sections = soup.select('div.ScheduleTables')
 
     for section in schedule_sections:
-        date_title = section.find('div', class_='Table__Title')
+        date_title = section.select_one('.Table__Title')
         if not date_title:
             continue
-        dt_text = date_title.get_text(strip=True)
-        if dt_text.startswith(date_str):
-            tables = section.find_all('table')
-            if not tables:
-                return []
-            schedule_table = tables[0]
-            games = []
-            rows = schedule_table.find_all('tr')[1:]
-            for row in rows:
-                away_span = row.select_one('span.Table__Team.away')
-                home_span = None
-                for span in row.select('span.Table__Team'):
-                    if 'away' not in span.get('class', []):
-                        home_span = span
-                        break
+        if not date_title.get_text(strip=True).startswith(date_str):
+            continue
 
-                time_cell = row.find('td', class_='date__col')
-                if away_span and home_span and time_cell:
-                    away_name = get_full_team_name(away_span.get_text(strip=True))
-                    home_name = get_full_team_name(home_span.get_text(strip=True))
-                    game_time_et = time_cell.get_text(strip=True)
-                    game_time_pdt = convert_et_to_pdt(game_time_et, date)
-                    display_time = f"{date.strftime('%B %#d, %Y')} {game_time_pdt}"
-                    games.append({
-                        'event': f"{away_name} vs {home_name}",
-                        'display_time': display_time,
-                    })
-            return games
+        table = section.find('table')
+        if not table:
+            return []
+
+        games = []
+        for row in table.select('tr.Table__TR'):
+            # away = matchup column, home = the "vs" column
+            away_span = row.select_one('td.events__col span.Table__Team')
+            home_span = row.select_one('td.colspan__col span.Table__Team')
+            time_cell = row.select_one('td.date__col')
+            if not (away_span and home_span and time_cell):
+                continue
+
+            away_name = get_full_team_name(away_span.get_text(strip=True))
+            home_name = get_full_team_name(home_span.get_text(strip=True))
+
+            game_time_et = time_cell.get_text(strip=True)
+            try:
+                game_time = convert_et_to_pdt(game_time_et, date)
+            except ValueError:
+                game_time = game_time_et or 'TBD'
+
+            display_time = f"{date.strftime('%B %d, %Y').replace(' 0', ' ')} {game_time}"
+            games.append({
+                'event': f"{away_name} vs {home_name}",
+                'display_time': display_time,
+            })
+        return games
     return []
 
 def update_games_in_html(html_path, new_games):
