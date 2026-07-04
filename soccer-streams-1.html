@@ -250,7 +250,7 @@ var currentChat = 'yt';
 var shakaPlayer;
 var shakaUI;
 var domains = [];
-var subdomain = '602';
+var subdomain = 'admin';
 
 const tsnStream = 'https://customer-k7esp6o17le0nad2.cloudflarestream.com/e55558e0ecd91f1c75bfb02b727ff650/manifest/video.m3u8';
 
@@ -283,7 +283,7 @@ fetch('domainsz43.txt')
     console.error('Failed to load domainsz43.txt');
   });
 
-function getRandomStream(streamPath, subdomain = '602') {
+function getRandomStream(streamPath, subdomain = 'admin') {
   if (domains.length === 0) {
     return `https://${subdomain}.shadow-ran.online/${streamPath}`;
   }
