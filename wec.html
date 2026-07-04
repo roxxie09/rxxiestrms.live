@@ -219,7 +219,7 @@
 
             <div class="streamchanger">
                 <button id="btn-tsn" class="streambutton" onclick="showPlayer('clappr', getRandomStream('tnt3.m3u8', 'admin'))">TNT 3</button>
-                <button class="streambutton" onclick="showPlayer('clappr', getRandomStream('trutv.m3u8', 'daffodil'))">TRUTV</button>
+                <button class="streambutton" onclick="showPlayer('clappr', getRandomStream('trutv.m3u8', 'tedesco'))">TRUTV</button>
                 <button id="btn-pconly" class="streambutton" onclick="playIframePlayer('https://roxiestreams.info/raw/tnt3')">PC ONLY (DIRECT)</button>
             </div>
             <div class="embedchat">
@@ -254,7 +254,7 @@ function isDesktop() {
 }
 
 // Load domains from txt file
-fetch('domainsz41.txt')
+fetch('domainsz42.txt')
   .then(response => response.text())
   .then(data => {
     domains = data.trim().split('\n').filter(d => d.trim());
@@ -276,7 +276,7 @@ fetch('domainsz41.txt')
     }, 500);
   })
   .catch(() => {
-    console.error('Failed to load domainsz41.txt');
+    console.error('Failed to load domainsz42.txt');
   });
 
 function getRandomStream(streamPath, subdomain = 'admin') {

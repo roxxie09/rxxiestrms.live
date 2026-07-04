@@ -219,8 +219,8 @@
 
             <div class="streamchanger">
                 <button id="btn-tsn" class="streambutton" onclick="showPlayer('clappr', getRandomStream('tsn.m3u8', 'ataide0'))">TSN</button>
-                <button class="streambutton" onclick="showPlayer('clappr', getRandomStream('fox.m3u8', 'daffodil'))">FOX</button>
-                <button class="streambutton" onclick="showPlayer('clappr', getRandomStream('tele.m3u8', 'daffodil'))">TELEMUNDO</button>
+                <button class="streambutton" onclick="showPlayer('clappr', getRandomStream('fox.m3u8', 'tedesco'))">FOX</button>
+                <button class="streambutton" onclick="showPlayer('clappr', getRandomStream('tele.m3u8', 'tedesco'))">TELEMUNDO</button>
                 <button id="btn-pconly" class="streambutton" onclick="playIframePlayer('https://roxiestreams.info/raw/events1')">PC ONLY (DIRECT)</button>
                 <button class="streambutton" onclick="playIframePlayer('https://roxiestreams.info/raw/peacock')">Tele (Peacock)</button>
             </div>
@@ -256,7 +256,7 @@ function isDesktop() {
 }
 
 // Load domains from txt file
-fetch('domainsz41.txt')
+fetch('domainsz42.txt')
   .then(response => response.text())
   .then(data => {
     domains = data.trim().split('\n').filter(d => d.trim());
@@ -278,7 +278,7 @@ fetch('domainsz41.txt')
     }, 500);
   })
   .catch(() => {
-    console.error('Failed to load domainsz41.txt');
+    console.error('Failed to load domainsz42.txt');
   });
 
 function getRandomStream(streamPath, subdomain = 'ataide0') {
