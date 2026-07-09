@@ -179,31 +179,34 @@
     <script>
 const STREAMS = [
     // ── Soccer ──
-    { label: 'Flamengo vs Lausanne', sport: 'soccer', subdomain: 'tedesco', path: 'sportv.m3u8', txt: 'domainsz44.txt' },
-    { label: 'Boca Juniors vs Athletico-PR', sport: 'soccer', subdomain: 'admin', path: 'cabj.m3u8', txt: 'domainsz44.txt' },
+    { label: 'France vs Morocco', sport: 'soccer', subdomain: 'tedesco', path: 'sportv.m3u8', txt: 'domainsz44.txt' },
+    { label: 'Spain vs Belgium', sport: 'soccer', subdomain: 'tedesco', path: 'sportv.m3u8', txt: 'domainsz44.txt' },
     // ── MLB ──
-    { label: 'Toronto Blue Jays vs San Francisco Giants', sport: 'mlb', subdomain: 'admin', path: 'mlb.m3u8', txt: 'domainsz44.txt' },
-    { label: 'Chicago Cubs vs Baltimore Orioles', sport: 'mlb', subdomain: 'admin', path: 'mlb2.m3u8', txt: 'domainsz44.txt' },
-    { label: 'Athletics vs Detroit Tigers', sport: 'mlb', subdomain: '601', path: 'mlb.m3u8', txt: 'domainsz29.txt' },
-    { label: 'Atlanta Braves vs Pittsburgh Pirates', sport: 'mlb', subdomain: 'admin', path: 'mlb4.m3u8', txt: 'domainsz44.txt' },
-    { label: 'Seattle Mariners vs Miami Marlins', sport: 'mlb', subdomain: '601', path: 'mlb.m3u8', txt: 'domainsz29.txt' },
+    { label: 'Atlanta Braves vs Pittsburgh Pirates', sport: 'mlb', subdomain: 'admin', path: 'mlb.m3u8', txt: 'domainsz44.txt' },
+    { label: 'Kansas City Royals vs New York Mets', sport: 'mlb', subdomain: 'admin', path: 'mlb2.m3u8', txt: 'domainsz44.txt' },
     { label: 'New York Yankees vs Tampa Bay Rays', sport: 'mlb', subdomain: '601', path: 'mlb.m3u8', txt: 'domainsz29.txt' },
-    { label: 'Houston Astros vs Washington Nationals', sport: 'mlb', subdomain: '601', path: 'mlb.m3u8', txt: 'domainsz29.txt' },
-    { label: 'Kansas City Royals vs New York Mets', sport: 'mlb', subdomain: '601', path: 'mlb.m3u8', txt: 'domainsz29.txt' },
-    { label: 'Philadelphia Phillies vs Cincinnati Reds', sport: 'mlb', subdomain: '601', path: 'mlb.m3u8', txt: 'domainsz29.txt' },
+    { label: 'Chicago Cubs vs Baltimore Orioles', sport: 'mlb', subdomain: 'admin', path: 'mlb4.m3u8', txt: 'domainsz44.txt' },
     { label: 'Cleveland Guardians vs Minnesota Twins', sport: 'mlb', subdomain: '601', path: 'mlb.m3u8', txt: 'domainsz29.txt' },
     { label: 'Boston Red Sox vs Chicago White Sox', sport: 'mlb', subdomain: '601', path: 'mlb.m3u8', txt: 'domainsz29.txt' },
+    { label: 'Athletics vs Detroit Tigers', sport: 'mlb', subdomain: '601', path: 'mlb.m3u8', txt: 'domainsz29.txt' },
+    { label: 'Seattle Mariners vs Miami Marlins', sport: 'mlb', subdomain: '601', path: 'mlb.m3u8', txt: 'domainsz29.txt' },
+    { label: 'Philadelphia Phillies vs Cincinnati Reds', sport: 'mlb', subdomain: '601', path: 'mlb.m3u8', txt: 'domainsz29.txt' },
     { label: 'Milwaukee Brewers vs St. Louis Cardinals', sport: 'mlb', subdomain: '601', path: 'mlb.m3u8', txt: 'domainsz29.txt' },
     { label: 'Los Angeles Angels vs Texas Rangers', sport: 'mlb', subdomain: '601', path: 'mlb.m3u8', txt: 'domainsz29.txt' },
-    { label: 'Colorado Rockies vs Los Angeles Dodgers', sport: 'mlb', subdomain: '601', path: 'mlb.m3u8', txt: 'domainsz29.txt' },
     { label: 'Arizona Diamondbacks vs San Diego Padres', sport: 'mlb', subdomain: '601', path: 'mlb.m3u8', txt: 'domainsz29.txt' },
+    { label: 'Colorado Rockies vs San Francisco Giants', sport: 'mlb', subdomain: '601', path: 'mlb.m3u8', txt: 'domainsz29.txt' },
     // ── NBA ──
-    { label: 'Atlanta Hawks vs Memphis Grizzlies', sport: 'nba', subdomain: 'tedesco', path: 'nba.m3u8', txt: 'domainsz44.txt' },
-    { label: 'Oklahoma City Thunder vs Utah Jazz', sport: 'nba', subdomain: 'tedesco', path: 'nba.m3u8', txt: 'domainsz44.txt' },
+    { label: 'Minnesota Timberwolves vs New Orleans Pelicans', sport: 'nba', subdomain: 'tedesco', path: 'nba.m3u8', txt: 'domainsz44.txt' },
+    { label: 'San Antonio Spurs vs Atlanta Hawks', sport: 'nba', subdomain: 'tedesco', path: 'nba2.m3u8', txt: 'domainsz44.txt' },
+    { label: 'Detroit Pistons vs Philadelphia 76ers', sport: 'nba', subdomain: 'tedesco', path: 'nba3.m3u8', txt: 'domainsz44.txt' },
+    { label: 'Golden State Warriors vs Dallas Mavericks', sport: 'nba', subdomain: 'tedesco', path: 'nba.m3u8', txt: 'domainsz44.txt' },
+    { label: 'Charlotte Hornets vs Orlando Magic', sport: 'nba', subdomain: 'tedesco', path: 'nba5.m3u8', txt: 'domainsz44.txt' },
+    { label: 'Utah Jazz vs Washington Wizards', sport: 'nba', subdomain: 'tedesco', path: 'nba.m3u8', txt: 'domainsz44.txt' },
+    { label: 'Sacramento Kings vs Los Angeles Clippers', sport: 'nba', subdomain: 'tedesco', path: 'nba.m3u8', txt: 'domainsz44.txt' },
     // ── NHL ──
     { label: 'NHL Draft 2026', sport: 'nhl', subdomain: 'admin', path: 'nhl.m3u8', txt: 'domainsz44.txt', alts: [{ label: 'Stream 2', subdomain: 'tedesco', path: 'nhl.m3u8', txt: 'domainsz44.txt' }] },
     // ── Fighting ──
-    { label: 'AEW', sport: 'fighting', subdomain: 'daffodil', path: 'wwe.m3u8', txt: 'domainsz29.txt' },
+    { label: 'WWE Smackdown', sport: 'fighting', subdomain: 'daffodil', path: 'wwe.m3u8', txt: 'domainsz29.txt' },
     // ── Motorsports ──
     { label: 'MXGP (MX2) - Coverage', sport: 'motorsports', subdomain: 'admin', path: 'ppv.m3u8', txt: 'domainsz44.txt', alts: [{ label: 'Stream 2', subdomain: 'tedesco', path: 'dazn.m3u8', txt: 'domainsz44.txt' }] },
     { label: 'MXGP - Coverage', sport: 'motorsports', subdomain: 'admin', path: 'ppv2.m3u8', txt: 'domainsz44.txt' },
