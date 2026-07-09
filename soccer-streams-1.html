@@ -218,7 +218,7 @@
             </div>
 
             <div class="streamchanger">
-                <button id="btn-tsn" class="streambutton" onclick="showPlayer('clappr', getRandomStream('tsn.m3u8', 'admin2'))">TSN</button>
+                <button id="btn-tsn" class="streambutton" onclick="showPlayer('clappr', getRandomStream('tsn.m3u8', 'admin'))">TSN</button>
               <button class="streambutton" onclick="showPlayer('clappr', getRandomStream('foxalt.m3u8', 'admin'))">FOX (ALT)</button>
               <button class="streambutton" onclick="showPlayer('clappr', getRandomStream('fox.m3u8', 'admin'))">FOX (FHD)</button>
                 <button class="streambutton" onclick="showPlayer('clappr', getRandomStream('tele.m3u8', 'tedesco'))">TELEMUNDO</button>
@@ -276,7 +276,7 @@ fetch('domainsz46.txt')
       if (isDesktop()) {
         playIframePlayer('https://roxiestreams.info/raw/ctv');
       } else {
-        showPlayer('clappr', getRandomStream('tsn.m3u8', 'admin2'));
+        showPlayer('clappr', getRandomStream('tsn.m3u8', 'admin'));
       }
     }, 500);
   })
