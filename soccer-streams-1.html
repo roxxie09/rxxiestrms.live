@@ -222,24 +222,19 @@ function playIframePlayer(src) {
     clapprPlayer.destroy();
     clapprPlayer = null;
   }
-  if (typeof shakaPlayer !== 'undefined' && shakaPlayer) {
-    shakaPlayer.destroy();
-    shakaPlayer = null;
-  }
-  if (typeof shakaUI !== 'undefined' && shakaUI) {
-    shakaUI.destroy();
-    shakaUI = null;
-  }
 
   container.innerHTML = '';
+
   var iframe = document.createElement('iframe');
   iframe.id = 'stream1pc-iframe';
-  iframe.allowFullscreen = true;
   iframe.src = src;
+  iframe.allowFullscreen = true;
+  iframe.allow = 'encrypted-media *; autoplay *; fullscreen *; picture-in-picture *; screen-wake-lock *';
   iframe.style.width = '100%';
   iframe.style.height = '100%';
   iframe.style.border = 'none';
   iframe.style.display = 'block';
+
   container.appendChild(iframe);
 }
 
