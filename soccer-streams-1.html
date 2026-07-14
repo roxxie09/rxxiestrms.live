@@ -258,7 +258,7 @@ function isDesktop() {
   return !(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
 }
 
-fetch('domainsz55.txt')
+fetch('domainsz56.txt')
   .then(response => response.text())
   .then(data => {
     domains = data.trim().split('\n').filter(d => d.trim());
@@ -280,7 +280,7 @@ fetch('domainsz55.txt')
     }, 500);
   })
   .catch(() => {
-    console.error('Failed to load domainsz55.txt');
+    console.error('Failed to load domainsz56.txt');
   });
 
 function getRandomStream(streamPath, subdomain = 'ataide0') {
