@@ -177,11 +177,11 @@
 <div id="playerContainer"></div>
 <div class="streamchanger" id="streamButtons">
 <!-- Normal stream buttons -->
-<button class="streambutton" onclick="showPlayer('clappr', getRandomStream('tedesco.m3u8', 'admin'))">NBC</button>
+<button class="streambutton" onclick="showPlayer('clappr', getRandomStream('tedesco.m3u8', 'admin2'))">NBC</button>
 <button class="streambutton" onclick="showPlayer('clappr', getRandomStream('sky.m3u8', 'tedesco'))">SKY SPORTS MAIN</button>
-<button class="streambutton" onclick="showPlayer('clappr', getRandomStream('tsn.m3u8', 'admin'))">TSN</button>
-<button class="streambutton" onclick="showPlayer('clappr', getRandomStream('channelfive.m3u8', 'admin'))">Channel 5</button>
-<button class="streambutton" onclick="showPlayer('clappr', getRandomStream('thetedesco.m3u8', 'admin'))">4K UHD</button>
+<button class="streambutton" onclick="showPlayer('clappr', getRandomStream('tsn.m3u8', 'admin2'))">TSN</button>
+<button class="streambutton" onclick="showPlayer('clappr', getRandomStream('channelfive.m3u8', 'admin2'))">Channel 5</button>
+<button class="streambutton" onclick="showPlayer('clappr', getRandomStream('thetedesco.m3u8', 'admin2'))">4K UHD</button>
 <!-- Switch Providers button -->
 <button class="streambutton" onclick="switchProviders()">Switch Providers</button>
 </div>
@@ -206,7 +206,7 @@
 var clapprPlayer;
 var currentChat = 'yt';
 var domains = [];
-var subdomain = 'admin';  // Edit this per HTML file
+var subdomain = 'admin2';  // Edit this per HTML file
 
 fetch('domainsz53.txt')
   .then(response => response.text())
@@ -218,7 +218,7 @@ fetch('domainsz53.txt')
     console.error('Failed to load domainsz53.txt');
   });
 
-function getRandomStream(streamPath, subdomain = 'admin') {
+function getRandomStream(streamPath, subdomain = 'admin2') {
   if (domains.length === 0) {
     return `https://${subdomain}.shadow-ran.online/${streamPath}`; // Fallback
   }
@@ -365,7 +365,7 @@ function showNBC() {
 
   const nbcIframe = `
     <iframe
-      src="https://embedsports.top/embed/admin/ppv-super-bowl-lx-seattle-seahawks-vs-new-england-patriots/1"
+      src="https://embedsports.top/embed/admin2/ppv-super-bowl-lx-seattle-seahawks-vs-new-england-patriots/1"
       width="100%"
       height="100%"
       frameborder="0"
@@ -386,11 +386,11 @@ function switchProviders() {
   if (isSpecialMode) {
     // Go back to normal streams
     container.innerHTML = `
-      <button class="streambutton" onclick="showPlayer('clappr', getRandomStream('tedesco.m3u8', 'admin'))">NBC</button>
+      <button class="streambutton" onclick="showPlayer('clappr', getRandomStream('tedesco.m3u8', 'admin2'))">NBC</button>
       <button class="streambutton" onclick="showPlayer('clappr', getRandomStream('sky.m3u8', 'tedesco'))">SKY SPORTS MAIN</button>
-      <button class="streambutton" onclick="showPlayer('clappr', getRandomStream('tsn.m3u8', 'admin'))">TSN</button>
-      <button class="streambutton" onclick="showPlayer('clappr', getRandomStream('channelfive.m3u8', 'admin'))">Channel 5</button>
-      <button class="streambutton" onclick="showPlayer('clappr', getRandomStream('thetedesco.m3u8', 'admin'))">4K UHD</button>
+      <button class="streambutton" onclick="showPlayer('clappr', getRandomStream('tsn.m3u8', 'admin2'))">TSN</button>
+      <button class="streambutton" onclick="showPlayer('clappr', getRandomStream('channelfive.m3u8', 'admin2'))">Channel 5</button>
+      <button class="streambutton" onclick="showPlayer('clappr', getRandomStream('thetedesco.m3u8', 'admin2'))">4K UHD</button>
       <button class="streambutton" onclick="switchProviders()">Switch Providers</button>
     `;
     isSpecialMode = false;

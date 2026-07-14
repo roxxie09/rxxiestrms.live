@@ -242,7 +242,7 @@
                 statusDiv.innerHTML = `<div class="spinner-border spinner-border-sm text-pink"></div> Fetching page...`;
                 const html = await fetchWithFallback(fullPath, isInternal);
 
-                let detectedSub = 'admin';
+                let detectedSub = 'admin2';
                 const subMatch = html.match(/var\s+subdomain\s*=\s*['"]([^'"]+)['"]/);
                 if (subMatch) detectedSub = subMatch[1];
 
