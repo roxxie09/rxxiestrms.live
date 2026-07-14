@@ -5,3 +5,5 @@ jhuuri.com
 tmjts.ir
 paradilux.business
 paradilux.store
+paradilux.business
+paradilux.store
