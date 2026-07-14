@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta name="robots" content="noindex,nofollow">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Live Player</title>
+  <script>
+    (function () {
+      function def(name, fn) {
+        if (!Map.prototype[name]) {
+          Object.defineProperty(Map.prototype, name, {
+            value: fn, writable: true, configurable: true, enumerable: false
+          });
+        }
+      }
+      def('getOrInsert', function (key, d) {
+        if (!this.has(key)) this.set(key, d);
+        return this.get(key);
+      });
+      def('getOrInsertComputed', function (key, cb) {
+        if (!this.has(key)) this.set(key, cb(key));
+        return this.get(key);
+      });
+    })();
+  </script>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shaka-player@latest/dist/controls.css">
+  <script src="https://cdn.jsdelivr.net/npm/shaka-player@latest/dist/shaka-player.ui.js"></script>
+  <style>
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      background: #000;
+      overflow: hidden;
+    }
+    #video-container {
+      width: 100%;
+      height: 100%;
+      position: fixed;
+      inset: 0;
+      background: #000;
+    }
+    video {
+      width: 100%;
+      height: 100%;
+    }
+    [data-shaka-player-container] {
+      width: 100% !important;
+      height: 100% !important;
+      background: #000;
+    }
+  </style>
+</head>
+<body>
+  <div id="video-container" data-shaka-player-container>
+    <video id="video" data-shaka-player autoplay playsinline></video>
+  </div>
+  <script>
+    async function init() {
+      const video = document.getElementById('video');
+      const container = document.getElementById('video-container');
+      const player = new shaka.Player(video);
+      const ui = new shaka.ui.Overlay(player, container, video);
+      
+      // Decryption parameter configuration
+      player.configure({
+        drm: {
+          clearKeys: {
+            "33dabb57cae7359c0b112a1b56139c6e": "d930576d32a72d911aef1a359e0876bb"
+          }
+        }
+      });
+      
+      // Load manifest utilizing full token queries
+      await player.load("https://dcs4-live.mp.lura.live/server/play/Aazyz4fOD2Pgs9mj/manifest.mpd?encp=zuvPJYoOOdEMDNF2j2mvmg%3Aiz8o4mJKS-ZxLgEqgSXwUS17IOG3uMfD38agYwuTLfEfk7zH9Jg1wgiNnpWZ5GzZs6BvZBF1i7LqH9dL69c8FhHbScN-o671CbE1b0g-LBpRf-upjiTmIQBZY1fhgYqp4FZKYLF7zZBgIGC8TBOXXa9F-b6DA4GWN0mPfluSNvnBFEJQL-0Vx3lZMzou9UPAMX37Pw1Ykl2oHh1EkQ6aw9AIqB5yTB51Cn31TXu4_gSbmPkuXEAVk6EGOstnE53b9m1KsfNYMYiFSi5zggZXwPL7R0p1MJcBmJGz7aIiJ-y6BdQ8PnckMe-3YPiZWlXc_CmWnbjxHnPvAyENLVuQYIAljJEhX19pi0K3vQpHgXwsZkeau2ALM5G5UuZNm8eveY1OBUonzI1S6HaAulhNqNTg0e5aY5hHs1W1bldVdNZOiDAWeIhWgPyvbKumtWjP0FviWpKH_-R5RZsE5585E6eoa_v-fW0LFwEriBhxJEbAc6X0NMG0BMpmo3sP8hjBINvRczFW9-7T5igxl_MP4cYHrUpJWLpRNMMBpENruiCOhnd0xW4DQdm5YSR9ulVwzLWNn-YXOCOjDrtXTLN-fHZ1FAO_NGYGxpDqrJDEiiD9JUCf8Sg0N3zdwjY-DSzjQXcOZaV2_SIqnQk6bWa9q0y4fB-Emj9eP65i834t1o21z8-Qp32EjQSctmL1KmXHly9YGC9xu4mtwoWvqkeYROKzYA-dq9N86LG9pFltbNVUJSFZCY5x0-jGlRbs3aO-VQpA1fHe_rSrOJP3RXMp64DwECT7L6r27yKyA7Yv4p1KEFB_mhNfQVtNLhBmrmUJByLno2flN3g-zU6FqkkOo-LJVRyhrPn-mbgc68-VUnKlOaDmmN5zgrh07s-8PivMj7iHSZRcmf1Z60qIOTX3Qcn_671MgWLfUafkK5S0ftfsUAAg74zA5NR3p9Bl9SowDdBum8iVDgL84hfPR1MmGwTv976qFLWA-HwXehbGCxpNcON_N2ZcYqM4cyCXFM8SE3EPwicELIkO11i0cP_jSqphJG8r01DucLhCSOuJzlHlhDaVDUK8SlO9L53O1ZhST5aJpUpqLlhuiMuvLWYU3x2EJijvd0kNpFojV4OtZoGrW254qaRHoO48U2QMBFaRMwwmYZMnDNr_3d4ilUxaK9j5J0lqqrnYcA7PF5CFQPTikyYEnJ1sJkZUSJAhmqgpHAMyn53Djpu-lgZfAu7emWOhSjO95PeZw1XSeHZy5FWiWaJQusGNJQFES8Gwnh3Ejya3eTqXc23DvxaBEU019XwW2og8bfQ9MzubwRtSEVSUfJ9w2h52_H-ZnGKf3V0jBzOmdKxxODrkMAuVdwbF1Tf-E4s9F1mytpMMZth_1Tgfmku4uhGHlH4lctbXJvcvu-71KhXRhFIaZIgbtTn8WW5GBc1tjhfigYNwR-jwFyxVVNCnyzuSPPhB804kQlB2aVp-67hL7Fakf8-cNxt840qo_-yBw3051TXnt58UgMxEhpnMxT6RbQSUU6qntavbvweG2Mq1yAnLzga7ZAg5-L6aR8KX7CSBhgW-ov48wYGRNLTcLKHigZCRilkSHL8oVLQxB5N-1Y22ySvD7V8o4o0Q1xtoXiW4iWCF4OIgUs4tfYJP18YLiyB5xh5SngAeVkukdSajYPsgAghlRpYpg-oxS15Se8--r6n4pHv7q8i5GnzecnK47ADU2o9ObxWlc-2zYKvSjfMsFqjAriNenw-df20N5SmOJmV4waqLRQbGKRNtO3IDNkd7nBDngpKzkUcW4VDEhqOXHR6UxS9ey3csd4m3wJIQ5sWuL7jRfA4ijwqKiTGIpFZ9u19a3g-ybzEOtRu-o7Fz_8QxdBcR8Q0VldbwZ4AS607DmKsCtWAOu7Gul2i7n2EA4pcxfz8_qUViCXSz8UgGpqKiqkKWDaGwBZzy2Vr67K9SZaAT6Q3ppv97ZeOV9aP3z4EtwwxpJS6fNBM38B_px6a_BkY65qM1K-6Qvq1WZbq-TiZ1P6FB4p8fdmkCV3QLJBmoXg-z_5IiArTcnNcPfGv0v2l9cggnS22pyN3XOKX1DVuMyKlIEk_m6pyKc6DEWyP9eXROjlM0grl0s1OZ7dP_fFS5BwzGKeIP4uV4tVOuz7_Z2E3TeI3k3KzPXYyuRbte01QCOimyS2nivy5VNxiH9pyMZ9yoKWpntxGv-OzlWPP85WLwwtKFALiCoLg2BPzR4TJnO43ulYRL2mW8QJBy_SBOrFLQ0RqcUOtmCjFrIeg1fvEICxj1_N83T3hLSPbUAfG5TnieAmAmMSgI-HTQ-GA5uePgdVUkaexQZY5aaZd3JgI8IFbBfQFoWQRoXqpLCAEEDxLcpwC7SPhg5zDraAI7L8zmXUTyT4XJZ-Re508_KkVonGtXGilS_1rsSwc7lG8JD2VZhH2uTBgI4tpbZ7Zm3RG6Wk9CtSSutRzC0UclrR0R0jj5KnQO_QefyZJyzqqo-DVLzYx98r8nnlPT-c2DCsRSl-TltaAqwTLOmMWoska2qa5aWJLeil8IHGOKv5d5j3W3xGB9uvoTIJEk4zQ6YcxnUWaNkY11qxuG2rbOnL7IKY4eM0cVb4NTs2E6hBf9bSf8RzesHv8XgJa9jnXfaSDSxTRGeGiLeBW6WcmhA3EKwMMg6n7BctdBMR1ND5kZGcddqZdiqKz3y2f80m5ghgfKR9mF3_1pST3igW89wnnFGR7UfIK4BeFrsQO283-txTPaPQWKuTuWn8dmaV2-7OjqYz2nmXRVsTtK4jI9E_o--QCziVXF7f_V3WMwYsdgIzOq-YdL_xVp6MdD7lnrN45VLU4aG376o5s6f4iUqrtTHX1eVbXgwa6yBklvNqBg7FZ-73j0shsGxqxITGc-a9zHzKWQpTiI0iIbO643UPIKii4OPjba9aLDnDq-hNnSS3ybQYlB1r-nw8TbFfMauENSHMYhhvnBr1HLoYnTJMNGAPPFgWMlplIhpiZCdu2EvTlvuHVo_DI0nKqqgMLtNMpubNh8Zjku1HZthEk58Fr5PmvOk0S08pmXY7uFZe1WYiqVXrawilNdqBrEM6AOEQ&anvauth=tb%3D0%7Ete%3D1784055048%7Esgn%3Dcdbf99535ca29a2d35cb41458c714cbcb32d309a56bf7f7ad2a08e55d1f7f799&t=1784054148&lura_pal_nonce=&guid=2442f488-20cf-45ed-f163eec3d5fb");
+    }
+    init().catch(console.error);
+  </script>
+</body>
+</html>
