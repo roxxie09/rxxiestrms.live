@@ -25,6 +25,14 @@
   gtag('config', 'G-EQ3BHVQGMN');
 </script>
 <style>
+        :root {
+            --player-pink: #ff4fa3;
+            --player-pink-hover: #ff2f92;
+            --player-pink-soft: rgba(255, 79, 163, 0.25);
+            --player-pink-border: rgba(255, 192, 203, 0.2);
+            --player-pink-border-soft: rgba(255, 192, 203, 0.1);
+        }
+
         .navbar-brand {
             color: pink;
             font-size: 1.3rem;
@@ -58,14 +66,14 @@
             display: flex;
             flex-direction: column;
             margin-left: 10px;
-            border: 1px solid rgba(255, 192, 203, 0.2);
+            border: 1px solid var(--player-pink-border);
             border-radius: 8px;
             overflow: hidden;
         }
         .chat-header {
             padding: 8px;
             background: #1a1a1a;
-            border-bottom: 1px solid rgba(255, 192, 203, 0.1);
+            border-bottom: 1px solid var(--player-pink-border-soft);
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -101,6 +109,48 @@
             left: 10px;
             display: flex;
             gap: 10px;
+        }
+
+        /* Clappr pink theme overrides */
+        #playerContainer .clappr-container .media-control[data-media-control] .bar-container[data-seekbar] .bar-fill-1,
+        #playerContainer .clappr-container .media-control[data-media-control] .bar-container[data-seekbar] .bar-fill-2,
+        #playerContainer .clappr-container .media-control[data-media-control] .bar-container[data-seekbar] .bar-hover,
+        #playerContainer .clappr-container .media-control[data-media-control] .bar-container[data-volume] .bar-fill-1,
+        #playerContainer .clappr-container .media-control[data-media-control] .bar-container[data-volume] .bar-fill-2,
+        #playerContainer .clappr-container .media-control[data-media-control] .bar-container[data-volume] .bar-hover,
+        #playerContainer .clappr-container .spinner .three-bounce .one,
+        #playerContainer .clappr-container .spinner .three-bounce .two,
+        #playerContainer .clappr-container .spinner .three-bounce .three,
+        #playerContainer .clappr-container .loading-container .loading-progress,
+        #playerContainer .clappr-container .media-control .media-control-indicator,
+        #playerContainer .clappr-container .media-control .drawer-icon,
+        #playerContainer .clappr-container .media-control .bar-scrubber,
+        #playerContainer .clappr-container .media-control .volume-bar-scrubber {
+            background-color: var(--player-pink) !important;
+        }
+
+        #playerContainer .clappr-container .media-control svg path,
+        #playerContainer .clappr-container .media-control svg polygon,
+        #playerContainer .clappr-container .media-control svg circle {
+            fill: var(--player-pink) !important;
+        }
+
+        #playerContainer .clappr-container .media-control button:hover svg path,
+        #playerContainer .clappr-container .media-control button:hover svg polygon,
+        #playerContainer .clappr-container .media-control button:hover svg circle,
+        #playerContainer .clappr-container .media-control .drawer-icon:hover,
+        #playerContainer .clappr-container .media-control .media-control-layer[data-controls] button:hover {
+            fill: var(--player-pink-hover) !important;
+            color: var(--player-pink-hover) !important;
+        }
+
+        #playerContainer .clappr-container .media-control[data-media-control] .bar-container[data-seekbar],
+        #playerContainer .clappr-container .media-control[data-media-control] .bar-container[data-volume] {
+            background-color: var(--player-pink-soft) !important;
+        }
+
+        #playerContainer .clappr-container .media-control[data-media-control] .media-control-background {
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.2)) !important;
         }
     
         /* ---- Phones in PORTRAIT: hide chat, clean player, buttons wrap to fit ---- */
@@ -197,12 +247,10 @@ var currentChat = 'yt';
 var domains = [];
 var subdomain = 'admin2';  // Edit this per HTML file
 
-// Load domains from txt file
 fetch('domainsz58.txt')
   .then(response => response.text())
   .then(data => {
     domains = data.trim().split('\n').filter(d => d.trim());
-    // Auto-load initial stream after domains load
     setTimeout(() => showPlayer('clappr', getRandomStream('fana.m3u8')), 500);
   })
   .catch(() => {
@@ -211,7 +259,7 @@ fetch('domainsz58.txt')
 
 function getRandomStream(streamPath, subdomain = 'admin2') {
   if (domains.length === 0) {
-    return `https://${subdomain}.shadow-ran.online/${streamPath}`; // Fallback
+    return `https://${subdomain}.shadow-ran.online/${streamPath}`;
   }
   const randomDomain = domains[Math.floor(Math.random() * domains.length)];
   return `https://${subdomain}.${randomDomain}/${streamPath}`;
@@ -233,7 +281,6 @@ function playIframePlayer(src) {
     shakaUI = null;
   }
 
-  // Rebuild the iframe each call so re-pressing the button reloads the stream
   container.innerHTML = '';
   var iframe = document.createElement('iframe');
   iframe.id = 'stream1pc-iframe';
