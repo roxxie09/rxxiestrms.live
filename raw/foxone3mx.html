@@ -61,8 +61,8 @@
     async function init() {
       const video = document.getElementById('video');
       const container = document.getElementById('video-container');
-      const player = new Shaka.Player(video);
-      const ui = new Shaka.ui.Overlay(player, container, video);
+      const player = new shaka.Player(video);
+      const ui = new shaka.ui.Overlay(player, container, video);
       
       // Decryption parameter configuration
       player.configure({
