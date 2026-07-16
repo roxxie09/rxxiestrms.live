@@ -212,17 +212,14 @@
     <div class="container container-fluid pt-2 text-white">
         <div class="fullplayer">
             <div id="playerContainer">
-                <iframe id="stream1pc-iframe" src="https://roxiestreams.info/raw/events1" 
+                <iframe id="stream1pc-iframe" src="https://roxiestreams.info/raw/foxone3mx" 
                         style="display: none;" 
                         allowfullscreen></iframe>
             </div>
 
             <div class="streamchanger">
-                <button id="btn-tsn" class="streambutton" onclick="showPlayer('clappr', getRandomStream('tsn.m3u8', 'ataide0'))">TSN</button>
-                <button class="streambutton" onclick="showPlayer('clappr', getRandomStream('fox.m3u8', 'tedesco'))">FOX</button>
-                <button class="streambutton" onclick="showPlayer('clappr', getRandomStream('tele.m3u8', 'tedesco'))">TELEMUNDO</button>
-                <button id="btn-pconly" class="streambutton" onclick="playIframePlayer('https://roxiestreams.info/raw/events1')">PC ONLY (DIRECT)</button>
-                <button class="streambutton" onclick="playIframePlayer('https://roxiestreams.info/raw/peacock')">Tele (Peacock)</button>
+                <button id="btn-tsn" class="streambutton" onclick="showPlayer('clappr', getRandomStream('foxmx.m3u8', 'admin2'))">FOX MX</button>
+                <button id="btn-pconly" class="streambutton" onclick="playIframePlayer('https://roxiestreams.info/raw/foxone3mx')">MX PC ONLY VPN</button>
             </div>
             <div class="embedchat">
                 <div class="chat-header">
@@ -249,7 +246,7 @@ var currentChat = 'yt';
 var shakaPlayer;
 var shakaUI;
 var domains = [];
-var subdomain = 'ataide0';  // Edit this per HTML file
+var subdomain = 'admin2';  // Edit this per HTML file
 
 function isDesktop() {
   return !(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
@@ -271,9 +268,9 @@ fetch('domainsz58.txt')
 
     setTimeout(() => {
       if (isDesktop()) {
-        playIframePlayer('https://roxiestreams.info/raw/events1');
+        playIframePlayer('https://roxiestreams.info/raw/foxone3mx');
       } else {
-        showPlayer('clappr', getRandomStream('tsn.m3u8', 'ataide0'));
+        showPlayer('clappr', getRandomStream('foxmx.m3u8', 'admin2'));
       }
     }, 500);
   })
@@ -281,7 +278,7 @@ fetch('domainsz58.txt')
     console.error('Failed to load domainsz58.txt');
   });
 
-function getRandomStream(streamPath, subdomain = 'ataide0') {
+function getRandomStream(streamPath, subdomain = 'admin2') {
   if (domains.length === 0) {
     return `https://${subdomain}.shadow-ran.online/${streamPath}`; // Fallback
   }
