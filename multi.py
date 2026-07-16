@@ -20,15 +20,17 @@ SCHEDULE_STREAM_MAP = {
         "aew": {"file": "aew.html"},
     }
 },
-    "motorsports.html": {"pattern": "ppv-streams-{n}.html",
-                         "default": {"subdomain": "601", "path": "tt.m3u8", "txt": "domainsz29.txt"},
-                         "slug_map": {
-                             "motogp":  {"file": "motogp.html"},
-                             "mxgp":    {"file": "mxgp.html"},
-                             "f1":      {"file": "f1.html"},
-                             "indycar": {"file": "indycar.html"},
-                         }},
-}
+"motorsports.html": {
+    "pattern": "ppv-streams-{n}.html",
+    "default": {"subdomain": "601", "path": "tt.m3u8", "txt": "domainsz29.txt"},
+    "slug_map": {
+        "motogp": {"file": "motogp.html"},
+        "mxgp": {"file": "mxgp.html"},
+        "f1": {"file": "f1.html"},
+        "indycar": {"file": "indycar.html"},
+        "floracing": {"file": "floracing.html"},
+    },
+},
 
 STREAM_OVERRIDES = {
 }
