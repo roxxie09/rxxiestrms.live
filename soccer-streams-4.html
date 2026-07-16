@@ -219,7 +219,7 @@
 
             <div class="streamchanger">
                 <button id="btn-tsn" class="streambutton" onclick="showPlayer('clappr', getRandomStream('foxmx.m3u8', 'admin2'))">FOX MX</button>
-                <button id="btn-pconly" class="streambutton" onclick="playIframePlayer('https://roxiestreams.info/raw/foxone3mx')">MX VPN PC</button>
+                <button id="btn-pconly" class="streambutton" onclick="playIframePlayer('https://roxiestreams.info/raw/foxone3mx')">MX VPN PC ONLY</button>
             </div>
             <div class="embedchat">
                 <div class="chat-header">
@@ -262,7 +262,7 @@ fetch('domainsz58.txt')
       const pcBtn = document.getElementById('btn-pconly');
       if (pcBtn && pcBtn.parentNode) {
         pcBtn.parentNode.insertBefore(pcBtn, pcBtn.parentNode.firstElementChild);
-        pcBtn.innerText = 'PC ONLY (DIRECT)';
+        pcBtn.innerText = 'MX VPN PC ONLY';
       }
     }
 
