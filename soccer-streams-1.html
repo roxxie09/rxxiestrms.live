@@ -136,6 +136,68 @@
                 padding-right: 12px;
             }
         }
+:root {
+  --player-pink: #e573b5;   /* change this one value to re-theme everything */
+  --player-pink-dim: #9c3d78; /* darker pink for tracks/buffered */
+}
+
+/* ---------- SEEKBAR (progress scrubber) ---------- */
+
+/* Unfilled track behind the progress bar */
+.media-control .bar-background[data-seekbar] {
+  background-color: rgba(255, 192, 203, 0.15) !important;
+}
+
+/* Buffered portion (loaded but not yet played) */
+.media-control .bar-fill-1[data-seekbar] {
+  background-color: var(--player-pink-dim) !important;
+}
+
+/* Played / progress portion */
+.media-control .bar-fill-2[data-seekbar] {
+  background-color: var(--player-pink) !important;
+}
+
+/* Hover indicator line that follows the cursor */
+.media-control .bar-hover[data-seekbar] {
+  background-color: rgba(229, 115, 181, 0.5) !important;
+}
+
+/* The round scrubber thumb */
+.media-control .bar-scrubber[data-seekbar] .bar-scrubber-icon {
+  background-color: var(--player-pink) !important;
+  box-shadow: 0 0 6px rgba(229, 115, 181, 0.8);
+}
+
+/* ---------- CONTROL BUTTONS (play, pause, fullscreen, etc.) ---------- */
+
+.media-control .media-control-button svg path {
+  fill: var(--player-pink) !important;
+}
+
+/* HD indicator text/badge */
+.media-control [data-hd-indicator] {
+  color: var(--player-pink) !important;
+}
+
+/* ---------- VOLUME BAR ---------- */
+
+/* If your build uses the segmented (stepped) volume bar */
+.media-control .segmented-bar-element[data-volume].fill,
+.media-control .segmented-bar-element[data-volume]:hover {
+  background-color: var(--player-pink) !important;
+}
+
+/* If your build uses the smooth (fill) volume bar */
+.media-control .bar-fill-2[data-volume] {
+  background-color: var(--player-pink) !important;
+}
+
+/* ---------- LOADING SPINNER ---------- */
+
+.spinner-three-bounce > div {
+  background-color: var(--player-pink) !important;
+}
     </style>
 </link></head>
 <body>
