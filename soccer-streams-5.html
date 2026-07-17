@@ -213,14 +213,14 @@
     <div class="container container-fluid pt-2 text-white">
         <div class="fullplayer">
             <div id="playerContainer">
-                <iframe id="stream1pc-iframe" src="https://roxiestreams.info/raw/foxone4mx" 
+                <iframe id="stream1pc-iframe" src="https://roxiestreams.info/raw/foxone3mx" 
                         style="display: none;" 
                         allowfullscreen></iframe>
             </div>
 
             <div class="streamchanger">
                 <button id="btn-tsn" class="streambutton" onclick="showPlayer('clappr', getRandomStream('foxmx.m3u8', 'admin2'))">FOX MX</button>
-                <button id="btn-pconly" class="streambutton" onclick="playIframePlayer('https://roxiestreams.info/raw/foxone4mx')">MX VPN PC ONLY</button>
+                <button id="btn-pconly" class="streambutton" onclick="playIframePlayer('https://roxiestreams.info/raw/foxone3mx')">MX VPN PC ONLY</button>
             </div>
             <div class="embedchat">
                 <div class="chat-header">
@@ -269,7 +269,7 @@ fetch('domainsz58.txt')
 
     setTimeout(() => {
       if (isDesktop()) {
-        playIframePlayer('https://roxiestreams.info/raw/foxone4mx');
+        playIframePlayer('https://roxiestreams.info/raw/foxone3mx');
       } else {
         showPlayer('clappr', getRandomStream('foxmx.m3u8', 'admin2'));
       }
