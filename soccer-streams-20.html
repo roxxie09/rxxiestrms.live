@@ -35,6 +35,7 @@
       })();
     </script>
     <script src="https://cdn.jsdelivr.net/npm/clappr@latest/dist/clappr.min.js"></script>
+<script src="js/clappr.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/dash-shaka-playback@latest/dist/dash-shaka-playback.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/clappr-level-selector-plugin@latest/dist/level-selector.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shaka-player@latest/dist/controls.css">
@@ -395,6 +396,7 @@ function showPlayer(playerType, stream, drmConfig) {
       height: '100%',
       width: '100%',
       autoPlay: true,
+      mediacontrol: ClapprPinkTheme.mediacontrol,
       playback: {
         playInline: true,
         recycleVideo: true
