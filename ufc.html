@@ -172,9 +172,10 @@
 <div class="fullplayer">
 <div id="playerContainer"></div>
 <div class="streamchanger">
-<button class="streambutton" onclick="showPlayer('clappr', getRandomStream('happybirthdayabby.m3u8', 'admin2'))">Stream 1 (Para)</button>
-<button class="streambutton" onclick="showPlayer('clappr', getRandomStream('ufc.m3u8', 'admin2'))">Stream 2 (SN)
-<button class="streambutton" onclick="showPlayer('clappr', getRandomStream('ufc.m3u8', 'tedesco'))">Stream 3 (TNT)
+<button class="streambutton" onclick="showPlayer('clappr', getRandomStream('happybirthdayabby.m3u8', 'admin2'))">Stream 1</button>
+<button class="streambutton" onclick="showPlayer('clappr', getRandomStream('ufc.m3u8', 'admin2'))">Stream 2 (SN)</button>
+<button class="streambutton" onclick="showPlayer('clappr', getRandomStream('ufc.m3u8', 'tedesco'))">Stream 3 (TNT)</button>
+</div>
 <div class="embedchat">
 <div class="chat-header">
 <span style="font-size: 10px; color: pink; font-weight: bold;">LIVE CHAT</span>
@@ -196,7 +197,7 @@
 var clapprPlayer;
 var currentChat = 'yt';
 var domains = [];
-var subdomain = 'admin2'  // Edit this per HTML file
+var subdomain = 'admin2';  // Edit this per HTML file
 
 // Load domains from txt file
 fetch('domainsz58.txt')
@@ -260,7 +261,7 @@ function showPlayer(playerType, stream) {
       height: '100%',
       width: '100%',
       autoPlay: true,
-      mediacontrol: ClapprPinkTheme.mediacontrol,
+  mediacontrol: ClapprPinkTheme.mediacontrol,
       playback: {
         playInline: true,
         recycleVideo: true
@@ -326,6 +327,7 @@ window.onload = function() {
         document.addEventListener('contextmenu', function (e) {
             e.preventDefault();
         });
+
         document.addEventListener('keydown', function (e) {
             if ((e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'C'))) ||
                 (e.ctrlKey && e.shiftKey && e.key === 'J')) {
