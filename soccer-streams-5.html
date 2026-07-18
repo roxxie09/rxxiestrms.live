@@ -35,7 +35,6 @@
       })();
     </script>
     <script src="https://cdn.jsdelivr.net/npm/clappr@latest/dist/clappr.min.js"></script>
-<script src="js/clappr.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/dash-shaka-playback@latest/dist/dash-shaka-playback.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/clappr-level-selector-plugin@latest/dist/level-selector.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shaka-player@latest/dist/controls.css">
@@ -259,7 +258,7 @@ function isDesktop() {
   return !(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
 }
 
-fetch('domainsz58.txt')
+fetch('domainsz53.txt')
   .then(response => response.text())
   .then(data => {
     domains = data.trim().split('\n').filter(d => d.trim());
@@ -281,7 +280,7 @@ fetch('domainsz58.txt')
     }, 500);
   })
   .catch(() => {
-    console.error('Failed to load domainsz58.txt');
+    console.error('Failed to load domainsz53.txt');
   });
 
 function getRandomStream(streamPath, subdomain = 'ataide0') {
@@ -396,7 +395,6 @@ function showPlayer(playerType, stream, drmConfig) {
       height: '100%',
       width: '100%',
       autoPlay: true,
-      mediacontrol: ClapprPinkTheme.mediacontrol,
       playback: {
         playInline: true,
         recycleVideo: true
