@@ -172,7 +172,7 @@
 <div class="fullplayer">
 <div id="playerContainer"></div>
 <div class="streamchanger">
-<button class="streambutton" onclick="showPlayer('clappr', 'https://tedesco.formaturamaxi.com.br/wec.m3u8')">Stream 1</button>
+<button class="streambutton" onclick="showPlayer('clappr', getRandomStream('indy.m3u8', 'admin2'))">Stream 1</button>
 </div>
 <div class="embedchat">
 <div class="chat-header">
@@ -192,62 +192,81 @@
 <p class="mb-0 text-body-secondary text-center text-lg-start">Roxiestreams © 2026</p>
 </footer>
 <script>
-        var clapprPlayer;
+var clapprPlayer;
 var currentChat = 'yt';
+var domains = [];
+var subdomain = 'admin2'  // Edit this per HTML file
 
-        function playIframePlayer(src) {
-          var container = document.getElementById('playerContainer');
+// Load domains from txt file
+fetch('domainsz58.txt')
+  .then(response => response.text())
+  .then(data => {
+    domains = data.trim().split('\n').filter(d => d.trim());
+    // Auto-load initial stream after domains load
+    setTimeout(() => showPlayer('clappr', getRandomStream('indy.m3u8')), 500);
+  })
+  .catch(() => {
+    console.error('Failed to load domainsz58.txt');
+  });
 
-          if (typeof clapprPlayer !== 'undefined' && clapprPlayer) {
-            clapprPlayer.destroy();
-            clapprPlayer = null;
-          }
-          if (typeof shakaPlayer !== 'undefined' && shakaPlayer) {
-            shakaPlayer.destroy();
-            shakaPlayer = null;
-          }
-          if (typeof shakaUI !== 'undefined' && shakaUI) {
-            shakaUI.destroy();
-            shakaUI = null;
-          }
+function getRandomStream(streamPath, subdomain = 'admin2') {
+  if (domains.length === 0) {
+    return `https://${subdomain}.shadow-ran.online/${streamPath}`; // Fallback
+  }
+  const randomDomain = domains[Math.floor(Math.random() * domains.length)];
+  return `https://${subdomain}.${randomDomain}/${streamPath}`;
+}
 
-          // Rebuild the iframe each call so re-pressing the button reloads the stream
-          container.innerHTML = '';
-          var iframe = document.createElement('iframe');
-          iframe.id = 'stream1pc-iframe';
-          iframe.allowFullscreen = true;
-          iframe.src = src;
-          iframe.style.width = '100%';
-          iframe.style.height = '100%';
-          iframe.style.border = 'none';
-          iframe.style.display = 'block';
-          container.appendChild(iframe);
-        }
+function playIframePlayer(src) {
+  var container = document.getElementById('playerContainer');
 
-        function showPlayer(playerType, stream) {
-            if (playerType === "clappr") {
-              var __pcFrame = document.getElementById('stream1pc-iframe');
-              if (__pcFrame) __pcFrame.remove();
-                if (clapprPlayer) {
-                    clapprPlayer.destroy();
-                }
+  if (typeof clapprPlayer !== 'undefined' && clapprPlayer) {
+    clapprPlayer.destroy();
+    clapprPlayer = null;
+  }
+  if (typeof shakaPlayer !== 'undefined' && shakaPlayer) {
+    shakaPlayer.destroy();
+    shakaPlayer = null;
+  }
+  if (typeof shakaUI !== 'undefined' && shakaUI) {
+    shakaUI.destroy();
+    shakaUI = null;
+  }
 
-                clapprPlayer = new Clappr.Player({
-                    source: stream,
-                    parentId: "#playerContainer",
-                    height: '100%',
-                    width: '100%',
-                    autoPlay: true,
-                    mediacontrol: ClapprPinkTheme.mediacontrol,
-                    playback: {
-                      playInline: true,
-                      recycleVideo: true
-                    },
-                });
-            }
-        }
+  // Rebuild the iframe each call so re-pressing the button reloads the stream
+  container.innerHTML = '';
+  var iframe = document.createElement('iframe');
+  iframe.id = 'stream1pc-iframe';
+  iframe.allowFullscreen = true;
+  iframe.src = src;
+  iframe.style.width = '100%';
+  iframe.style.height = '100%';
+  iframe.style.border = 'none';
+  iframe.style.display = 'block';
+  container.appendChild(iframe);
+}
 
-        showPlayer('clappr', 'https://tedesco.formaturamaxi.com.br/wec.m3u8');
+function showPlayer(playerType, stream) {
+  if (playerType === "clappr") {
+    var __pcFrame = document.getElementById('stream1pc-iframe');
+    if (__pcFrame) __pcFrame.remove();
+    if (clapprPlayer) {
+      clapprPlayer.destroy();
+    }
+    clapprPlayer = new Clappr.Player({
+      source: stream,
+      parentId: "#playerContainer",
+      height: '100%',
+      width: '100%',
+      autoPlay: true,
+      mediacontrol: ClapprPinkTheme.mediacontrol,
+      playback: {
+        playInline: true,
+        recycleVideo: true
+      },
+    });
+  }
+}
 
 window.onload = function() {
         var toggleBtn = document.getElementById('toggleChat');
@@ -301,7 +320,7 @@ window.onload = function() {
             };
         }
     };
-    </script>
+</script>
 <script>
         document.addEventListener('contextmenu', function (e) {
             e.preventDefault();
