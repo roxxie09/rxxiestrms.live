@@ -6,31 +6,44 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 MULTIVIEW_HTML = os.path.join(BASE_DIR, "multiview.html")
 
 SCHEDULE_STREAM_MAP = {
-    "soccer.html":      {"pattern": "soccer-streams-{n}.html",  "default": {"subdomain": "601",      "path": "cyrus.m3u8",   "txt": "domainsz29.txt"}},
-    "mlb.html":         {"pattern": "mlb-streams-{n}.html",     "default": {"subdomain": "601",      "path": "mlb.m3u8",     "txt": "domainsz29.txt"}},
-    "nba.html":         {"pattern": "nba-streams-{n}.html",     "default": {"subdomain": "daffodil", "path": "nba.m3u8",     "txt": "domainsz29.txt"}},
-    "nhl.html":         {"pattern": "nhl-streams-{n}.html",     "default": {"subdomain": "601",      "path": "nhl.m3u8",     "txt": "domainsz29.txt"}},
-"fighting.html": {
-    "pattern": None,
-    "default": {"subdomain": "daffodil", "path": "wwe.m3u8", "txt": "domainsz29.txt"},
-    "slug_map": {
-        "wwe": {"file": "wwe.html"},
-        "ufc": {"file": "ufc.html"},
-        "ppv": {"file": "ppv.html"},
-        "aew": {"file": "aew.html"},
-    }
-},
-"motorsports.html": {
-    "pattern": "ppv-streams-{n}.html",
-    "default": {"subdomain": "601", "path": "tt.m3u8", "txt": "domainsz29.txt"},
-    "slug_map": {
-        "motogp": {"file": "motogp.html"},
-        "mxgp": {"file": "mxgp.html"},
-        "f1": {"file": "f1.html"},
-        "indycar": {"file": "indycar.html"},
-        "floracing": {"file": "floracing.html"},
+    "soccer.html": {
+        "pattern": "soccer-streams-{n}.html",
+        "default": {"subdomain": "601", "path": "cyrus.m3u8", "txt": "domainsz29.txt"},
     },
-},
+    "mlb.html": {
+        "pattern": "mlb-streams-{n}.html",
+        "default": {"subdomain": "601", "path": "mlb.m3u8", "txt": "domainsz29.txt"},
+    },
+    "nba.html": {
+        "pattern": "nba-streams-{n}.html",
+        "default": {"subdomain": "daffodil", "path": "nba.m3u8", "txt": "domainsz29.txt"},
+    },
+    "nhl.html": {
+        "pattern": "nhl-streams-{n}.html",
+        "default": {"subdomain": "601", "path": "nhl.m3u8", "txt": "domainsz29.txt"},
+    },
+    "fighting.html": {
+        "pattern": None,
+        "default": {"subdomain": "daffodil", "path": "wwe.m3u8", "txt": "domainsz29.txt"},
+        "slug_map": {
+            "wwe": {"file": "wwe.html"},
+            "ufc": {"file": "ufc.html"},
+            "ppv": {"file": "ppv.html"},
+            "aew": {"file": "aew.html"},
+        },
+    },
+    "motorsports.html": {
+        "pattern": "ppv-streams-{n}.html",
+        "default": {"subdomain": "601", "path": "tt.m3u8", "txt": "domainsz29.txt"},
+        "slug_map": {
+            "motogp": {"file": "motogp.html"},
+            "mxgp": {"file": "mxgp.html"},
+            "f1": {"file": "f1.html"},
+            "indycar": {"file": "indycar.html"},
+            "floracing": {"file": "floracing.html"},
+        },
+    },
+}
 
 STREAM_OVERRIDES = {
 }
