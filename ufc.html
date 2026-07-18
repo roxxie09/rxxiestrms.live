@@ -172,11 +172,9 @@
 <div class="fullplayer">
 <div id="playerContainer"></div>
 <div class="streamchanger">
-<button class="streambutton" onclick="showPlayer('clappr', getRandomStream('happybirthdayabby.m3u8', 'admin22'))">Stream 1 (Para)</button>
-<button class="streambutton" onclick="showPlayer('clappr', getRandomStream('ufc.m3u8', 'tedesco'))">Stream 2 (Hub)</button>
-<button class="streambutton" onclick="showPlayer('clappr', getRandomStream('happybirthdayabb.m3u8', 'admin2'))">Stream 3</button>
-<button class="streambutton" onclick="showPlayer('clappr', getRandomStream('stw.m3u8', 'admin2'))">Stream 4 (STW)</button>
-</div>
+<button class="streambutton" onclick="showPlayer('clappr', getRandomStream('happybirthdayabby.m3u8', 'admin2'))">Stream 1 (Para)</button>
+<button class="streambutton" onclick="showPlayer('clappr', getRandomStream('ufc.m3u8', 'admin2'))">Stream 2 (SN)
+<button class="streambutton" onclick="showPlayer('clappr', getRandomStream('ufc.m3u8', 'tedesco'))">Stream 3 (TNT)
 <div class="embedchat">
 <div class="chat-header">
 <span style="font-size: 10px; color: pink; font-weight: bold;">LIVE CHAT</span>
@@ -198,7 +196,7 @@
 var clapprPlayer;
 var currentChat = 'yt';
 var domains = [];
-var subdomain = 'admin22'  // Edit this per HTML file
+var subdomain = 'admin2'  // Edit this per HTML file
 
 // Load domains from txt file
 fetch('domainsz58.txt')
@@ -212,7 +210,7 @@ fetch('domainsz58.txt')
     console.error('Failed to load domainsz58.txt');
   });
 
-function getRandomStream(streamPath, subdomain = 'admin22') {
+function getRandomStream(streamPath, subdomain = 'admin2') {
   if (domains.length === 0) {
     return `https://${subdomain}.shadow-ran.online/${streamPath}`; // Fallback
   }
