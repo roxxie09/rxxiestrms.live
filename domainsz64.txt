@@ -1,3 +1,0 @@
-paradilux.business
-paradilux.store
-paradilux.store
