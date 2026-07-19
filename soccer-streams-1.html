@@ -212,7 +212,7 @@
     <div class="container container-fluid pt-2 text-white">
         <div class="fullplayer">
             <div id="playerContainer">
-                <iframe id="stream1pc-iframe" src="https://roxiestreams.info/raw/fox" 
+                <iframe id="stream1pc-iframe" src="https://roxiestreams.info/raw/ctv" 
                         style="display: none;" 
                         allowfullscreen></iframe>
             </div>
@@ -222,7 +222,7 @@
               <button class="streambutton" onclick="showPlayer('clappr', getRandomStream('foxalt.m3u8', 'admin2'))">FOX</button>
               <button class="streambutton" onclick="showPlayer('clappr', getRandomStream('fox.m3u8', 'tedesco'))">FOX (ALT)</button>
                 <button class="streambutton" onclick="showPlayer('clappr', getRandomStream('tele.m3u8', 'admin2'))">TELEMUNDO</button>
-                <button id="btn-pconly" class="streambutton" onclick="playIframePlayer('https://roxiestreams.info/raw/fox')">PC ONLY (DIRECT)</button>
+                <button id="btn-pconly" class="streambutton" onclick="playIframePlayer('https://roxiestreams.info/raw/ctv')">PC ONLY (DIRECT)</button>
                 <button class="streambutton" onclick="playIframePlayer('https://roxiestreams.info/raw/peacock2')">Tele (Peacock)</button>
                  <button class="streambutton" onclick="showPlayer('clappr', getRandomStream('bein1.m3u8', 'admin2'))">العربية</button>
                  <button class="streambutton" onclick="playIframePlayer('https://roxiestreams.info/raw/tsn1')">TSN PC DIRECT VPN</button>
@@ -274,7 +274,7 @@ fetch('domainsz58.txt')
 
     setTimeout(() => {
       if (isDesktop()) {
-        playIframePlayer('https://roxiestreams.info/raw/fox');
+        playIframePlayer('https://roxiestreams.info/raw/ctv');
       } else {
         showPlayer('clappr', getRandomStream('tsn.m3u8', 'admin2'));
       }
