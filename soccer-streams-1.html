@@ -13,9 +13,8 @@
     <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="css/main2.css">
     <link href="/css/buttons.css" rel="stylesheet">
-    <link href="imgs/iconn.png" rel="shortcut icon" type="x-icon"/>
-    <script disable-devtool-auto src="https://cdn.jsdelivr.net/npm/disable-devtool/disable-devtool.min.js"></script>
-
+<link href="imgs/iconn.png" rel="shortcut icon" type="x-icon"/>
+<script disable-devtool-auto src='https://cdn.jsdelivr.net/npm/disable-devtool/disable-devtool.min.js'></script>
     <script>
       (function () {
         function def(name, fn) {
@@ -35,21 +34,19 @@
         });
       })();
     </script>
-
     <script src="https://cdn.jsdelivr.net/npm/clappr@latest/dist/clappr.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/dash-shaka-playback@latest/dist/dash-shaka-playback.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/clappr-level-selector-plugin@latest/dist/level-selector.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shaka-player@latest/dist/controls.css">
     <script src="https://cdn.jsdelivr.net/npm/shaka-player@latest/dist/shaka-player.ui.js"></script>
-
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-EQ3BHVQGMN"></script>
     <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-EQ3BHVQGMN');
-    </script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
 
+  gtag('config', 'G-EQ3BHVQGMN');
+</script>
     <style>
         .navbar-brand {
             color: pink;
@@ -133,7 +130,8 @@
             width: 100% !important;
             height: 100% !important;
         }
-
+        
+        /* Stream 1 PC iframe sizing - matches other players */
         #stream1pc-iframe {
             width: 100% !important;
             height: 100% !important;
@@ -142,7 +140,8 @@
             top: 0;
             left: 0;
         }
-
+    
+        /* ---- Phones in PORTRAIT: hide chat, clean player, buttons wrap to fit ---- */
         @media (max-width: 768px) and (orientation: portrait) {
             .fullplayer {
                 flex-direction: column;
@@ -186,14 +185,14 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item"><a class="nav-link nav-link-soccer" href="https://roxiestreams.info/soccer">Soccer (WC 2026)</a></li>
-                    <li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/mlb">MLB</a></li>
-                    <li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/nba">NBA</a></li>
-                    <li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/nfl">NFL</a></li>
-                    <li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/nhl">NHL</a></li>
-                    <li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/fighting">Fighting</a></li>
-                    <li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/motorsports">Motorsports</a></li>
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0"><li class="nav-item"><a class="nav-link nav-link-soccer" href="https://roxiestreams.info/soccer">Soccer (WC 2026)</a></li>
+<li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/mlb">MLB</a></li>
+<li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/nba">NBA</a></li>
+<li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/nfl">NFL</a></li>
+<li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/nhl">NHL</a></li>
+
+<li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/fighting">Fighting</a></li>
+<li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/motorsports">Motorsports</a></li>
                     <li class="nav-item"><a class="nav-link" href="https://discord.gg/JhkVmejRmn">Stream Request (Discord)</a></li>
                 </ul>
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
@@ -213,24 +212,22 @@
     <div class="container container-fluid pt-2 text-white">
         <div class="fullplayer">
             <div id="playerContainer">
-                <iframe id="stream1pc-iframe" src="https://roxiestreams.info/raw/ctv"
-                        style="display: none;"
-                        allow="fullscreen; autoplay; encrypted-media; picture-in-picture"
+                <iframe id="stream1pc-iframe" src="https://roxiestreams.info/raw/ctv" 
+                        style="display: none;" 
                         allowfullscreen></iframe>
             </div>
 
             <div class="streamchanger">
-                <button id="btn-tsn" class="streambutton" onclick="playIframePlayer('https://embed.st/embed/admin/ppv-spain-vs-argentina/1')">TSN</button>
-                <button class="streambutton" onclick="showPlayer('clappr', getRandomStream('foxalt.m3u8', 'admin2'))">FOX</button>
-                <button class="streambutton" onclick="showPlayer('clappr', getRandomStream('fox.m3u8', 'tedesco'))">FOX (ALT)</button>
+                <button id="btn-tsn" class="streambutton" onclick="showPlayer('clappr', getRandomStream('tsn.m3u8', 'admin2'))">TSN</button>
+              <button class="streambutton" onclick="showPlayer('clappr', getRandomStream('foxalt.m3u8', 'admin2'))">FOX</button>
+              <button class="streambutton" onclick="showPlayer('clappr', getRandomStream('fox.m3u8', 'tedesco'))">FOX (ALT)</button>
                 <button class="streambutton" onclick="showPlayer('clappr', getRandomStream('tele.m3u8', 'admin2'))">TELEMUNDO</button>
                 <button id="btn-pconly" class="streambutton" onclick="playIframePlayer('https://roxiestreams.info/raw/ctv')">PC ONLY (DIRECT)</button>
                 <button class="streambutton" onclick="playIframePlayer('https://roxiestreams.info/raw/peacock2')">Tele (Peacock)</button>
-                <button class="streambutton" onclick="showPlayer('clappr', getRandomStream('bein1.m3u8', 'admin2'))">العربية</button>
-                <button class="streambutton" onclick="playIframePlayer('https://roxiestreams.info/raw/tsn1')">TSN PC DIRECT VPN</button>
-                <button class="streambutton" onclick="showPlayer('clappr', getRandomStream('azteca7.m3u8', 'admin2'))">AZTECA 7</button>
+                 <button class="streambutton" onclick="showPlayer('clappr', getRandomStream('bein1.m3u8', 'admin2'))">العربية</button>
+                 <button class="streambutton" onclick="playIframePlayer('https://roxiestreams.info/raw/tsn1')">TSN PC DIRECT VPN</button>
+                 <button class="streambutton" onclick="showPlayer('clappr', getRandomStream('azteca7.m3u8', 'admin2'))">AZTECA 7</button>
             </div>
-
             <div class="embedchat">
                 <div class="chat-header">
                     <span style="font-size: 10px; color: pink; font-weight: bold;">LIVE CHAT</span>
@@ -279,7 +276,7 @@ fetch('domainsz62.txt')
       if (isDesktop()) {
         playIframePlayer('https://roxiestreams.info/raw/ctv');
       } else {
-        playIframePlayer('https://embed.st/embed/admin/ppv-spain-vs-argentina/1');
+        showPlayer('clappr', getRandomStream('tsn.m3u8', 'admin2'));
       }
     }, 500);
   })
@@ -317,10 +314,9 @@ function playIframePlayer(src) {
   iframe.id = 'stream1pc-iframe';
   iframe.src = src;
   iframe.allowFullscreen = true;
-  iframe.setAttribute('allowfullscreen', '');
   iframe.setAttribute(
     'allow',
-    'fullscreen; autoplay; encrypted-media; picture-in-picture'
+    'encrypted-media *; autoplay *; fullscreen *; picture-in-picture *; screen-wake-lock *'
   );
   iframe.style.display = 'block';
   iframe.style.width = '100%';
@@ -425,7 +421,6 @@ function showPlayer(playerType, stream, drmConfig) {
   }
 }
 </script>
-
     <script>
         document.addEventListener('contextmenu', function (e) {
             e.preventDefault();
