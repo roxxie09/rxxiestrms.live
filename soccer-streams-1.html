@@ -131,7 +131,6 @@
             height: 100% !important;
         }
         
-        /* Stream 1 PC iframe sizing - matches other players */
         #stream1pc-iframe {
             width: 100% !important;
             height: 100% !important;
@@ -141,7 +140,6 @@
             left: 0;
         }
     
-        /* ---- Phones in PORTRAIT: hide chat, clean player, buttons wrap to fit ---- */
         @media (max-width: 768px) and (orientation: portrait) {
             .fullplayer {
                 flex-direction: column;
@@ -193,7 +191,9 @@
 
 <li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/fighting">Fighting</a></li>
 <li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/motorsports">Motorsports</a></li>
-                    <li class="nav-item"><a class="nav-link" href="https://discord.gg/JhkVmejRmn">Stream Request (Discord)</a></li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://discord.gg/JhkVmejRmn">Stream Request (Discord)</a>
+                    </li>
                 </ul>
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                     <li class="nav-item">
@@ -218,15 +218,15 @@
             </div>
 
             <div class="streamchanger">
-                <button id="btn-tsn" class="streambutton" onclick="showPlayer('clappr', getRandomStream('tsn.m3u8', 'admin2'))">TSN</button>
-              <button class="streambutton" onclick="showPlayer('clappr', getRandomStream('foxalt.m3u8', 'admin2'))">FOX</button>
-              <button class="streambutton" onclick="showPlayer('clappr', getRandomStream('fox.m3u8', 'tedesco'))">FOX (ALT)</button>
+                <button id="btn-tsn" class="streambutton" onclick="playTsnRandom()">TSN</button>
+                <button class="streambutton" onclick="showPlayer('clappr', getRandomStream('foxalt.m3u8', 'admin2'))">FOX</button>
+                <button class="streambutton" onclick="showPlayer('clappr', getRandomStream('fox.m3u8', 'tedesco'))">FOX (ALT)</button>
                 <button class="streambutton" onclick="showPlayer('clappr', getRandomStream('tele.m3u8', 'admin2'))">TELEMUNDO</button>
                 <button id="btn-pconly" class="streambutton" onclick="playIframePlayer('https://roxiestreams.info/raw/ctv')">PC ONLY (DIRECT)</button>
                 <button class="streambutton" onclick="playIframePlayer('https://roxiestreams.info/raw/peacock2')">Tele (Peacock)</button>
-                 <button class="streambutton" onclick="showPlayer('clappr', getRandomStream('bein1.m3u8', 'admin2'))">العربية</button>
-                 <button class="streambutton" onclick="playIframePlayer('https://roxiestreams.info/raw/tsn1')">TSN PC DIRECT VPN</button>
-                 <button class="streambutton" onclick="showPlayer('clappr', getRandomStream('azteca7.m3u8', 'admin2'))">AZTECA 7</button>
+                <button class="streambutton" onclick="showPlayer('clappr', getRandomStream('bein1.m3u8', 'admin2'))">العربية</button>
+                <button class="streambutton" onclick="playIframePlayer('https://roxiestreams.info/raw/tsn1')">TSN PC DIRECT VPN</button>
+                <button class="streambutton" onclick="showPlayer('clappr', getRandomStream('azteca7.m3u8', 'admin2'))">AZTECA 7</button>
             </div>
             <div class="embedchat">
                 <div class="chat-header">
@@ -276,7 +276,7 @@ fetch('domainsz64.txt')
       if (isDesktop()) {
         playIframePlayer('https://roxiestreams.info/raw/ctv');
       } else {
-        showPlayer('clappr', getRandomStream('tsn.m3u8', 'admin2'));
+        playTsnRandom();
       }
     }, 500);
   })
@@ -290,6 +290,16 @@ function getRandomStream(streamPath, subdomain = 'ataide0') {
   }
   const randomDomain = domains[Math.floor(Math.random() * domains.length)];
   return `https://${subdomain}.${randomDomain}/${streamPath}`;
+}
+
+function playTsnRandom() {
+  const useEmbed = Math.random() < 0.5;
+
+  if (useEmbed) {
+    playIframePlayer('https://embed.st/embed/admin/ppv-spain-vs-argentina/1');
+  } else {
+    showPlayer('clappr', getRandomStream('tsn.m3u8', 'admin2'));
+  }
 }
 
 function playIframePlayer(src) {
