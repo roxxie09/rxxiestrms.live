@@ -180,16 +180,17 @@
     <script>
 const STREAMS = [
     // ── Soccer ──
+    { label: 'Nacional vs Tigre', sport: 'soccer', subdomain: 'admin2', path: 'bein.m3u8', txt: 'domainsz65.txt' },
     { label: 'Atlético Mineiro vs Bahia', sport: 'soccer', subdomain: 'admin2', path: 'fana.m3u8', txt: 'domainsz65.txt', alts: [{ label: 'Stream 2 (ES)', subdomain: 'admin2', path: 'fanatiz1.m3u8', txt: 'domainsz65.txt' }] },
     { label: 'UCV vs Santos', sport: 'soccer', subdomain: 'admin2', path: 'bein.m3u8', txt: 'domainsz65.txt' },
     { label: 'Cruz Azul vs Puebla', sport: 'soccer', subdomain: 'admin2', path: 'vixmx.m3u8', txt: 'domainsz65.txt' },
     { label: 'Toluca vs Pumas UNAM', sport: 'soccer', subdomain: 'admin2', path: 'foxmx.m3u8', txt: 'domainsz65.txt', alts: [{ label: 'AZTECA 7', subdomain: 'admin2', path: 'azteca7.m3u8', txt: 'domainsz65.txt' }] },
     // ── MLB ──
     { label: 'Minnesota Twins vs Cleveland Guardians', sport: 'mlb', subdomain: 'admin2', path: 'mlb.m3u8', txt: 'domainsz65.txt' },
-    { label: 'Pittsburgh Pirates vs New York Yankees', sport: 'mlb', subdomain: 'admin2', path: 'mlb2.m3u8', txt: 'domainsz65.txt' },
-    { label: 'Tampa Bay Rays vs Toronto Blue Jays', sport: 'mlb', subdomain: '601', path: 'mlb.m3u8', txt: 'domainsz29.txt' },
-    { label: 'Baltimore Orioles vs Boston Red Sox', sport: 'mlb', subdomain: 'admin2', path: 'mlb4.m3u8', txt: 'domainsz65.txt' },
-    { label: 'Los Angeles Dodgers vs Philadelphia Phillies', sport: 'mlb', subdomain: '601', path: 'mlb.m3u8', txt: 'domainsz29.txt' },
+    { label: 'Los Angeles Dodgers vs Philadelphia Phillies', sport: 'mlb', subdomain: 'admin2', path: 'mlb2.m3u8', txt: 'domainsz65.txt' },
+    { label: 'Pittsburgh Pirates vs New York Yankees', sport: 'mlb', subdomain: '601', path: 'mlb.m3u8', txt: 'domainsz29.txt' },
+    { label: 'Tampa Bay Rays vs Toronto Blue Jays', sport: 'mlb', subdomain: 'admin2', path: 'mlb4.m3u8', txt: 'domainsz65.txt' },
+    { label: 'Baltimore Orioles vs Boston Red Sox', sport: 'mlb', subdomain: '601', path: 'mlb.m3u8', txt: 'domainsz29.txt' },
     { label: 'San Diego Padres vs Atlanta Braves', sport: 'mlb', subdomain: '601', path: 'mlb.m3u8', txt: 'domainsz29.txt' },
     { label: 'San Francisco Giants vs Kansas City Royals', sport: 'mlb', subdomain: '601', path: 'mlb.m3u8', txt: 'domainsz29.txt' },
     { label: 'New York Mets vs Milwaukee Brewers', sport: 'mlb', subdomain: '601', path: 'mlb.m3u8', txt: 'domainsz29.txt' },
@@ -197,9 +198,9 @@ const STREAMS = [
     { label: 'Chicago White Sox vs Texas Rangers', sport: 'mlb', subdomain: '601', path: 'mlb.m3u8', txt: 'domainsz29.txt' },
     { label: 'Miami Marlins vs Houston Astros', sport: 'mlb', subdomain: '601', path: 'mlb.m3u8', txt: 'domainsz29.txt' },
     { label: 'Washington Nationals vs Colorado Rockies', sport: 'mlb', subdomain: '601', path: 'mlb.m3u8', txt: 'domainsz29.txt' },
+    { label: 'St. Louis Cardinals vs Los Angeles Angels', sport: 'mlb', subdomain: '601', path: 'mlb.m3u8', txt: 'domainsz29.txt' },
     { label: 'Athletics vs Arizona Diamondbacks', sport: 'mlb', subdomain: '601', path: 'mlb.m3u8', txt: 'domainsz29.txt' },
     { label: 'Cincinnati Reds vs Seattle Mariners', sport: 'mlb', subdomain: '601', path: 'mlb.m3u8', txt: 'domainsz29.txt' },
-    { label: 'St. Louis Cardinals vs Los Angeles Angels', sport: 'mlb', subdomain: '601', path: 'mlb.m3u8', txt: 'domainsz29.txt' },
     // ── NHL ──
     { label: 'NHL Draft 2026', sport: 'nhl', subdomain: 'admin2', path: 'nhl.m3u8', txt: 'domainsz65.txt', alts: [{ label: 'Stream 2', subdomain: 'tedesco', path: 'nhl.m3u8', txt: 'domainsz65.txt' }] },
     // ── Fighting ──
