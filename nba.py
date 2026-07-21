@@ -228,7 +228,7 @@ def update_combined_games_in_html(html_path, nba_games, wnba_games):
     with open(html_path, encoding='utf-8') as f:
         soup = BeautifulSoup(f, 'html.parser')
 
-    main_table = soup.find('table', id='eventsTable')
+    main_table = soup.find("table", id="eventsTable") or soup.find("table", class_="schedule-table")
     if main_table is None:
         print("Could not find table with id='eventsTable'")
         return
