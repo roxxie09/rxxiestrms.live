@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta name="robots" content="noindex,nofollow">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Live Player - TSN 5</title>
+  <script>
+    (function () {
+      function def(name, fn) {
+        if (!Map.prototype[name]) {
+          Object.defineProperty(Map.prototype, name, {
+            value: fn, writable: true, configurable: true, enumerable: false
+          });
+        }
+      }
+      def('getOrInsert', function (key, d) {
+        if (!this.has(key)) this.set(key, d);
+        return this.get(key);
+      });
+      def('getOrInsertComputed', function (key, cb) {
+        if (!this.has(key)) this.set(key, cb(key));
+        return this.get(key);
+      });
+    })();
+  </script>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shaka-player@latest/dist/controls.css">
+  <script src="https://cdn.jsdelivr.net/npm/shaka-player@latest/dist/shaka-player.ui.js"></script>
+  <style>
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      background: #000;
+      overflow: hidden;
+    }
+    #video-container {
+      width: 100%;
+      height: 100%;
+      position: fixed;
+      inset: 0;
+      background: #000;
+    }
+    video {
+      width: 100%;
+      height: 100%;
+    }
+    [data-shaka-player-container] {
+      width: 100% !important;
+      height: 100% !important;
+      background: #000;
+    }
+  </style>
+</head>
+<body>
+  <div id="video-container" data-shaka-player-container>
+    <video id="video" data-shaka-player autoplay playsinline></video>
+  </div>
+  <script>
+    async function init() {
+      const video = document.getElementById('video');
+      const container = document.getElementById('video-container');
+      const player = new shaka.Player(video);
+      const ui = new shaka.ui.Overlay(player, container, video);
+      
+      // Decryption parameter configuration
+      player.configure({
+        drm: {
+          clearKeys: {
+            "8acde4160c2846ef80d662963f7d0069": "de70df1a7963db249f64037fdb03afba",
+            "d9f16dae6aa856c297879138420f9759": "de70df1a7963db249f64037fdb03afba",
+            "340407b9d8495e9c87e69b4f4c143a72": "de70df1a7963db249f64037fdb03afba"
+          }
+        }
+      });
+      
+      // Load manifest utilizing full token queries
+      await player.load("https://stream.video.9c9media.com/MTc4NDY0MjQ5N19lY2Q4NDM1ZWI4Y2ZhM2RlNzMzNDIxZmM0MGEwYzllMTFkYWRlZGM5NWJjM2YyYjkwNmYzOWM3MDFhYWVkOGM4/d/tsn/tsn5a/manifest.mpd?filter=fe&pnkh=MTc4NDY0MjQ5N19lY2Q4NDM1ZWI4Y2ZhM2RlNzMzNDIxZmM0MGEwYzllMTFkYWRlZGM5NWJjM2YyYjkwNmYzOWM3MDFhYWVkOGM4&dolbyvision=false&mcv=false&mca=true&u=li&mta=false&stt=true&hdr10=false");
+    }
+    init().catch(console.error);
+  </script>
+</body>
+</html>
