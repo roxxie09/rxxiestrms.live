@@ -4,87 +4,38 @@
   <meta name="robots" content="noindex,nofollow">
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>Live Player</title>
-  <script>
-    (function () {
-      function def(name, fn) {
-        if (!Map.prototype[name]) {
-          Object.defineProperty(Map.prototype, name, {
-            value: fn, writable: true, configurable: true, enumerable: false
-          });
-        }
-      }
-      def('getOrInsert', function (key, d) {
-        if (!this.has(key)) this.set(key, d);
-        return this.get(key);
-      });
-      def('getOrInsertComputed', function (key, cb) {
-        if (!this.has(key)) this.set(key, cb(key));
-        return this.get(key);
-      });
-    })();
-  </script>
-
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shaka-player@latest/dist/controls.css">
-  <script src="https://cdn.jsdelivr.net/npm/shaka-player@latest/dist/shaka-player.ui.js"></script>
+  <title>Live Stream</title>
   <style>
-    html, body {
+    body {
       margin: 0;
-      width: 100%;
-      height: 100%;
       background: #000;
-      overflow: hidden;
+      color: #fff;
     }
-    #video-container {
+    #jwplayerDiv {
       width: 100%;
-      height: 100%;
-      position: fixed;
-      inset: 0;
-      background: #000;
-    }
-    video {
-      width: 100%;
-      height: 100%;
-    }
-    [data-shaka-player-container] {
-      width: 100% !important;
-      height: 100% !important;
-      background: #000;
+      height: 100vh;
     }
   </style>
 </head>
 <body>
-  <div id="video-container" data-shaka-player-container>
-    <video id="video" data-shaka-player autoplay playsinline></video>
-  </div>
-  <script>
-    async function init() {
-      const video = document.getElementById('video');
-      const container = document.getElementById('video-container');
-      const player = new shaka.Player(video);
-      const ui = new shaka.ui.Overlay(player, container, video);
+  <div id="jwplayerDiv"></div>
 
-      // Intercept outgoing requests to attach required headers
-      player.getNetworkingEngine().registerRequestFilter((type, request) => {
-        request.headers['Accept'] = '*/*';
-        request.headers['Origin'] = 'https://vix.com';
-        request.headers['Referer'] = 'https://vix.com/';
-        request.headers['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36 Edg/150.0.0.0';
-      });
-      
-      // Decryption parameter configuration
-      player.configure({
-        drm: {
-          clearKeys: {
-            "5ea2ac1200ecb840649454261a30f1c2": "1846147b08cc55fa3f7ab4849a458fee"
-          }
+  <script src="https://content.jwplatform.com/libraries/IDzF9Zmk.js"></script>
+  <script>
+    jwplayer("jwplayerDiv").setup({
+      file: "https://dcs4-live.mp.lura.live/server/play/019n91h1VmpZsMe0/manifest.mpd?encp=zuvPJYoOOdEMDNF2j2mvmg%3Aiz8o4mJKS-ZxLgEqgSXwUS17IOG3uMfD38agYwuTLfEfk7zH9Jg1wgiNnpWZ5GzZs6BvZBF1i7LqH9dL69c8FhHbScN-o671CbE1b0g-LBpRf-upjiTmIQBZY1fhgYqp4FZKYLF7zZBgIGC8TBOXXa9F-b6DA4GWN0mPfluSNvk9yHWX5W2OT0RMSpjLN4ceEYFdVBrSMOMTTlYrNfI1_9BitCMH30n6I_QUFr_N9O839sLaDSvk-oFHDlvJNRJtvsWrEbBUx6sK8IQu90Jsv50I9m8rSJJQOEIiSt8PmE1w7j4KhFHYsRHzfZ2vcLzBW_WmPWU_sqCYc3lrq9TkgOrzwq5V27utoXMDHNB-Pj3-SfkWJAkgdIvnemJ5ZngOl22to4kcsw-euT3SRNZKAnfNxgyEkFHpxS-Fh93pGWtMIxm4M-G0jsYAQR-e1NS4kVX4yi0FCBbWxCG02dh0mrL7bHylP88t7MG_QmaKJ0mG2IJtnopmODRkoGnsRAMtOgXSHfTzt0Uf-XPW_fsUe02hBtLFa0zL2IzikaX5LkGfFTUFcewgUohvrATC3HrhQ6Wi9-Ppq9hT-t1TOFYrz2q6UKaMlYfom1d6GnThLGkHmIla8i_WCiT9IzO2S5Uu9HA0Pkt-uKTuqwXqY62Kf-bmDp4xGXXRo8jcJcwiythqd8f6Efv-WhtEYqF6vZzhu6rPtllfZsAmDU5B_n6CSuENTo4e2lNmqobOTqZrmMPlcO0WfV_8n-kZSqg5UC6FKLw8pSvNaZ0LRSiskFpRJbzv9PF_rOTZZevNNY5UmWpJjTEJ4pvtMtqHWY983YgLXx0NGfrwI_wySpWNtZ52DmU6m2OTKYIlyf3z4KqFk4t_7kddgCAu3djO_svQ0fSStOSjfaTx3EWn8E_BLxgQx31-krWeYrjuyTQBJxv_KDHknjooUk3ZjtihRXI_Jry54N2Ry5ia3iTMjFrH0q4GUfZ9LdT-yUW7bRq8MXfwZI4ucmM_J5h70P7YQSXNr872Z78CySTMMjWnl9ZXQZsETRkIE8wVaYRNd_JYMF-anaUaaAYmLD4bawJD9cbqzo0TUrnVSIFvvxJQlxN1w3TgTTlT-RehlwU446Xf8Bw-dvRS1xH4kuUe-Wp_P730gJfoQWKpN87_ny1mE7BIBm2MSc-alNsxuatk5PBzpVo0YrnLKZbL-EsYMM7sfEPS7G4l1XnpcDZjMp8G9N1fq9GpmAwBbFIVI9QnjByIdNSa5ZiEC_K3mt_8Evn41PhPJKao2gw-_GyFGl-xKpvoyUxl1e-ZFU6yyEUHUzxUeL5YlFvlg_PAhHw0OrNAeHOVq1SbChEl6aEBCS8pnl2N8bbOIJMqgWU-h-V6NWiKP-FXX5tJCA8udbb-9B9Fx1i_TnmF0TlxpTb-G0rYrZMQwOZMzWk2cXrrGUd2qqA9al8cjPlpO56qzJmLmv69n3uu_ICX1wFdJr7yaOs0H79m89RN0MPeigmIlIuwIke5pF7USXmSNPF5ImgiBNSW1ttPEU8rGgJSZCMCmk7HdNnvuuO7_1CZ8E83eQUmu2Qcs1t0kmn8caF87W9ZMDdAZYwcO4qEFKJL-GSFuZk_v2nhrDL9BnrHJpC-5IfXrAUOvp_khFUYWW1c3NEZG6W_DVL7Pl9BSKi2J4_YY8l1wyGoeRpauo_oxCql6jqTgyezju-z-6CGvRpmmwIy4ASE0SzlWOpCYpSSsxwvF6WOhFNRPqXNtPFKmQAqS6EjgqA5YxT_RVH1qPZNTRxAJs9i-P8jS6zh57mtKRXqQ6NWXaHSG3vTpfEAzuh4FXiw9waHNx__QPaEdS1z3zre_piW4yVrjk63XYFRCZ1aGuoTsb8O7544EoNgZTLf2xlU2PX_9AG2UqAgLiGv1uIaCeSzREuAZwACy54Drh8yaRCeamsg-UjKOcIGb8DDfAi1ZHzMSZ7e4E-WAcsRHmVs1gNbDrRfpNtASSsjp_LFCHxC5Zj7LvIaXzG-P3pStendBXfiCsFgLCQnt0YohmVa5aUTwkMdLdTOU-caTsRSgBDz49PgmBX9SUxbUZ3VvKbNFK6kPNYhOlA9UjWP04uCUQi4ZlmhiMXOyaKP18d7ryaJM6BVIDRkRefgjYUPNMn2p1xLRkKzjKOlpa3r19HLUlsMz9ydw-ktxNi7EUJiQ3HfbS3cbKUKetXxWZ-nIRphGYW1Q-GbCtbEu_9PLky_relfkazp9LpSHd8mWQiTfVNz86aPbB04qGObP5e4X7yxgRrRZvOYJg_fiK0IVFh_THkrt69cu6fznTeXQpdfvkwd3D7CSXbvuPgVFun6YoXCthTuOOqG4GSgNAAvX6D0iciBO55-3ZMsv9cBqcQYcvgD52QHxiL-3KhL69pmQ9h-Ogjjmn37lsC2y9O9IQkLaDP5ZVd59R6uWjDFb1-khRVQsZLj7XKEjSGCnLioB6F2Uuj0pSfO9-lQYjdp46hN7qxQpuXKzLm57K-oSNFkw_ZbueO2_Y5RQIrNq-nuShQtvGU-4eo7DZdCHMOo3a_Zxe7L3nvAME-sWi5ytuD1pcwQZlM_iOGK5n7iNLiznhia7oMKYrS0sWEG5dayp8BypYp1vxCKDHAESKktgmjfwluQTLcjIIh84wceIBfxty8rj-VJWHuVRVktKDEo9K9tUj-qH23DW6OEJWUH2LvSaESN36HwEqqru6TefDGC6L5qAS5bWZ84Y3ZRbFhr1gpMEGnuUf4laEawkRtdDU94Cl2xdHMHJ01aM5NDaW17RDiEKzlvni8f8xtR4OMhwSDkj_xLqxXv3-GjeoZ8UGZqzBRfumQFw_Jrf2auCQtAwhMwmMd2XNfBm0PhRHvZt3_WToqtICf94mXCoTq2seP2ujxv4hWYL05SsU0AR2HF8_pDhsedUQ1oB-cO0ir0R0xVS461N4vnN3tzF03UZAgBY5udhc2qvEQn4lccfQ_m_5FyOEyvV-YQWW9lL-jYTI6-iV7uy5zix9mHOxp0wF9ZeyY-YuKo1yl-vSdKCL3L8_IVFbAtvFrFJXOJMWCvUtb0nn_FnHKYqP7jMYGGDWnQzbZAwjz8g_aMRJqNfQC1ELz0VrhU0UK5Se2-7SUWvzlgtA1uny8uqJw_Vt5m2QbvpCP75-mpJe5nmuzgpv_YZn3JuoDZrHcEhKByl3IoYcplJbgabruIkCW5KgnoO0mRb3BP5VlrBaps1nvhdhDWZi3vLjCk1K3Aj3j4iUbxwa4Kw_6Wtg-Pz627vX805vz58fn8coKaeBldv3a_9ExQaQfbyg8hl91ieqogRRXuocG4gtWAOZnWx5Qww0sl5bKsgrD7gpYplmCjCrI05s-5mUuI_2MtEGzoDADzbgc6X5NEXEwyEhqWGGinJNc5ilbDOL7xbztMUxL7PkFJ1r9a59O-_SmedP1Zhw8IdG3mAv8hAANzJ0sArfwf0MRjwufUTpC2-5Mj7RzEG9-GhMlbVh0qB5nFRc4b8xLLK2XKdPvMxtLru0TGu4CyK3E3Rf-JnCOgINyHXVykCDNiNsdEGa8wMFPbDHVJ-2RN0VFF1wapX1XrEDvNSxEZNc1yCDej_jSGRNGB1rl1HuJkJxIAmGhjqOWWVaMlY_JwdjPtzFE3FLvsSE5fOvG7KSai09uFQ33ZhmHBUwsNcw6YjLAXVOJsQ4OrKEPP3X7HI18LAlD6hMoaT8F0MfbU5VAqJg3JVcezY8cr-vb9F-hOXREQNkQue7MYnGfet58SZHd4NYmHp-Wk9SSM0M7cunWRjsAJG0LHWHrGQ188jgx5mh7edkOSOK0W151REH2uHVr4pxZamobft0w_2XeKeNt3DGQQgSxpKOHWo6dxo1oxsbMsV7zTmPKRcpm2gxgVeu6-Tjs_ERkZ3I0kX7jbeMPeCTS_IhyeZKkhhqWlodX9dm82YPJjwfikRHSRNl_JNleHEodDc2roG08DWwGl6a_dn3cy9zf8Djv7WcUQCUYW23xZVrN7W2-GxUhYu1Ud6_jW5afDrFUJXx8H1H9BEzLNgu3gk6rllTMTSJxc-UVHwiGuiPaKw1hwxsvO93Rfcx5xy_An_iycM36UxmxqjN7jy4s4PUGeZgz-aKJlf71fQEdqQs8x9XpRHd_HhyLuDHTJLXRfdpoXSuJ3A0e0Ky5KjGrYzf6Tx5b1tE7QmXePaNZLymXAPtgAILvkUH8&anvauth=tb%3D0~te%3D1784685894~sgn%3Db068ec5f16b3c2f7fdc81fb8cad6bf850854785143bdc871591ce1fe13fabd48&t=1784684994&lura_pal_nonce=&guid=1279b139-d8fe-47c1-2c2180a302c5&ck=eyI1ZWEyYWMxMjAwZWNiODQwNjQ5NDU0MjYxYTMwZjFjMiI6IjE4NDYxNDdiMDhjYzU1ZmEzZjdhYjQ4NDlhNDU4ZmVlIn0%3D",
+      type: "dash",
+      width: "100%",
+      height: "100%",
+      autostart: true,
+      title: "Live Stream",
+      drm: {
+        clearkey: {
+          keyId: "5ea2ac1200ecb840649454261a30f1c2",
+          key: "1846147b08cc55fa3f7ab4849a458fee"
         }
-      });
-      
-      // Load manifest utilizing full token queries
-      await player.load("https://dcs4-live.mp.lura.live/server/play/019n91h1VmpZsMe0/manifest.mpd?encp=zuvPJYoOOdEMDNF2j2mvmg%3Aiz8o4mJKS-ZxLgEqgSXwUS17IOG3uMfD38agYwuTLfEfk7zH9Jg1wgiNnpWZ5GzZs6BvZBF1i7LqH9dL69c8FhHbScN-o671CbE1b0g-LBpRf-upjiTmIQBZY1fhgYqp4FZKYLF7zZBgIGC8TBOXXa9F-b6DA4GWN0mPfluSNvk9yHWX5W2OT0RMSpjLN4ceEYFdVBrSMOMTTlYrNfI1_9BitCMH30n6I_QUFr_N9O839sLaDSvk-oFHDlvJNRJtvsWrEbBUx6sK8IQu90Jsv50I9m8rSJJQOEIiSt8PmE1w7j4KhFHYsRHzfZ2vcLzBW_WmPWU_sqCYc3lrq9TkgOrzwq5V27utoXMDHNB-Pj3-SfkWJAkgdIvnemJ5ZngOl22to4kcsw-euT3SRNZKAnfNxgyEkFHpxS-Fh93pGWtMIxm4M-G0jsYAQR-e1NS4kVX4yi0FCBbWxCG02dh0mrL7bHylP88t7MG_QmaKJ0mG2IJtnopmODRkoGnsRAMtOgXSHfTzt0Uf-XPW_fsUe02hBtLFa0zL2IzikaX5LkGfFTUFcewgUohvrATC3HrhQ6Wi9-Ppq9hT-t1TOFYrz2q6UKaMlYfom1d6GnThLGkHmIla8i_WCiT9IzO2S5Uu9HA0Pkt-uKTuqwXqY62Kf-bmDp4xGXXRo8jcJcwiythqd8f6Efv-WhtEYqF6vZzhu6rPtllfZsAmDU5B_n6CSuENTo4e2lNmqobOTqZrmMPlcO0WfV_8n-kZSqg5UC6FKLw8pSvNaZ0LRSiskFpRJbzv9PF_rOTZZevNNY5UmWpJjTEJ4pvtMtqHWY983YgLXx0NGfrwI_wySpWNtZ52DmU6m2OTKYIlyf3z4KqFk4t_7kddgCAu3djO_svQ0fSStOSjfaTx3EWn8E_BLxgQx31-krWeYrjuyTQBJxv_KDHknjooUk3ZjtihRXI_Jry54N2Ry5ia3iTMjFrH0q4GUfZ9LdT-yUW7bRq8MXfwZI4ucmM_J5h70P7YQSXNr872Z78CySTMMjWnl9ZXQZsETRkIE8wVaYRNd_JYMF-anaUaaAYmLD4bawJD9cbqzo0TUrnVSIFvvxJQlxN1w3TgTTlT-RehlwU446Xf8Bw-dvRS1xH4kuUe-Wp_P730gJfoQWKpN87_ny1mE7BIBm2MSc-alNsxuatk5PBzpVo0YrnLKZbL-EsYMM7sfEPS7G4l1XnpcDZjMp8G9N1fq9GpmAwBbFIVI9QnjByIdNSa5ZiEC_K3mt_8Evn41PhPJKao2gw-_GyFGl-xKpvoyUxl1e-ZFU6yyEUHUzxUeL5YlFvlg_PAhHw0OrNAeHOVq1SbChEl6aEBCS8pnl2N8bbOIJMqgWU-h-V6NWiKP-FXX5tJCA8udbb-9B9Fx1i_TnmF0TlxpTb-G0rYrZMQwOZMzWk2cXrrGUd2qqA9al8cjPlpO56qzJmLmv69n3uu_ICX1wFdJr7yaOs0H79m89RN0MPeigmIlIuwIke5pF7USXmSNPF5ImgiBNSW1ttPEU8rGgJSZCMCmk7HdNnvuuO7_1CZ8E83eQUmu2Qcs1t0kmn8caF87W9ZMDdAZYwcO4qEFKJL-GSFuZk_v2nhrDL9BnrHJpC-5IfXrAUOvp_khFUYWW1c3NEZG6W_DVL7Pl9BSKi2J4_YY8l1wyGoeRpauo_oxCql6jqTgyezju-z-6CGvRpmmwIy4ASE0SzlWOpCYpSSsxwvF6WOhFNRPqXNtPFKmQAqS6EjgqA5YxT_RVH1qPZNTRxAJs9i-P8jS6zh57mtKRXqQ6NWXaHSG3vTpfEAzuh4FXiw9waHNx__QPaEdS1z3zre_piW4yVrjk63XYFRCZ1aGuoTsb8O7544EoNgZTLf2xlU2PX_9AG2UqAgLiGv1uIaCeSzREuAZwACy54Drh8yaRCeamsg-UjKOcIGb8DDfAi1ZHzMSZ7e4E-WAcsRHmVs1gNbDrRfpNtASSsjp_LFCHxC5Zj7LvIaXzG-P3pStendBXfiCsFgLCQnt0YohmVa5aUTwkMdLdTOU-caTsRSgBDz49PgmBX9SUxbUZ3VvKbNFK6kPNYhOlA9UjWP04uCUQi4ZlmhiMXOyaKP18d7ryaJM6BVIDRkRefgjYUPNMn2p1xLRkKzjKOlpa3r19HLUlsMz9ydw-ktxNi7EUJiQ3HfbS3cbKUKetXxWZ-nIRphGYW1Q-GbCtbEu_9PLky_relfkazp9LpSHd8mWQiTfVNz86aPbB04qGObP5e4X7yxgRrRZvOYJg_fiK0IVFh_THkrt69cu6fznTeXQpdfvkwd3D7CSXbvuPgVFun6YoXCthTuOOqG4GSgNAAvX6D0iciBO55-3ZMsv9cBqcQYcvgD52QHxiL-3KhL69pmQ9h-Ogjjmn37lsC2y9O9IQkLaDP5ZVd59R6uWjDFb1-khRVQsZLj7XKEjSGCnLioB6F2Uuj0pSfO9-lQYjdp46hN7qxQpuXKzLm57K-oSNFkw_ZbueO2_Y5RQIrNq-nuShQtvGU-4eo7DZdCHMOo3a_Zxe7L3nvAME-sWi5ytuD1pcwQZlM_iOGK5n7iNLiznhia7oMKYrS0sWEG5dayp8BypYp1vxCKDHAESKktgmjfwluQTLcjIIh84wceIBfxty8rj-VJWHuVRVktKDEo9K9tUj-qH23DW6OEJWUH2LvSaESN36HwEqqru6TefDGC6L5qAS5bWZ84Y3ZRbFhr1gpMEGnuUf4laEawkRtdDU94Cl2xdHMHJ01aM5NDaW17RDiEKzlvni8f8xtR4OMhwSDkj_xLqxXv3-GjeoZ8UGZqzBRfumQFw_Jrf2auCQtAwhMwmMd2XNfBm0PhRHvZt3_WToqtICf94mXCoTq2seP2ujxv4hWYL05SsU0AR2HF8_pDhsedUQ1oB-cO0ir0R0xVS461N4vnN3tzF03UZAgBY5udhc2qvEQn4lccfQ_m_5FyOEyvV-YQWW9lL-jYTI6-iV7uy5zix9mHOxp0wF9ZeyY-YuKo1yl-vSdKCL3L8_IVFbAtvFrFJXOJMWCvUtb0nn_FnHKYqP7jMYGGDWnQzbZAwjz8g_aMRJqNfQC1ELz0VrhU0UK5Se2-7SUWvzlgtA1uny8uqJw_Vt5m2QbvpCP75-mpJe5nmuzgpv_YZn3JuoDZrHcEhKByl3IoYcplJbgabruIkCW5KgnoO0mRb3BP5VlrBaps1nvhdhDWZi3vLjCk1K3Aj3j4iUbxwa4Kw_6Wtg-Pz627vX805vz58fn8coKaeBldv3a_9ExQaQfbyg8hl91ieqogRRXuocG4gtWAOZnWx5Qww0sl5bKsgrD7gpYplmCjCrI05s-5mUuI_2MtEGzoDADzbgc6X5NEXEwyEhqWGGinJNc5ilbDOL7xbztMUxL7PkFJ1r9a59O-_SmedP1Zhw8IdG3mAv8hAANzJ0sArfwf0MRjwufUTpC2-5Mj7RzEG9-GhMlbVh0qB5nFRc4b8xLLK2XKdPvMxtLru0TGu4CyK3E3Rf-JnCOgINyHXVykCDNiNsdEGa8wMFPbDHVJ-2RN0VFF1wapX1XrEDvNSxEZNc1yCDej_jSGRNGB1rl1HuJkJxIAmGhjqOWWVaMlY_JwdjPtzFE3FLvsSE5fOvG7KSai09uFQ33ZhmHBUwsNcw6YjLAXVOJsQ4OrKEPP3X7HI18LAlD6hMoaT8F0MfbU5VAqJg3JVcezY8cr-vb9F-hOXREQNkQue7MYnGfet58SZHd4NYmHp-Wk9SSM0M7cunWRjsAJG0LHWHrGQ188jgx5mh7edkOSOK0W151REH2uHVr4pxZamobft0w_2XeKeNt3DGQQgSxpKOHWo6dxo1oxsbMsV7zTmPKRcpm2gxgVeu6-Tjs_ERkZ3I0kX7jbeMPeCTS_IhyeZKkhhqWlodX9dm82YPJjwfikRHSRNl_JNleHEodDc2roG08DWwGl6a_dn3cy9zf8Djv7WcUQCUYW23xZVrN7W2-GxUhYu1Ud6_jW5afDrFUJXx8H1H9BEzLNgu3gk6rllTMTSJxc-UVHwiGuiPaKw1hwxsvO93Rfcx5xy_An_iycM36UxmxqjN7jy4s4PUGeZgz-aKJlf71fQEdqQs8x9XpRHd_HhyLuDHTJLXRfdpoXSuJ3A0e0Ky5KjGrYzf6Tx5b1tE7QmXePaNZLymXAPtgAILvkUH8&anvauth=tb%3D0~te%3D1784685894~sgn%3Db068ec5f16b3c2f7fdc81fb8cad6bf850854785143bdc871591ce1fe13fabd48&t=1784684994&lura_pal_nonce=&guid=1279b139-d8fe-47c1-2c2180a302c5&ck=eyI1ZWEyYWMxMjAwZWNiODQwNjQ5NDU0MjYxYTMwZjFjMiI6IjE4NDYxNDdiMDhjYzU1ZmEzZjdhYjQ4NDlhNDU4ZmVlIn0%3D");
-    }
-    init().catch(console.error);
+      }
+    });
   </script>
 </body>
 </html>
