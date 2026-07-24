@@ -4,7 +4,7 @@
   <meta name="robots" content="noindex,nofollow">
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>Live Stream</title>
+  <title>Live Player - KTAZ</title>
   <script>
     (function () {
       function def(name, fn) {
@@ -63,14 +63,18 @@
       const container = document.getElementById('video-container');
       const player = new shaka.Player(video);
       const ui = new shaka.ui.Overlay(player, container, video);
+      
+      // Decryption parameter configuration
       player.configure({
         drm: {
           clearKeys: {
-            "fa76a2cb41543bc8a1b2ebf874289934": "ff292e3d115950f70c6d8c552141a520"
+            "67228706e64738499ee8846aa11c6f3c": "03e384fb08dc521dcb96a49138851233"
           }
         }
       });
-      await player.load("https://g001-live-us-cmaf-prd-ak.pcdn03.cssott.com/Content/CMAF_OL2-CTR-4s/Live/channel(KSTS)/master.mpd?audio=all&subtitle=all&forcedNarrative=true");
+      
+      // Load manifest with parameters
+      await player.load("https://g001-live-us-cmaf-prd-fy.pcdn03.cssott.com/Content/CMAF_OL2-CTR-4s/Live/channel(KTAZ)/master.mpd?audio=all&subtitle=all&forcedNarrative=true");
     }
     init().catch(console.error);
   </script>
