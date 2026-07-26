@@ -220,8 +220,8 @@
 
             <div class="streamchanger">
                 <button id="btn-tsn" class="streambutton" onclick="showPlayer('clappr', getRandomStream('azteca7.m3u8', 'admin2'))">AZTECA 7</button>
-                <button id="btn-pconly" class="streambutton" onclick="playIframePlayer('https://roxiestreams.info/raw/azteca7mx')">AZTECA 7 MX VPN PC ONLY</button>
-                <button class="streambutton" onclick="playIframePlayer('https://roxiestreams.info/raw/foxone2mx')">MX VPN PC ONLY</button>
+                <button id="btn-pconly" class="streambutton" onclick="playIframePlayer('https://roxiestreams.info/raw/azteca7mx')">AZTECA 7 MX VPN</button>
+                <button class="streambutton" onclick="playIframePlayer('https://roxiestreams.info/raw/foxone2mx')">FOX ONE MX VPN</button>
                 <button class="streambutton" onclick="showPlayer('clappr', getRandomStream('foxonemx.m3u8', 'admin2'))">FOX ONE MX</button>
                 <button class="streambutton" onclick="playIframePlayer('https://roxiestreams.info/raw/peacockligamx')">PEACOCK US VPN</button>
             </div>
@@ -266,7 +266,7 @@ fetch('domainsz65.txt')
       const pcBtn = document.getElementById('btn-pconly');
       if (pcBtn && pcBtn.parentNode) {
         pcBtn.parentNode.insertBefore(pcBtn, pcBtn.parentNode.firstElementChild);
-        pcBtn.innerText = 'AZTECA 7 MX VPN PC ONLY';
+        pcBtn.innerText = 'AZTECA 7 MX VPN';
       }
     }
 
