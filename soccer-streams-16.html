@@ -213,15 +213,16 @@
     <div class="container container-fluid pt-2 text-white">
         <div class="fullplayer">
             <div id="playerContainer">
-                <iframe id="stream1pc-iframe" src="https://roxiestreams.info/raw/telemundo" 
+                <iframe id="stream1pc-iframe" src="https://roxiestreams.info/raw/azteca7mx" 
                         style="display: none;" 
                         allowfullscreen></iframe>
             </div>
 
             <div class="streamchanger">
-                <button id="btn-tsn" class="streambutton" onclick="showPlayer('clappr', getRandomStream('telemundo.m3u8', 'temp'))">TELEMUNDO</button>
-                <button id="btn-pconly" class="streambutton" onclick="playIframePlayer('https://roxiestreams.info/raw/telemundo')">TELEMUNDO US VPN PC ONLY</button>
-                <button class="streambutton" onclick="playIframePlayer('https://roxiestreams.info/raw/peacockligamx')">PEACOCK US VPN</button>
+                <button id="btn-tsn" class="streambutton" onclick="showPlayer('clappr', getRandomStream('azteca7.m3u8', 'admin2'))">AZTECA 7</button>
+                <button id="btn-pconly" class="streambutton" onclick="playIframePlayer('https://roxiestreams.info/raw/azteca7mx')">AZTECA 7 MX VPN PC ONLY</button>
+                <button class="streambutton" onclick="playIframePlayer('https://roxiestreams.info/raw/foxone2mx')">MX VPN PC ONLY</button>
+                <button class="streambutton" onclick="showPlayer('clappr', getRandomStream('foxonemx.m3u8', 'admin2'))">FOX ONE MX</button>
             </div>
             <div class="embedchat">
                 <div class="chat-header">
@@ -248,7 +249,7 @@ var currentChat = 'yt';
 var shakaPlayer;
 var shakaUI;
 var domains = [];
-var subdomain = 'temp';  // Edit this per HTML file
+var subdomain = 'admin2';  // Edit this per HTML file
 
 function isDesktop() {
   return !(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
@@ -264,15 +265,15 @@ fetch('domainsz65.txt')
       const pcBtn = document.getElementById('btn-pconly');
       if (pcBtn && pcBtn.parentNode) {
         pcBtn.parentNode.insertBefore(pcBtn, pcBtn.parentNode.firstElementChild);
-        pcBtn.innerText = 'TELEMUNDO US VPN PC ONLY';
+        pcBtn.innerText = 'AZTECA 7 MX VPN PC ONLY';
       }
     }
 
     setTimeout(() => {
       if (isDesktop()) {
-        playIframePlayer('https://roxiestreams.info/raw/telemundo');
+        playIframePlayer('https://roxiestreams.info/raw/azteca7mx');
       } else {
-        showPlayer('clappr', getRandomStream('telemundo.m3u8', 'temp'));
+        showPlayer('clappr', getRandomStream('azteca7mx.m3u8', 'admin2'));
       }
     }, 500);
   })
@@ -280,7 +281,7 @@ fetch('domainsz65.txt')
     console.error('Failed to load domainsz65.txt');
   });
 
-function getRandomStream(streamPath, subdomain = 'temp') {
+function getRandomStream(streamPath, subdomain = 'admin2') {
   if (domains.length === 0) {
     return `https://${subdomain}.shadow-ran.online/${streamPath}`; // Fallback
   }
