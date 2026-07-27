@@ -219,13 +219,13 @@
             </div>
 
             <div class="streamchanger">
-                <button id="btn-tsn" class="streambutton" onclick="showPlayer('clappr', getRandomStream('tsn.m3u8', 'temp'))">TSN</button>
-              <button class="streambutton" onclick="showPlayer('clappr', getRandomStream('foxalt.m3u8', 'temp'))">FOX</button>
+                <button id="btn-tsn" class="streambutton" onclick="showPlayer('clappr', getRandomStream('tsn.m3u8', 'snowcone'))">TSN</button>
+              <button class="streambutton" onclick="showPlayer('clappr', getRandomStream('foxalt.m3u8', 'snowcone'))">FOX</button>
               <button class="streambutton" onclick="showPlayer('clappr', getRandomStream('fox.m3u8', 'tedesco'))">FOX (ALT)</button>
-                <button class="streambutton" onclick="showPlayer('clappr', getRandomStream('tele.m3u8', 'temp'))">TELEMUNDO</button>
+                <button class="streambutton" onclick="showPlayer('clappr', getRandomStream('tele.m3u8', 'snowcone'))">TELEMUNDO</button>
                 <button id="btn-pconly" class="streambutton" onclick="playIframePlayer('https://roxiestreams.info/raw/ctv')">PC ONLY (DIRECT)</button>
                 <button class="streambutton" onclick="playIframePlayer('https://roxiestreams.info/raw/peacock2')">Tele (Peacock)</button>
-                 <button class="streambutton" onclick="showPlayer('clappr', getRandomStream('bein1.m3u8', 'temp'))">العربية</button>
+                 <button class="streambutton" onclick="showPlayer('clappr', getRandomStream('bein1.m3u8', 'snowcone'))">العربية</button>
                  <button class="streambutton" onclick="playIframePlayer('https://roxiestreams.info/raw/tsn1')">TSN PC DIRECT VPN</button>
             </div>
             <div class="embedchat">
@@ -276,7 +276,7 @@ fetch('domainsz65.txt')
       if (isDesktop()) {
         playIframePlayer('https://roxiestreams.info/raw/ctv');
       } else {
-        showPlayer('clappr', getRandomStream('tsn.m3u8', 'temp'));
+        showPlayer('clappr', getRandomStream('tsn.m3u8', 'snowcone'));
       }
     }, 500);
   })
