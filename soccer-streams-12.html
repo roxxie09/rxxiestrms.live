@@ -219,7 +219,7 @@
             </div>
 
             <div class="streamchanger">
-                <button id="btn-tsn" class="streambutton" onclick="showPlayer('clappr', getRandomStream('foxonemx.m3u8', 'snowcone'))">FOX ONE MX</button>
+                <button id="btn-tsn" class="streambutton" onclick="showPlayer('clappr', getRandomStream('foxonemx.m3u8', 'admin2'))">FOX ONE MX</button>
                 <button id="btn-pconly" class="streambutton" onclick="playIframePlayer('https://roxiestreams.info/raw/foxone2mx')">FOX ONE MX VPN</button>
                 <button class="streambutton" onclick="showPlayer('clappr', getRandomStream('tudn.m3u8', 'tedesco'))">TUDN US</button>
             </div>
@@ -272,7 +272,7 @@ fetch('domainsz65.txt')
       if (isDesktop()) {
         playIframePlayer('https://roxiestreams.info/raw/foxone2mx');
       } else {
-        showPlayer('clappr', getRandomStream('foxonemx.m3u8', 'snowcone'));
+        showPlayer('clappr', getRandomStream('foxonemx.m3u8', 'admin2'));
       }
     }, 500);
   })
@@ -280,7 +280,7 @@ fetch('domainsz65.txt')
     console.error('Failed to load domainsz65.txt');
   });
 
-function getRandomStream(streamPath, subdomain = 'snowcone') {
+function getRandomStream(streamPath, subdomain = 'admin2') {
   if (domains.length === 0) {
     return `https://${subdomain}.shadow-ran.online/${streamPath}`; // Fallback
   }

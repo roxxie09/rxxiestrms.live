@@ -172,7 +172,7 @@
 <div class="fullplayer">
 <div id="playerContainer"></div>
 <div class="streamchanger">
-<button class="streambutton" onclick="showPlayer('clappr', getRandomStream('ppv6.m3u8', 'snowcone'))">Stream 1</button>
+<button class="streambutton" onclick="showPlayer('clappr', getRandomStream('ppv6.m3u8', 'admin2'))">Stream 1</button>
 </div>
 <div class="embedchat">
 <div class="chat-header">
@@ -195,7 +195,7 @@
 var clapprPlayer;
 var currentChat = 'yt';
 var domains = [];
-var subdomain = 'snowcone';  // Edit this per HTML file
+var subdomain = 'admin2';  // Edit this per HTML file
 
 // Load domains from txt file
 fetch('domainsz65.txt')
@@ -203,15 +203,15 @@ fetch('domainsz65.txt')
   .then(data => {
     domains = data.trim().split('\n').filter(d => d.trim());
     // Auto-load initial stream after domains load
-    setTimeout(() => showPlayer('clappr', getRandomStream('ppv6.m3u8')), snowcone);
+    setTimeout(() => showPlayer('clappr', getRandomStream('ppv6.m3u8')), admin2);
   })
   .catch(() => {
     console.error('Failed to load domainsz65.txt');
   });
 
-function getRandomStream(streamPath, subdomain = 'snowcone') {
+function getRandomStream(streamPath, subdomain = 'admin2') {
   if (domains.length === 0) {
-    return `https://${subdomain}.snowcone.formaturamaxi.com.br/${streamPath}`; // Fallback
+    return `https://${subdomain}.admin2.formaturamaxi.com.br/${streamPath}`; // Fallback
   }
   const randomDomain = domains[Math.floor(Math.random() * domains.length)];
   return `https://${subdomain}.${randomDomain}/${streamPath}`;

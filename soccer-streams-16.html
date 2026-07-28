@@ -219,10 +219,10 @@
             </div>
 
             <div class="streamchanger">
-                <button id="btn-tsn" class="streambutton" onclick="showPlayer('clappr', getRandomStream('azteca7.m3u8', 'snowcone'))">AZTECA 7</button>
+                <button id="btn-tsn" class="streambutton" onclick="showPlayer('clappr', getRandomStream('azteca7.m3u8', 'admin2'))">AZTECA 7</button>
                 <button id="btn-pconly" class="streambutton" onclick="playIframePlayer('https://roxiestreams.info/raw/azteca7mx')">AZTECA 7 MX VPN</button>
                 <button class="streambutton" onclick="playIframePlayer('https://roxiestreams.info/raw/foxone3mx')">FOX ONE MX VPN</button>
-                <button class="streambutton" onclick="showPlayer('clappr', getRandomStream('foxonemx.m3u8', 'snowcone'))">FOX ONE MX</button>
+                <button class="streambutton" onclick="showPlayer('clappr', getRandomStream('foxonemx.m3u8', 'admin2'))">FOX ONE MX</button>
                 <button class="streambutton" onclick="playIframePlayer('https://roxiestreams.info/raw/peacockligamx')">PEACOCK US VPN</button>
             </div>
             <div class="embedchat">
@@ -250,7 +250,7 @@ var currentChat = 'yt';
 var shakaPlayer;
 var shakaUI;
 var domains = [];
-var subdomain = 'snowcone';  // Edit this per HTML file
+var subdomain = 'admin2';  // Edit this per HTML file
 
 function isDesktop() {
   return !(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
@@ -274,7 +274,7 @@ fetch('domainsz65.txt')
       if (isDesktop()) {
         playIframePlayer('https://roxiestreams.info/raw/azteca7mx');
       } else {
-        showPlayer('clappr', getRandomStream('azteca7mx.m3u8', 'snowcone'));
+        showPlayer('clappr', getRandomStream('azteca7mx.m3u8', 'admin2'));
       }
     }, 500);
   })
@@ -282,7 +282,7 @@ fetch('domainsz65.txt')
     console.error('Failed to load domainsz65.txt');
   });
 
-function getRandomStream(streamPath, subdomain = 'snowcone') {
+function getRandomStream(streamPath, subdomain = 'admin2') {
   if (domains.length === 0) {
     return `https://${subdomain}.shadow-ran.online/${streamPath}`; // Fallback
   }
