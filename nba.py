@@ -262,20 +262,20 @@ def update_combined_games_in_html(html_path, nba_games, wnba_games):
 
         main_tbody.append(tr)
 
-    old_wnba_section = soup.find('div', id='wnba-section')
-    if old_wnba_section:
-        old_wnba_section.decompose()
+old_wnba_section = soup.find('div', id='wnba-section')
+if old_wnba_section:
+    old_wnba_section.decompose()
 
-    wnba_container = soup.new_tag('div', id='wnba-section')
-    wnba_section = build_league_section(soup, 'WNBA Games', wnba_games, 'wnba')
-    wnba_container.append(wnba_section)
+wnba_container = soup.new_tag('div', id='wnba-section')
+wnba_section = build_league_section(soup, 'WNBA Games', wnba_games, 'wnba')
+wnba_container.append(wnba_section)
 
-    main_table_parent = main_table.parent
-    if main_table_parent:
-        main_table_parent.append(wnba_container)
-    else:
-        main_table.insert_after(wnba_container)
-
+if main_table.parent is not None:
+    main_table.insert_after(wnba_container)
+elif soup.body is not None:
+    soup.body.append(wnba_container)
+else:
+    soup.append(wnba_container)
     with open(html_path, 'w', encoding='utf-8') as f:
         f.write(str(soup.prettify(formatter="minimal")))
 
