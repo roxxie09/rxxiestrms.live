@@ -11,8 +11,8 @@ for filename in os.listdir(folder):
         with open(filepath, 'r', encoding='utf-8') as file:
             content = file.read()
 
-        # Replace all instances of "https://www.youtube.com/live_chat?v=K5tlSOUSRXY&amp;embed_domain=roxiestreams.info" with "https://www.youtube.com/live_chat?v=K5tlSOUSRXY&amp;embed_domain=roxiestreams.info&amp;dark_theme=1"
-        updated_content = content.replace("https://www.youtube.com/live_chat?v=K5tlSOUSRXY&amp;embed_domain=roxiestreams.info", "https://www.youtube.com/live_chat?v=K5tlSOUSRXY&amp;embed_domain=roxiestreams.info&amp;dark_theme=1")
+        # Replace all instances of "main2.css" with "main.css"
+        updated_content = content.replace("main2.css", "main.css")
 
         # Write the changes back to the file
         with open(filepath, 'w', encoding='utf-8') as file:
