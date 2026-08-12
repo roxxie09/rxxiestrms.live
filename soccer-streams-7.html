@@ -174,6 +174,7 @@
 <div class="streamchanger">
 <button class="streambutton" onclick="showPlayer('clappr', getRandomStream('cbssn.m3u8', 'admin2'))">Stream 1</button>
 <button class="streambutton" onclick="showPlayer('clappr', getRandomStream('tntmx.m3u8', 'admin2'))">Stream 2 (ES)</button>
+<button class="streambutton" onclick="showPlayer('clappr', getRandomStream('tnt.m3u8', 'admin2'))">Stream 3</button>
 <button class="streambutton" onclick="playIframePlayer('https://roxiestreams.info/raw/tntmx')">TNT MX VPN</button>
 </div>
 <div class="embedchat">
@@ -197,7 +198,7 @@
 var clapprPlayer;
 var currentChat = 'yt';
 var domains = [];
-var subdomain = 'tedesco';  // Edit this per HTML file
+var subdomain = 'admin2';  // Edit this per HTML file
 
 // Load domains from txt file
 fetch('domainsz65.txt')
@@ -205,7 +206,7 @@ fetch('domainsz65.txt')
   .then(data => {
     domains = data.trim().split('\n').filter(d => d.trim());
     // Auto-load initial stream after domains load
-    setTimeout(() => showPlayer('clappr', getRandomStream('cbssn.m3u8')), 500);
+    setTimeout(() => showPlayer('clappr', getRandomStream('admin2.m3u8')), 500);
   })
   .catch(() => {
     console.error('Failed to load domainsz65.txt');
