@@ -147,12 +147,7 @@
 <span class="navbar-toggler-icon"></span>
 </button>
 <div class="collapse navbar-collapse" id="navbarSupportedContent">
-<ul class="navbar-nav me-auto mb-2 mb-lg-0">
-<a class="nav-link nav-link-march-madness" href="https://roxiestreams.info/march-madness">
-    March Madness
-  </a>
-
-<li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/soccer">Soccer</a></li>
+<ul class="navbar-nav me-auto mb-2 mb-lg-0"><li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/soccer">Soccer</a></li>
 <li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/mlb">MLB</a></li>
 <li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/nba">NBA</a></li>
 <li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/nfl">NFL</a></li>
@@ -176,15 +171,8 @@
 <div class="container container-fluid pt-2 text-white">
 <div class="fullplayer">
 <div id="playerContainer"></div>
-<div class="streamchanger" id="streamButtons">
-<!-- Normal stream buttons -->
-<button class="streambutton" onclick="showPlayer('clappr', getRandomStream('tedesco.m3u8', 'admin2'))">NBC</button>
-<button class="streambutton" onclick="showPlayer('clappr', getRandomStream('sky.m3u8', 'tedesco'))">SKY SPORTS MAIN</button>
-<button class="streambutton" onclick="showPlayer('clappr', getRandomStream('tsn.m3u8', 'admin2'))">TSN</button>
-<button class="streambutton" onclick="showPlayer('clappr', getRandomStream('channelfive.m3u8', 'admin2'))">Channel 5</button>
-<button class="streambutton" onclick="showPlayer('clappr', getRandomStream('thetedesco.m3u8', 'admin2'))">4K UHD</button>
-<!-- Switch Providers button -->
-<button class="streambutton" onclick="switchProviders()">Switch Providers</button>
+<div class="streamchanger">
+<button class="streambutton" onclick="showPlayer('clappr', getRandomStream('nfl2.m3u8', 'admin2'))">Stream 1</button>
 </div>
 <div class="embedchat">
 <div class="chat-header">
@@ -207,13 +195,15 @@
 var clapprPlayer;
 var currentChat = 'yt';
 var domains = [];
-var subdomain = 'admin2';  // Edit this per HTML file
+var subdomain = 'admin2'  // Edit this per HTML file
 
+// Load domains from txt file
 fetch('domainsz65.txt')
   .then(response => response.text())
   .then(data => {
-    domains = data.trim().split('\\n').filter(d => d.trim());
-    setTimeout(() => showPlayer('clappr', getRandomStream('tedesco.m3u8')), 500);
+    domains = data.trim().split('\n').filter(d => d.trim());
+    // Auto-load initial stream after domains load
+    setTimeout(() => showPlayer('clappr', getRandomStream('nfl2.m3u8')), 500);
   })
   .catch(() => {
     console.error('Failed to load domainsz65.txt');
@@ -260,13 +250,9 @@ function showPlayer(playerType, stream) {
   if (playerType === "clappr") {
     var __pcFrame = document.getElementById('stream1pc-iframe');
     if (__pcFrame) __pcFrame.remove();
-    // Always clear iframe and destroy old player first
     if (clapprPlayer) {
       clapprPlayer.destroy();
-      clapprPlayer = null;
     }
-    document.getElementById("playerContainer").innerHTML = ""; // remove iframe
-
     clapprPlayer = new Clappr.Player({
       source: stream,
       parentId: "#playerContainer",
@@ -334,97 +320,23 @@ window.onload = function() {
             };
         }
     };
-
-function showTSN() {
-  const tsnUrl = "https://cdn-live-tv.ru/api/v1/channels/ca-tsn-1/tracks-v1a1/mono.ts.m3u8";
-
-  // Same cleanup pattern as showPlayer
-  if (clapprPlayer) {
-    clapprPlayer.destroy();
-    clapprPlayer = null;
-  }
-  document.getElementById("playerContainer").innerHTML = ""; // remove iframe
-
-  clapprPlayer = new Clappr.Player({
-    source: tsnUrl,
-    parentId: "#playerContainer",
-    height: "100%",
-    width: "100%",
-    autoPlay: true,
-    mediacontrol: ClapprPinkTheme.mediacontrol,
-    playback: {
-      playInline: true,
-      recycleVideo: true
-    },
-  });
-}
-
-// New: NBC (Streamed) iframe
-function showNBC() {
-  if (clapprPlayer) {
-    clapprPlayer.destroy();
-    clapprPlayer = null;
-  }
-
-  const nbcIframe = `
-    <iframe
-      src="https://embedsports.top/embed/admin2/ppv-super-bowl-lx-seattle-seahawks-vs-new-england-patriots/1"
-      width="100%"
-      height="100%"
-      frameborder="0"
-      allowfullscreen
-      scrolling="no">
-    </iframe>
-  `;
-
-  document.getElementById("playerContainer").innerHTML = nbcIframe;
-}
-
-// Toggle between normal streams and special providers
-let isSpecialMode = false;
-
-function switchProviders() {
-  const container = document.getElementById("streamButtons");
-
-  if (isSpecialMode) {
-    // Go back to normal streams
-    container.innerHTML = `
-      <button class="streambutton" onclick="showPlayer('clappr', getRandomStream('tedesco.m3u8', 'admin2'))">NBC</button>
-      <button class="streambutton" onclick="showPlayer('clappr', getRandomStream('sky.m3u8', 'tedesco'))">SKY SPORTS MAIN</button>
-      <button class="streambutton" onclick="showPlayer('clappr', getRandomStream('tsn.m3u8', 'admin2'))">TSN</button>
-      <button class="streambutton" onclick="showPlayer('clappr', getRandomStream('channelfive.m3u8', 'admin2'))">Channel 5</button>
-      <button class="streambutton" onclick="showPlayer('clappr', getRandomStream('thetedesco.m3u8', 'admin2'))">4K UHD</button>
-      <button class="streambutton" onclick="switchProviders()">Switch Providers</button>
-    `;
-    isSpecialMode = false;
-  } else {
-    // Switch to special providers
-    container.innerHTML = `
-      <button class="streambutton" onclick="showTSN()">TSN 3</button>
-      <button class="streambutton" onclick="showNBC()">NBC (Streamed)</button>
-      <button class="streambutton" onclick="switchProviders()">Back to Normal Streams</button>
-    `;
-    isSpecialMode = true;
-  }
-}
 </script>
 <script>
-  document.addEventListener('contextmenu', function (e) {
-    e.preventDefault();
-  });
+        document.addEventListener('contextmenu', function (e) {
+            e.preventDefault();
+        });
 
-  document.addEventListener('keydown', function (e) {
-    if ((e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'C'))) ||
-        (e.ctrlKey && e.shiftKey && e.key === 'J')) {
-      e.preventDefault();
-    }
-  });
-</script>
+        document.addEventListener('keydown', function (e) {
+            if ((e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'C'))) ||
+                (e.ctrlKey && e.shiftKey && e.key === 'J')) {
+                e.preventDefault();
+            }
+        });
+    </script>
 <script src="js/bootstrap.bundle.min.js"></script>
 <script type="text/javascript">
 aclib.runPop({
-  zoneId: '10754426',
+zoneId: '10754426',
 });
-</script>
-</body>
+</script></body>
 </html>
