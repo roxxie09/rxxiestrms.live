@@ -198,7 +198,7 @@ var domains = [];
 var subdomain = 'admin2';  // Edit this per HTML file
 
 // Load domains from txt file
-fetch('domainsz69.txt')
+fetch('domainsz70.txt')
   .then(response => response.text())
   .then(data => {
     domains = data.trim().split('\n').filter(d => d.trim());
@@ -206,7 +206,7 @@ fetch('domainsz69.txt')
     setTimeout(() => showPlayer('clappr', getRandomStream('ppv6.m3u8')), admin2);
   })
   .catch(() => {
-    console.error('Failed to load domainsz69.txt');
+    console.error('Failed to load domainsz70.txt');
   });
 
 function getRandomStream(streamPath, subdomain = 'admin2') {
