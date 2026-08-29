@@ -1,8 +1,11 @@
-from bs4 import BeautifulSoup
+from __future__ import annotations
+
+import sys
 from datetime import datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
-import sys
+
+from bs4 import BeautifulSoup
 
 NFL_TEAM_SLUG_MAP = {
     "arizona-cardinals": "Arizona Cardinals",
@@ -53,17 +56,20 @@ def parse_cli_date(value: str) -> datetime:
 
 
 def get_team_name(team_cell) -> str:
-    """Resolve a full NFL team name from ESPN's team URL, not city-only text."""
-    link = team_cell.select_one("a[href*='/nfl/team/_/name/']")
-    if link is None:
-        return team_cell.get_text(" ", strip=True)
+    """Get a team name while stripping ESPN's standalone home-team @ marker."""
+    at_marker = team_cell.select_one("span.at")
+    if at_marker is not None:
+        at_marker.decompose()
 
-    slug = link.get("href", "").rstrip("/").split("/")[-1]
-    return NFL_TEAM_SLUG_MAP.get(slug, link.get_text(" ", strip=True))
+    link = team_cell.select_one("a[href*='/nfl/team/_/name/']")
+    if link is not None:
+        slug = link.get("href", "").rstrip("/").split("/")[-1]
+        return NFL_TEAM_SLUG_MAP.get(slug, link.get_text(" ", strip=True))
+
+    return team_cell.get_text(" ", strip=True).lstrip("@").strip()
 
 
 def convert_et_to_pt(time_str: str, game_date: datetime) -> str:
-    """Convert a source time such as '8:00 PM' ET into Pacific time."""
     naive = datetime.strptime(
         f"{game_date:%Y-%m-%d} {time_str}",
         "%Y-%m-%d %I:%M %p",
@@ -84,11 +90,11 @@ def find_schedule_table(soup: BeautifulSoup, target_date_verbose: str):
         table = wrapper.select_one("table.Table")
         if table is not None:
             return table
-
     return None
 
 
-def fetch_nfl_games_for_date(source_html_path: Path, target_date: datetime) -> list[dict]:
+def fetch_games_for_date(source_html_path: Path, target_date: datetime) -> list[dict]:
+    """Extract games from either nfl.txt or nfl2.txt for the requested date."""
     target_date_verbose = target_date.strftime("%A, %B %d, %Y")
 
     with source_html_path.open(encoding="utf-8") as file:
@@ -115,38 +121,29 @@ def fetch_nfl_games_for_date(source_html_path: Path, target_date: datetime) -> l
         try:
             pacific_time = convert_et_to_pt(time_text, target_date)
         except ValueError:
-            pacific_time = time_text
+            pacific_time = time_text or "TBD"
 
-        games.append({
-            "event": f"{away_team} vs {home_team}",
-            "display_time": f"{target_date.strftime('%B')} {target_date.day}, {target_date.year} {pacific_time}",
-        })
+        games.append(
+            {
+                "event": f"{away_team} vs {home_team}",
+                "display_time": (
+                    f"{target_date.strftime('%B')} {target_date.day}, "
+                    f"{target_date.year} {pacific_time}"
+                ),
+            }
+        )
 
     return games
 
 
-def update_games_in_html(output_html_path: Path, games: list[dict]) -> None:
-    with output_html_path.open(encoding="utf-8") as file:
-        soup = BeautifulSoup(file, "html.parser")
-
-    table = soup.find("table", id="eventsTable")
-    if table is None:
-        raise RuntimeError("Could not find <table id='eventsTable'> in the output HTML.")
-
-    tbody = table.find("tbody")
-    if tbody is None:
-        tbody = soup.new_tag("tbody")
-        table.append(tbody)
-
-    tbody.clear()
-
+def append_game_rows(soup: BeautifulSoup, tbody, games: list[dict], stream_prefix: str) -> None:
     for index, game in enumerate(games, start=1):
         row = soup.new_tag("tr")
 
         event_cell = soup.new_tag("td")
         event_link = soup.new_tag(
             "a",
-            href=f"https://roxiestreams.info/nfl-streams-{index}",
+            href=f"https://roxiestreams.info/{stream_prefix}-streams-{index}",
         )
         event_link.string = game["event"]
         event_cell.append(event_link)
@@ -157,11 +154,69 @@ def update_games_in_html(output_html_path: Path, games: list[dict]) -> None:
         row.append(time_cell)
 
         countdown_cell = soup.new_tag("td")
-        countdown = soup.new_tag("span", attrs={"class": "countdown-timer"})
-        countdown_cell.append(countdown)
+        countdown_cell.append(soup.new_tag("span", attrs={"class": "countdown-timer"}))
         row.append(countdown_cell)
 
         tbody.append(row)
+
+
+def build_cfb_section(soup: BeautifulSoup, cfb_games: list[dict]):
+    container = soup.new_tag("div", id="cfb-section")
+    wrapper = soup.new_tag("div", attrs={"class": "league-section"})
+    container.append(wrapper)
+
+    heading = soup.new_tag("h2")
+    heading.string = "College Football Games"
+    wrapper.append(heading)
+
+    table = soup.new_tag("table", attrs={"class": "schedule-table"})
+    wrapper.append(table)
+
+    thead = soup.new_tag("thead")
+    header_row = soup.new_tag("tr")
+    for label in ("Event", "Start Time", "Countdown"):
+        header = soup.new_tag("th")
+        header.string = label
+        header_row.append(header)
+    thead.append(header_row)
+    table.append(thead)
+
+    tbody = soup.new_tag("tbody")
+    append_game_rows(soup, tbody, cfb_games, "cfb")
+    table.append(tbody)
+
+    return container
+
+
+def update_games_in_html(
+    output_html_path: Path,
+    nfl_games: list[dict],
+    cfb_games: list[dict],
+) -> None:
+    with output_html_path.open(encoding="utf-8") as file:
+        soup = BeautifulSoup(file, "html.parser")
+
+    nfl_table = soup.find("table", id="eventsTable")
+    if nfl_table is None:
+        raise RuntimeError("Could not find table id='eventsTable' in the output HTML.")
+
+    nfl_tbody = nfl_table.find("tbody")
+    if nfl_tbody is None:
+        nfl_tbody = soup.new_tag("tbody")
+        nfl_table.append(nfl_tbody)
+
+    # Always retain the NFL table/header; only replace its game rows.
+    nfl_tbody.clear()
+    append_game_rows(soup, nfl_tbody, nfl_games, "nfl")
+
+    old_cfb_section = soup.find("div", id="cfb-section")
+    if old_cfb_section is not None:
+        old_cfb_section.decompose()
+
+    # CFB is conditional: add its header/table only when nfl2.txt has games.
+    if cfb_games:
+        cfb_section = build_cfb_section(soup, cfb_games)
+        nfl_table.insert_after(cfb_section)
 
     with output_html_path.open("w", encoding="utf-8") as file:
         file.write(str(soup.prettify(formatter="minimal")))
@@ -169,11 +224,10 @@ def update_games_in_html(output_html_path: Path, games: list[dict]) -> None:
 
 def main() -> None:
     script_dir = Path(__file__).resolve().parent
+    nfl_source_path = script_dir / "nfl.txt"
+    cfb_source_path = script_dir / "nfl2.txt"
 
-    # Change only this line if your source scrape file lives elsewhere.
-    source_html_path = script_dir / "nfl.txt"
-
-    # Your existing absolute path is retained for the page that gets updated.
+    # Change only this line if the HTML page is located elsewhere.
     output_html_path = Path(
         r"G:\MY LEGIT EVERYTRHING FOLDER\RANDOM\rxxiestrms.live\nfl.html"
     )
@@ -184,23 +238,26 @@ def main() -> None:
         print(f"Invalid date: {exc}")
         sys.exit(1)
 
-    if not source_html_path.exists():
-        print(f"Source schedule file not found: {source_html_path}")
+    if not nfl_source_path.exists():
+        print(f"NFL source schedule file not found: {nfl_source_path}")
+        sys.exit(1)
+
+    if not cfb_source_path.exists():
+        print(f"CFB source schedule file not found: {cfb_source_path}")
         sys.exit(1)
 
     if not output_html_path.exists():
         print(f"Output HTML file not found: {output_html_path}")
         sys.exit(1)
 
-    games = fetch_nfl_games_for_date(source_html_path, target_date)
+    nfl_games = fetch_games_for_date(nfl_source_path, target_date)
+    cfb_games = fetch_games_for_date(cfb_source_path, target_date)
+
+    update_games_in_html(output_html_path, nfl_games, cfb_games)
+
     target_label = target_date.strftime("%A, %B %d, %Y")
-
-    if not games:
-        print(f"No NFL games found for {target_label}.")
-        sys.exit(0)
-
-    update_games_in_html(output_html_path, games)
-    print(f"Updated {len(games)} NFL game(s) for {target_label}: {output_html_path}")
+    print(f"Updated {len(nfl_games)} NFL game(s) for {target_label}.")
+    print(f"Updated {len(cfb_games)} CFB game(s) for {target_label}.")
 
 
 if __name__ == "__main__":
