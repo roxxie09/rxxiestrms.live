@@ -166,7 +166,7 @@ def build_cfb_section(soup: BeautifulSoup, cfb_games: list[dict]):
     container.append(wrapper)
 
     heading = soup.new_tag("h2")
-    heading.string = "CFB Events"
+    heading.string = "NCAA Events"
     wrapper.append(heading)
 
     table = soup.new_tag("table", attrs={"class": "schedule-table"})
