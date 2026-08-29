@@ -46,11 +46,11 @@
             display: grid; gap: 4px; padding: 0 8px 8px;
             height: calc(100vh - 120px);
         }
-        .grid-2 { grid-admin2late-columns: 1fr 1fr; grid-admin2late-rows: 1fr; }
-        .grid-3 { grid-admin2late-columns: 1fr 1fr; grid-admin2late-rows: 1fr 1fr; }
-        .grid-4 { grid-admin2late-columns: 1fr 1fr; grid-admin2late-rows: 1fr 1fr; }
-        .grid-5 { grid-admin2late-columns: 1fr 1fr 1fr 1fr 1fr 1fr; grid-admin2late-rows: 1fr 1fr; }
-        .grid-6 { grid-admin2late-columns: 1fr 1fr 1fr; grid-admin2late-rows: 1fr 1fr; }
+        .grid-2 { grid-adminlate-columns: 1fr 1fr; grid-adminlate-rows: 1fr; }
+        .grid-3 { grid-adminlate-columns: 1fr 1fr; grid-adminlate-rows: 1fr 1fr; }
+        .grid-4 { grid-adminlate-columns: 1fr 1fr; grid-adminlate-rows: 1fr 1fr; }
+        .grid-5 { grid-adminlate-columns: 1fr 1fr 1fr 1fr 1fr 1fr; grid-adminlate-rows: 1fr 1fr; }
+        .grid-6 { grid-adminlate-columns: 1fr 1fr 1fr; grid-adminlate-rows: 1fr 1fr; }
         .grid-3 .stream-panel:nth-child(3) { grid-column: 1 / -1; }
         .grid-5 .stream-panel:nth-child(1) { grid-column: 1 / 3; }
         .grid-5 .stream-panel:nth-child(2) { grid-column: 3 / 5; }
@@ -180,45 +180,45 @@
     <script>
 const STREAMS = [
     // ── Soccer ──
-    { label: 'Liverpool vs Nottingham', sport: 'soccer', subdomain: 'admin2', path: 'usa.m3u8', txt: 'domainsz73.txt', alts: [{ label: 'Stream 2', subdomain: 'admin2', path: 'tnt.m3u8', txt: 'domainsz73.txt' }] },
-    { label: 'Milton Keynes Dons vs Leicester City', sport: 'soccer', subdomain: 'admin2', path: 'lei.m3u8', txt: 'domainsz73.txt' },
+    { label: 'Liverpool vs Nottingham', sport: 'soccer', subdomain: 'admin', path: 'usa.m3u8', txt: 'domainsz73.txt', alts: [{ label: 'Stream 2', subdomain: 'admin', path: 'tnt.m3u8', txt: 'domainsz73.txt' }] },
+    { label: 'Milton Keynes Dons vs Leicester City', sport: 'soccer', subdomain: 'admin', path: 'lei.m3u8', txt: 'domainsz73.txt' },
     { label: 'Wolves vs Stoke City', sport: 'soccer', subdomain: 'tedesco', path: 'cbssn.m3u8', txt: 'domainsz73.txt' },
-    { label: 'Middlesbrough vs West Bromwich', sport: 'soccer', subdomain: 'admin2', path: 'golazo.m3u8', txt: 'domainsz73.txt' },
-    { label: 'Elversberg vs Bayer Leverkusen', sport: 'soccer', subdomain: 'tedesco', path: 'one.m3u8', txt: 'domainsz73.txt', alts: [{ label: 'Stream 2 (Dortmund)', subdomain: 'admin2', path: 'usa.m3u8', txt: 'domainsz73.txt' }] },
-    { label: 'Bournemouth vs Everton', sport: 'soccer', subdomain: 'admin2', path: 'everton.m3u8', txt: 'domainsz73.txt' },
-    { label: 'Coventry City vs Hull City', sport: 'soccer', subdomain: 'admin2', path: 'usa.m3u8', txt: 'domainsz73.txt' },
+    { label: 'Middlesbrough vs West Bromwich', sport: 'soccer', subdomain: 'admin', path: 'golazo.m3u8', txt: 'domainsz73.txt' },
+    { label: 'Elversberg vs Bayer Leverkusen', sport: 'soccer', subdomain: 'tedesco', path: 'one.m3u8', txt: 'domainsz73.txt', alts: [{ label: 'Stream 2 (Dortmund)', subdomain: 'admin', path: 'usa.m3u8', txt: 'domainsz73.txt' }] },
+    { label: 'Bournemouth vs Everton', sport: 'soccer', subdomain: 'admin', path: 'everton.m3u8', txt: 'domainsz73.txt' },
+    { label: 'Coventry City vs Hull City', sport: 'soccer', subdomain: 'admin', path: 'usa.m3u8', txt: 'domainsz73.txt' },
     { label: 'Cardiff vs Sheffield Utd', sport: 'soccer', subdomain: 'tedesco', path: 'cbssn.m3u8', txt: 'domainsz73.txt' },
-    { label: 'Southampton vs Millwall', sport: 'soccer', subdomain: 'admin2', path: 'south.m3u8', txt: 'domainsz73.txt' },
-    { label: 'Watford vs West Ham', sport: 'soccer', subdomain: 'admin2', path: 'golazo.m3u8', txt: 'domainsz73.txt' },
-    { label: 'Gillingham vs Northampton', sport: 'soccer', subdomain: 'admin2', path: 'north.m3u8', txt: 'domainsz73.txt' },
-    { label: 'Levante vs Real Betis', sport: 'soccer', subdomain: 'admin2', path: 'dep.m3u8', txt: 'domainsz73.txt', alts: [{ label: 'Stream 2', subdomain: 'admin2', path: 'skymx.m3u8', txt: 'domainsz73.txt' }] },
-    { label: 'Strasbourg vs Lens', sport: 'soccer', subdomain: 'admin2', path: 'beines.m3u8', txt: 'domainsz73.txt', alts: [{ label: 'Stream 2 (EN)', subdomain: 'admin2', path: 'bein.m3u8', txt: 'domainsz73.txt' }] },
-    { label: 'Al Kholood vs Al-Ahli', sport: 'soccer', subdomain: 'admin2', path: 'fsp.m3u8', txt: 'domainsz73.txt' },
-    { label: 'Tottenham vs Newcastle', sport: 'soccer', subdomain: 'admin2', path: 'ncaa2.m3u8', txt: 'domainsz73.txt', alts: [{ label: 'Stream 2', subdomain: 'admin2', path: 'sky.m3u8', txt: 'domainsz73.txt' }] },
-    { label: 'Dortmund vs Hamburger', sport: 'soccer', subdomain: 'tedesco', path: 'one.m3u8', txt: 'domainsz73.txt', alts: [{ label: 'Stream 2 (Dortmund)', subdomain: 'admin2', path: 'usa.m3u8', txt: 'domainsz73.txt' }] },
+    { label: 'Southampton vs Millwall', sport: 'soccer', subdomain: 'admin', path: 'south.m3u8', txt: 'domainsz73.txt' },
+    { label: 'Watford vs West Ham', sport: 'soccer', subdomain: 'admin', path: 'golazo.m3u8', txt: 'domainsz73.txt' },
+    { label: 'Gillingham vs Northampton', sport: 'soccer', subdomain: 'admin', path: 'north.m3u8', txt: 'domainsz73.txt' },
+    { label: 'Levante vs Real Betis', sport: 'soccer', subdomain: 'admin', path: 'dep.m3u8', txt: 'domainsz73.txt', alts: [{ label: 'Stream 2', subdomain: 'admin', path: 'skymx.m3u8', txt: 'domainsz73.txt' }] },
+    { label: 'Strasbourg vs Lens', sport: 'soccer', subdomain: 'admin', path: 'beines.m3u8', txt: 'domainsz73.txt', alts: [{ label: 'Stream 2 (EN)', subdomain: 'admin', path: 'bein.m3u8', txt: 'domainsz73.txt' }] },
+    { label: 'Al Kholood vs Al-Ahli', sport: 'soccer', subdomain: 'admin', path: 'fsp.m3u8', txt: 'domainsz73.txt' },
+    { label: 'Tottenham vs Newcastle', sport: 'soccer', subdomain: 'admin', path: 'ncaa2.m3u8', txt: 'domainsz73.txt', alts: [{ label: 'Stream 2', subdomain: 'admin', path: 'sky.m3u8', txt: 'domainsz73.txt' }] },
+    { label: 'Dortmund vs Hamburger', sport: 'soccer', subdomain: 'tedesco', path: 'one.m3u8', txt: 'domainsz73.txt', alts: [{ label: 'Stream 2 (Dortmund)', subdomain: 'admin', path: 'usa.m3u8', txt: 'domainsz73.txt' }] },
     { label: 'Fiorentina vs Frosinone', sport: 'soccer', subdomain: 'tedesco', path: 'cbssn.m3u8', txt: 'domainsz73.txt' },
-    { label: 'Sassuolo vs Torino', sport: 'soccer', subdomain: 'admin2', path: 'golazo.m3u8', txt: 'domainsz73.txt' },
-    { label: 'Real Sociedad vs Espanyol', sport: 'soccer', subdomain: 'admin2', path: 'dep.m3u8', txt: 'domainsz73.txt', alts: [{ label: 'Stream 2', subdomain: 'admin2', path: 'skymx.m3u8', txt: 'domainsz73.txt' }] },
-    { label: 'Al Fateh vs Al Ittihad', sport: 'soccer', subdomain: 'admin2', path: 'fsp.m3u8', txt: 'domainsz73.txt' },
-    { label: 'Brest vs Toulouse', sport: 'soccer', subdomain: 'admin2', path: 'xtra.m3u8', txt: 'domainsz73.txt' },
-    { label: 'Lyon vs Le Havre', sport: 'soccer', subdomain: 'admin2', path: 'beines.m3u8', txt: 'domainsz73.txt', alts: [{ label: 'Stream 2 (EN)', subdomain: 'admin2', path: 'bein.m3u8', txt: 'domainsz73.txt' }] },
-    { label: 'Juventus vs Parma', sport: 'soccer', subdomain: 'admin2', path: 'golazo.m3u8', txt: 'domainsz73.txt' },
-    { label: 'Sevilla vs Atletico Madrid', sport: 'soccer', subdomain: 'admin2', path: 'dep.m3u8', txt: 'domainsz73.txt', alts: [{ label: 'Stream 2', subdomain: 'admin2', path: 'skymx.m3u8', txt: 'domainsz73.txt' }] },
-    { label: 'Atlético Mineiro vs Vitória', sport: 'soccer', subdomain: 'admin2', path: 'fanapt.m3u8', txt: 'domainsz73.txt', alts: [{ label: 'Stream 2 (DE)', subdomain: 'admin2', path: 'sportdigitalfuss.m3u8', txt: 'domainsz73.txt' }] },
-    { label: 'Atlas vs Querétaro', sport: 'soccer', subdomain: 'admin2', path: 'beines.m3u8', txt: 'domainsz73.txt' },
-    { label: 'Pachuca vs Chivas', sport: 'soccer', subdomain: 'admin2', path: 'dep.m3u8', txt: 'domainsz73.txt' },
-    { label: 'São Paulo vs RB Bragantino', sport: 'soccer', subdomain: 'admin2', path: 'fana8.m3u8', txt: 'domainsz73.txt' },
-    { label: 'Inter Miami vs CF Montreal', sport: 'soccer', subdomain: 'admin2', path: '5.m3u8', txt: 'domainsz73.txt', alts: [{ label: 'Stream 2', subdomain: 'daffodil', path: 'tudn.m3u8', txt: 'domainsz73.txt' }] },
-    { label: 'Vasco Gama vs Cruzeiro', sport: 'soccer', subdomain: 'admin2', path: 'mls.m3u8', txt: 'domainsz73.txt' },
-    { label: 'Sporting KC vs Vancouver Whitecaps', sport: 'soccer', subdomain: 'admin2', path: 'tsn.m3u8', txt: 'domainsz73.txt' },
-    { label: 'América vs Puebla', sport: 'soccer', subdomain: 'admin2', path: 'dep.m3u8', txt: 'domainsz73.txt' },
-    { label: 'Portland Timbers vs Austin', sport: 'soccer', subdomain: 'admin2', path: 'tsn.m3u8', txt: 'domainsz73.txt' },
-    { label: 'Santos Laguna vs Tigres', sport: 'soccer', subdomain: 'admin2', path: 'dep.m3u8', txt: 'domainsz73.txt' },
+    { label: 'Sassuolo vs Torino', sport: 'soccer', subdomain: 'admin', path: 'golazo.m3u8', txt: 'domainsz73.txt' },
+    { label: 'Real Sociedad vs Espanyol', sport: 'soccer', subdomain: 'admin', path: 'dep.m3u8', txt: 'domainsz73.txt', alts: [{ label: 'Stream 2', subdomain: 'admin', path: 'skymx.m3u8', txt: 'domainsz73.txt' }] },
+    { label: 'Al Fateh vs Al Ittihad', sport: 'soccer', subdomain: 'admin', path: 'fsp.m3u8', txt: 'domainsz73.txt' },
+    { label: 'Brest vs Toulouse', sport: 'soccer', subdomain: 'admin', path: 'xtra.m3u8', txt: 'domainsz73.txt' },
+    { label: 'Lyon vs Le Havre', sport: 'soccer', subdomain: 'admin', path: 'beines.m3u8', txt: 'domainsz73.txt', alts: [{ label: 'Stream 2 (EN)', subdomain: 'admin', path: 'bein.m3u8', txt: 'domainsz73.txt' }] },
+    { label: 'Juventus vs Parma', sport: 'soccer', subdomain: 'admin', path: 'golazo.m3u8', txt: 'domainsz73.txt' },
+    { label: 'Sevilla vs Atletico Madrid', sport: 'soccer', subdomain: 'admin', path: 'dep.m3u8', txt: 'domainsz73.txt', alts: [{ label: 'Stream 2', subdomain: 'admin', path: 'skymx.m3u8', txt: 'domainsz73.txt' }] },
+    { label: 'Atlético Mineiro vs Vitória', sport: 'soccer', subdomain: 'admin', path: 'fanapt.m3u8', txt: 'domainsz73.txt', alts: [{ label: 'Stream 2 (DE)', subdomain: 'admin', path: 'sportdigitalfuss.m3u8', txt: 'domainsz73.txt' }] },
+    { label: 'Atlas vs Querétaro', sport: 'soccer', subdomain: 'admin', path: 'beines.m3u8', txt: 'domainsz73.txt' },
+    { label: 'Pachuca vs Chivas', sport: 'soccer', subdomain: 'admin', path: 'dep.m3u8', txt: 'domainsz73.txt' },
+    { label: 'São Paulo vs RB Bragantino', sport: 'soccer', subdomain: 'admin', path: 'fana8.m3u8', txt: 'domainsz73.txt' },
+    { label: 'Inter Miami vs CF Montreal', sport: 'soccer', subdomain: 'admin', path: '5.m3u8', txt: 'domainsz73.txt', alts: [{ label: 'Stream 2', subdomain: 'daffodil', path: 'tudn.m3u8', txt: 'domainsz73.txt' }] },
+    { label: 'Vasco Gama vs Cruzeiro', sport: 'soccer', subdomain: 'admin', path: 'mls.m3u8', txt: 'domainsz73.txt' },
+    { label: 'Sporting KC vs Vancouver Whitecaps', sport: 'soccer', subdomain: 'admin', path: 'tsn.m3u8', txt: 'domainsz73.txt' },
+    { label: 'América vs Puebla', sport: 'soccer', subdomain: 'admin', path: 'dep.m3u8', txt: 'domainsz73.txt' },
+    { label: 'Portland Timbers vs Austin', sport: 'soccer', subdomain: 'admin', path: 'tsn.m3u8', txt: 'domainsz73.txt' },
+    { label: 'Santos Laguna vs Tigres', sport: 'soccer', subdomain: 'admin', path: 'dep.m3u8', txt: 'domainsz73.txt' },
     // ── MLB ──
-    { label: 'Boston Red Sox vs New York Yankees', sport: 'mlb', subdomain: 'admin2', path: 'mlb.m3u8', txt: 'domainsz73.txt' },
-    { label: 'Boston Red Sox vs New York Yankees', sport: 'mlb', subdomain: 'admin2', path: 'mlb2.m3u8', txt: 'domainsz73.txt' },
+    { label: 'Boston Red Sox vs New York Yankees', sport: 'mlb', subdomain: 'admin', path: 'mlb.m3u8', txt: 'domainsz73.txt' },
+    { label: 'Boston Red Sox vs New York Yankees', sport: 'mlb', subdomain: 'admin', path: 'mlb2.m3u8', txt: 'domainsz73.txt' },
     { label: 'Los Angeles Dodgers vs Detroit Tigers', sport: 'mlb', subdomain: '601', path: 'mlb.m3u8', txt: 'domainsz29.txt' },
-    { label: 'Chicago White Sox vs Minnesota Twins', sport: 'mlb', subdomain: 'admin2', path: 'mlb4.m3u8', txt: 'domainsz73.txt' },
+    { label: 'Chicago White Sox vs Minnesota Twins', sport: 'mlb', subdomain: 'admin', path: 'mlb4.m3u8', txt: 'domainsz73.txt' },
     { label: 'Pittsburgh Pirates vs St. Louis Cardinals', sport: 'mlb', subdomain: '601', path: 'mlb.m3u8', txt: 'domainsz29.txt' },
     { label: 'Cincinnati Reds vs Chicago Cubs', sport: 'mlb', subdomain: '601', path: 'mlb.m3u8', txt: 'domainsz29.txt' },
     { label: 'Seattle Mariners vs Toronto Blue Jays', sport: 'mlb', subdomain: '601', path: 'mlb.m3u8', txt: 'domainsz29.txt' },
@@ -229,25 +229,25 @@ const STREAMS = [
     { label: 'Houston Astros vs New York Mets', sport: 'mlb', subdomain: '601', path: 'mlb.m3u8', txt: 'domainsz29.txt' },
     { label: 'San Diego Padres vs Tampa Bay Rays', sport: 'mlb', subdomain: '601', path: 'mlb.m3u8', txt: 'domainsz29.txt' },
     { label: 'Colorado Rockies vs Atlanta Braves', sport: 'mlb', subdomain: '601', path: 'mlb.m3u8', txt: 'domainsz29.txt' },
-    { label: 'Texas Rangers vs Milwaukee Brewers', sport: 'mlb', subdomain: 'admin2', path: 'mlb15.m3u8', txt: 'domainsz73.txt' },
+    { label: 'Texas Rangers vs Milwaukee Brewers', sport: 'mlb', subdomain: 'admin', path: 'mlb15.m3u8', txt: 'domainsz73.txt' },
     { label: 'Baltimore Orioles vs Athletics', sport: 'mlb', subdomain: '601', path: 'mlb.m3u8', txt: 'domainsz29.txt' },
     { label: 'Philadelphia Phillies vs Los Angeles Angels', sport: 'mlb', subdomain: '601', path: 'mlb.m3u8', txt: 'domainsz29.txt' },
     // ── NHL ──
-    { label: 'NHL Draft 2026', sport: 'nhl', subdomain: 'admin2', path: 'nhl.m3u8', txt: 'domainsz73.txt', alts: [{ label: 'Stream 2', subdomain: 'tedesco', path: 'nhl.m3u8', txt: 'domainsz73.txt' }] },
+    { label: 'NHL Draft 2026', sport: 'nhl', subdomain: 'admin', path: 'nhl.m3u8', txt: 'domainsz73.txt', alts: [{ label: 'Stream 2', subdomain: 'tedesco', path: 'nhl.m3u8', txt: 'domainsz73.txt' }] },
     // ── Fighting ──
-    { label: 'UFC Fight Night: Nurmagomedov vs. Song (China)', sport: 'fighting', subdomain: 'admin2', path: 'tnt4.m3u8', txt: 'domainsz73.txt', alts: [{ label: 'Stream 2 (Para)', subdomain: 'admin2', path: 'abbiecadabrii.m3u8', txt: 'domainsz73.txt' }, { label: 'Stream 3 (FP)', subdomain: 'tedesco', path: 'hub.m3u8', txt: 'domainsz73.txt' }] },
+    { label: 'UFC Fight Night: Nurmagomedov vs. Song (China)', sport: 'fighting', subdomain: 'admin', path: 'tnt4.m3u8', txt: 'domainsz73.txt', alts: [{ label: 'Stream 2 (Para)', subdomain: 'admin', path: 'abbiecadabrii.m3u8', txt: 'domainsz73.txt' }, { label: 'Stream 3 (FP)', subdomain: 'tedesco', path: 'hub.m3u8', txt: 'domainsz73.txt' }] },
     { label: 'MVPW 6: Mayer vs. Cameron', sport: 'fighting', subdomain: 'daffodil', path: 'wwe.m3u8', txt: 'domainsz29.txt' },
     { label: 'Itauma vs. Hrgovic: Natural Born Thriller', sport: 'fighting', subdomain: 'daffodil', path: 'wwe.m3u8', txt: 'domainsz29.txt' },
     { label: 'Duel Arena: Perry vs Jenkins / Gypsy Crusader vs Azoulay', sport: 'fighting', subdomain: 'daffodil', path: 'wwe.m3u8', txt: 'domainsz29.txt' },
     { label: 'Lara vs. Ornelas', sport: 'fighting', subdomain: 'daffodil', path: 'wwe.m3u8', txt: 'domainsz29.txt' },
     { label: 'WWE NXT: Heatwave', sport: 'fighting', subdomain: 'daffodil', path: 'wwe.m3u8', txt: 'domainsz29.txt' },
     // ── Motorsports ──
-    { label: 'MotoGP - Free Practice', sport: 'motorsports', subdomain: 'admin2', path: 'tnt2.m3u8', txt: 'domainsz73.txt' },
-    { label: 'AMA Motocross - Qualifying', sport: 'motorsports', subdomain: 'admin2', path: 'ppv2.m3u8', txt: 'domainsz73.txt' },
-    { label: 'AMA Motocross - Race', sport: 'motorsports', subdomain: 'admin2', path: 'ppv3.m3u8', txt: 'domainsz73.txt' },
-    { label: 'INDYCAR Series - Race', sport: 'motorsports', subdomain: 'admin2', path: 'mlb2.m3u8', txt: 'domainsz73.txt' },
-    { label: 'USAC Sprint Car Smackdown - Kokomo', sport: 'motorsports', subdomain: 'admin2', path: 'ppv.m3u8', txt: 'domainsz73.txt' },
-    { label: 'WoO Sprint Cars - Race', sport: 'motorsports', subdomain: 'admin2', path: 'ppv2.m3u8', txt: 'domainsz73.txt' },
+    { label: 'MotoGP - Free Practice', sport: 'motorsports', subdomain: 'admin', path: 'tnt2.m3u8', txt: 'domainsz73.txt' },
+    { label: 'AMA Motocross - Qualifying', sport: 'motorsports', subdomain: 'admin', path: 'ppv2.m3u8', txt: 'domainsz73.txt' },
+    { label: 'AMA Motocross - Race', sport: 'motorsports', subdomain: 'admin', path: 'ppv3.m3u8', txt: 'domainsz73.txt' },
+    { label: 'INDYCAR Series - Race', sport: 'motorsports', subdomain: 'admin', path: 'mlb2.m3u8', txt: 'domainsz73.txt' },
+    { label: 'USAC Sprint Car Smackdown - Kokomo', sport: 'motorsports', subdomain: 'admin', path: 'ppv.m3u8', txt: 'domainsz73.txt' },
+    { label: 'WoO Sprint Cars - Race', sport: 'motorsports', subdomain: 'admin', path: 'ppv2.m3u8', txt: 'domainsz73.txt' },
     { label: 'NASCAR Cup Series - Race', sport: 'motorsports', subdomain: '601', path: 'tt.m3u8', txt: 'domainsz29.txt' },
 ];
 

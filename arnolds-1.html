@@ -172,11 +172,11 @@
 <div class="fullplayer">
 <div id="playerContainer"></div>
 <div class="streamchanger">
-<button class="streambutton" onclick="showPlayer('clappr', getRandomStream('simplyabby.m3u8', 'admin2'))">MAIN FEED</button>
-<button class="streambutton" onclick="showPlayer('clappr', getRandomStream('arnold.m3u8', 'admin2'))">VENUE 1</button>
-<button class="streambutton" onclick="showPlayer('clappr', getRandomStream('arnold2.m3u8', 'admin2'))">VENUE 2</button>
-<button class="streambutton" onclick="showPlayer('clappr', getRandomStream('arnold3.m3u8', 'admin2'))">VENUE 3</button>
-<button class="streambutton" onclick="showPlayer('clappr', getRandomStream('arnold4.m3u8', 'admin2'))">VENUE 4</button>
+<button class="streambutton" onclick="showPlayer('clappr', getRandomStream('simplyabby.m3u8', 'admin'))">MAIN FEED</button>
+<button class="streambutton" onclick="showPlayer('clappr', getRandomStream('arnold.m3u8', 'admin'))">VENUE 1</button>
+<button class="streambutton" onclick="showPlayer('clappr', getRandomStream('arnold2.m3u8', 'admin'))">VENUE 2</button>
+<button class="streambutton" onclick="showPlayer('clappr', getRandomStream('arnold3.m3u8', 'admin'))">VENUE 3</button>
+<button class="streambutton" onclick="showPlayer('clappr', getRandomStream('arnold4.m3u8', 'admin'))">VENUE 4</button>
 </div>
 <div class="embedchat">
 <div class="chat-header">
@@ -199,7 +199,7 @@
 var clapprPlayer;
 var currentChat = 'yt';
 var domains = [];
-var subdomain = 'admin2'  // Edit this per HTML file
+var subdomain = 'admin'  // Edit this per HTML file
 
 // Load domains from txt file
 fetch('domainsz73.txt')
@@ -213,7 +213,7 @@ fetch('domainsz73.txt')
     console.error('Failed to load domainsz73.txt');
   });
 
-function getRandomStream(streamPath, subdomain = 'admin2') {
+function getRandomStream(streamPath, subdomain = 'admin') {
   if (domains.length === 0) {
     return `https://${subdomain}.shadow-ran.online/${streamPath}`; // Fallback
   }
