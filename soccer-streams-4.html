@@ -172,7 +172,7 @@
 <div class="fullplayer">
 <div id="playerContainer"></div>
 <div class="streamchanger">
-<button class="streambutton" onclick="showPlayer('clappr', getRandomStream('plus.m3u8', 'tedesco'))">Stream 1</button>
+<button class="streambutton" onclick="showPlayer('clappr', 'https://customer-b85rs0kp4mxlfevz.cloudflarestream.com/1eaba41af298206f1b58e75e8a13a1f5/manifest/video.m3u8')">Stream 1</button>
 </div>
 <div class="embedchat">
 <div class="chat-header">
@@ -192,81 +192,62 @@
 <p class="mb-0 text-body-secondary text-center text-lg-start">Roxiestreams © 2026</p>
 </footer>
 <script>
-var clapprPlayer;
+        var clapprPlayer;
 var currentChat = 'yt';
-var domains = [];
-var subdomain = 'tedesco';  // Edit this per HTML file
 
-// Load domains from txt file
-fetch('domainsz74.txt')
-  .then(response => response.text())
-  .then(data => {
-    domains = data.trim().split('\n').filter(d => d.trim());
-    // Auto-load initial stream after domains load
-    setTimeout(() => showPlayer('clappr', getRandomStream('plus.m3u8')), 500);
-  })
-  .catch(() => {
-    console.error('Failed to load domainsz74.txt');
-  });
+        function playIframePlayer(src) {
+          var container = document.getElementById('playerContainer');
 
-function getRandomStream(streamPath, subdomain = 'tedesco') {
-  if (domains.length === 0) {
-    return `https://${subdomain}.shadow-ran.online/${streamPath}`; // Fallback
-  }
-  const randomDomain = domains[Math.floor(Math.random() * domains.length)];
-  return `https://${subdomain}.${randomDomain}/${streamPath}`;
-}
+          if (typeof clapprPlayer !== 'undefined' && clapprPlayer) {
+            clapprPlayer.destroy();
+            clapprPlayer = null;
+          }
+          if (typeof shakaPlayer !== 'undefined' && shakaPlayer) {
+            shakaPlayer.destroy();
+            shakaPlayer = null;
+          }
+          if (typeof shakaUI !== 'undefined' && shakaUI) {
+            shakaUI.destroy();
+            shakaUI = null;
+          }
 
-function playIframePlayer(src) {
-  var container = document.getElementById('playerContainer');
+          // Rebuild the iframe each call so re-pressing the button reloads the stream
+          container.innerHTML = '';
+          var iframe = document.createElement('iframe');
+          iframe.id = 'stream1pc-iframe';
+          iframe.allowFullscreen = true;
+          iframe.src = src;
+          iframe.style.width = '100%';
+          iframe.style.height = '100%';
+          iframe.style.border = 'none';
+          iframe.style.display = 'block';
+          container.appendChild(iframe);
+        }
 
-  if (typeof clapprPlayer !== 'undefined' && clapprPlayer) {
-    clapprPlayer.destroy();
-    clapprPlayer = null;
-  }
-  if (typeof shakaPlayer !== 'undefined' && shakaPlayer) {
-    shakaPlayer.destroy();
-    shakaPlayer = null;
-  }
-  if (typeof shakaUI !== 'undefined' && shakaUI) {
-    shakaUI.destroy();
-    shakaUI = null;
-  }
+        function showPlayer(playerType, stream) {
+            if (playerType === "clappr") {
+              var __pcFrame = document.getElementById('stream1pc-iframe');
+              if (__pcFrame) __pcFrame.remove();
+                if (clapprPlayer) {
+                    clapprPlayer.destroy();
+                }
 
-  // Rebuild the iframe each call so re-pressing the button reloads the stream
-  container.innerHTML = '';
-  var iframe = document.createElement('iframe');
-  iframe.id = 'stream1pc-iframe';
-  iframe.allowFullscreen = true;
-  iframe.src = src;
-  iframe.style.width = '100%';
-  iframe.style.height = '100%';
-  iframe.style.border = 'none';
-  iframe.style.display = 'block';
-  container.appendChild(iframe);
-}
+                clapprPlayer = new Clappr.Player({
+                    source: stream,
+                    parentId: "#playerContainer",
+                    height: '100%',
+                    width: '100%',
+                    autoPlay: true,
+                    mediacontrol: ClapprPinkTheme.mediacontrol,
+                    playback: {
+                      playInline: true,
+                      recycleVideo: true
+                    },
+                });
+            }
+        }
 
-function showPlayer(playerType, stream) {
-  if (playerType === "clappr") {
-    var __pcFrame = document.getElementById('stream1pc-iframe');
-    if (__pcFrame) __pcFrame.remove();
-    if (clapprPlayer) {
-      clapprPlayer.destroy();
-    }
-    clapprPlayer = new Clappr.Player({
-      source: stream,
-      parentId: "#playerContainer",
-      height: '100%',
-      width: '100%',
-      autoPlay: true,
-      mediacontrol: ClapprPinkTheme.mediacontrol,
-      playback: {
-        playInline: true,
-        recycleVideo: true
-      },
-    });
-  }
-}
+        showPlayer('clappr', 'https://customer-b85rs0kp4mxlfevz.cloudflarestream.com/1eaba41af298206f1b58e75e8a13a1f5/manifest/video.m3u8');
 
 window.onload = function() {
         var toggleBtn = document.getElementById('toggleChat');
@@ -320,7 +301,7 @@ window.onload = function() {
             };
         }
     };
-</script>
+    </script>
 <script>
         document.addEventListener('contextmenu', function (e) {
             e.preventDefault();
@@ -335,8 +316,9 @@ window.onload = function() {
     </script>
 <script src="js/bootstrap.bundle.min.js"></script>
 <script type="text/javascript">
-aclib.runPop({
-zoneId: '10754426',
-});
-</script></body>
+    aclib.runPop({
+        zoneId: '10754426',
+    });
+</script>
+</body>
 </html>
