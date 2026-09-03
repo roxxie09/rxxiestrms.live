@@ -56,7 +56,7 @@ def parse_cli_date(value: str) -> datetime:
 
 
 def get_team_name(team_cell) -> str:
-    """Get a team name while stripping ESPN's standalone home-team @ marker."""
+    """Get a team name and omit ESPN's separate @ / v home-team marker."""
     at_marker = team_cell.select_one("span.at")
     if at_marker is not None:
         at_marker.decompose()
@@ -66,7 +66,7 @@ def get_team_name(team_cell) -> str:
         slug = link.get("href", "").rstrip("/").split("/")[-1]
         return NFL_TEAM_SLUG_MAP.get(slug, link.get_text(" ", strip=True))
 
-    return team_cell.get_text(" ", strip=True).lstrip("@").strip()
+    return team_cell.get_text(" ", strip=True).lstrip("@").lstrip("v").strip()
 
 
 def convert_et_to_pt(time_str: str, game_date: datetime) -> str:
@@ -78,29 +78,40 @@ def convert_et_to_pt(time_str: str, game_date: datetime) -> str:
     return pacific_time.strftime("%I:%M %p").lstrip("0")
 
 
-def find_schedule_table(soup: BeautifulSoup, target_date_verbose: str):
+def normalise_date_title(value: str) -> str:
+    """Make 'September 3' and 'September 03' compare as the same date."""
+    return " ".join(value.replace(" 0", " ").split())
+
+
+def find_schedule_table(soup: BeautifulSoup, target_date: datetime):
+    """Find the ESPN table for a date regardless of zero-padded day formatting."""
+    target_title = normalise_date_title(target_date.strftime("%A, %B %d, %Y"))
+
     for title in soup.select("div.Table__Title"):
-        if title.get_text(" ", strip=True) != target_date_verbose:
+        if normalise_date_title(title.get_text(" ", strip=True)) != target_title:
             continue
+
+        schedule_section = title.find_parent("div", class_="ScheduleTables")
+        if schedule_section is not None:
+            table = schedule_section.select_one("table.Table")
+            if table is not None:
+                return table
 
         wrapper = title.find_next_sibling("div")
-        if wrapper is None:
-            continue
+        if wrapper is not None:
+            table = wrapper.select_one("table.Table")
+            if table is not None:
+                return table
 
-        table = wrapper.select_one("table.Table")
-        if table is not None:
-            return table
     return None
 
 
 def fetch_games_for_date(source_html_path: Path, target_date: datetime) -> list[dict]:
     """Extract games from either nfl.txt or nfl2.txt for the requested date."""
-    target_date_verbose = target_date.strftime("%A, %B %d, %Y")
-
     with source_html_path.open(encoding="utf-8") as file:
         soup = BeautifulSoup(file, "html.parser")
 
-    table = find_schedule_table(soup, target_date_verbose)
+    table = find_schedule_table(soup, target_date)
     if table is None:
         return []
 
@@ -117,6 +128,9 @@ def fetch_games_for_date(source_html_path: Path, target_date: datetime) -> list[
         away_team = get_team_name(cols[0])
         home_team = get_team_name(cols[1])
         time_text = cols[2].get_text(" ", strip=True)
+
+        if not away_team or not home_team:
+            continue
 
         try:
             pacific_time = convert_et_to_pt(time_text, target_date)
@@ -166,7 +180,7 @@ def build_cfb_section(soup: BeautifulSoup, cfb_games: list[dict]):
     container.append(wrapper)
 
     heading = soup.new_tag("h2")
-    heading.string = "NCAA Events"
+    heading.string = "College Football Games"
     wrapper.append(heading)
 
     table = soup.new_tag("table", attrs={"class": "schedule-table"})
@@ -205,7 +219,7 @@ def update_games_in_html(
         nfl_tbody = soup.new_tag("tbody")
         nfl_table.append(nfl_tbody)
 
-    # Always retain the NFL table/header; only replace its game rows.
+    # Keep the NFL table/header at all times; update only its rows.
     nfl_tbody.clear()
     append_game_rows(soup, nfl_tbody, nfl_games, "nfl")
 
@@ -213,10 +227,9 @@ def update_games_in_html(
     if old_cfb_section is not None:
         old_cfb_section.decompose()
 
-    # CFB is conditional: add its header/table only when nfl2.txt has games.
+    # Only create the CFB heading/table when nfl2.txt produced games.
     if cfb_games:
-        cfb_section = build_cfb_section(soup, cfb_games)
-        nfl_table.insert_after(cfb_section)
+        nfl_table.insert_after(build_cfb_section(soup, cfb_games))
 
     with output_html_path.open("w", encoding="utf-8") as file:
         file.write(str(soup.prettify(formatter="minimal")))
@@ -227,7 +240,7 @@ def main() -> None:
     nfl_source_path = script_dir / "nfl.txt"
     cfb_source_path = script_dir / "nfl2.txt"
 
-    # Change only this line if the HTML page is located elsewhere.
+    # Change only this path if nfl.html lives elsewhere.
     output_html_path = Path(
         r"G:\MY LEGIT EVERYTRHING FOLDER\RANDOM\rxxiestrms.live\nfl.html"
     )
@@ -255,7 +268,7 @@ def main() -> None:
 
     update_games_in_html(output_html_path, nfl_games, cfb_games)
 
-    target_label = target_date.strftime("%A, %B %d, %Y")
+    target_label = f"{target_date.strftime('%A, %B')} {target_date.day}, {target_date.year}"
     print(f"Updated {len(nfl_games)} NFL game(s) for {target_label}.")
     print(f"Updated {len(cfb_games)} CFB game(s) for {target_label}.")
 
