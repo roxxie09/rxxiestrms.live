@@ -211,7 +211,7 @@ def fetch_games_for_date(
             {
                 "event": f"{away_team} vs {home_team}",
                 "display_time": (
-                    f"{target_date.strftime('%B')} {target_date.day}, "
+                    f"{target_date.strftime('%b')} {target_date.day}, "
                     f"{target_date.year} {pacific_time}"
                 ),
                 "broadcasts": broadcasts,
@@ -253,7 +253,6 @@ def append_game_rows(soup: BeautifulSoup, tbody, games: list[dict], stream_prefi
         row.append(event_cell)
 
         time_cell = soup.new_tag("td", attrs={"class": "event-start-time"})
-        # Match the schedule files/countdown parser: e.g. "September 5, 2026 4:30 PM".
         time_cell.string = game["display_time"]
         row.append(time_cell)
 
@@ -309,7 +308,6 @@ def update_games_in_html(
         nfl_tbody = soup.new_tag("tbody")
         nfl_table.append(nfl_tbody)
 
-    # Keep the NFL table/header at all times; update only its game rows.
     nfl_tbody.clear()
     append_game_rows(soup, nfl_tbody, nfl_games, "nfl")
 
@@ -320,6 +318,19 @@ def update_games_in_html(
     if cfb_games:
         assign_ncaa_stream_numbers(cfb_games)
         nfl_table.insert_after(build_cfb_section(soup, cfb_games))
+
+    # Inject required JS scripts if missing
+    body = soup.find("body")
+    if body:
+        bootstrap_js = soup.find("script", src="js/bootstrap.bundle.min.js")
+        if not bootstrap_js:
+            bs_tag = soup.new_tag("script", src="js/bootstrap.bundle.min.js")
+            body.append(bs_tag)
+
+        countdown_js = soup.find("script", src="scripts/countdownfinal2.js")
+        if not countdown_js:
+            cd_tag = soup.new_tag("script", src="scripts/countdownfinal2.js")
+            body.append(cd_tag)
 
     with output_html_path.open("w", encoding="utf-8") as file:
         file.write(str(soup.prettify(formatter="minimal")))
