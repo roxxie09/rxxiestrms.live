@@ -203,8 +203,17 @@ def get_events_from_schedule(schedule_path, selector=DEFAULT_SELECTOR):
         events.append({"name": name, "url": href})
     return events
 
+def slug_from_url(url):
+    """/nascar -> nascar,  /ncaa-streams-1/ -> ncaa-streams-1"""
+    slug = url.rstrip("/").rsplit("/", 1)[-1]
+    slug = slug.split("?")[0].split("#")[0]
+    if slug.endswith(".html"):
+        slug = slug[:-5]
+    return slug
+
 def build_streams_list():
     all_streams = []
+    unresolved = []
     for schedule_file, config in SCHEDULE_STREAM_MAP.items():
         schedule_path = os.path.join(BASE_DIR, schedule_file)
         if not os.path.exists(schedule_path):
@@ -229,6 +238,17 @@ def build_streams_list():
                     info = STREAM_OVERRIDES[event["name"]].copy()
                     print(f"    [{i}] {event['name']} -> OVERRIDE")
 
+                # The URL slug usually IS the filename -- try that first,
+                # it is unambiguous and needs no config.
+                if info is None:
+                    slug = slug_from_url(event["url"])
+                    if slug:
+                        slug_path = os.path.join(BASE_DIR, slug + ".html")
+                        if os.path.exists(slug_path):
+                            info = extract_stream_info(slug_path)
+                            if info:
+                                print(f"    [{i}] {event['name']} -> {slug}.html")
+
                 if info is None and slug_map:
                     for slug, slug_info in slug_map.items():
                         if slug in event["url"]:
@@ -245,21 +265,33 @@ def build_streams_list():
                             break
 
                 if info is None and pattern:
+                    # Only use the numbered pattern when the URL really carries
+                    # a number. Falling back to the loop index used to map
+                    # events onto unrelated stream pages by position.
                     match = re.search(r'-(\d+)/?$', event["url"].rstrip("/"))
-                    n = match.group(1) if match else str(i)
-                    stream_filename = pattern.replace("{n}", n)
-                    stream_path = os.path.join(BASE_DIR, stream_filename)
-                    info = extract_stream_info(stream_path)
-                    if info:
-                        print(f"    [{i}] {event['name']} -> {stream_filename}")
+                    if match:
+                        stream_filename = pattern.replace("{n}", match.group(1))
+                        stream_path = os.path.join(BASE_DIR, stream_filename)
+                        info = extract_stream_info(stream_path)
+                        if info:
+                            print(f"    [{i}] {event['name']} -> {stream_filename}")
 
                 if info is None:
                     info = default.copy()
-                    print(f"    [{i}] {event['name']} -> DEFAULT")
+                    unresolved.append(f"{sport_key}: {event['name']}  ({event['url']})")
+                    print(f"    [{i}] {event['name']} -> DEFAULT  <-- no page found")
 
                 entry = {"label": event["name"], "sport": sport_key}
                 entry.update(info)
                 all_streams.append(entry)
+
+    if unresolved:
+        print("\n  " + "!" * 46)
+        print(f"  {len(unresolved)} event(s) fell back to a DEFAULT stream:")
+        for line in unresolved:
+            print(f"    - {line}")
+        print("  These will play the wrong feed until a matching page exists.")
+        print("  " + "!" * 46)
 
     return all_streams
 
