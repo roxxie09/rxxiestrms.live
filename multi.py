@@ -19,8 +19,20 @@ SCHEDULE_STREAM_MAP = {
         "default": {"subdomain": "daffodil", "path": "nba.m3u8", "txt": "domainsz29.txt"},
     },
     "nfl.html": {
-        "pattern": "nfl-streams-{n}.html",
         "default": {"subdomain": "601", "path": "nfl.m3u8", "txt": "domainsz29.txt"},
+        "sections": [
+            {
+                "sport": "nfl",
+                "selector": "table#eventsTable tbody tr",
+                "pattern": "nfl-streams-{n}.html",
+            },
+            {
+                "sport": "ncaa",
+                "selector": "#cfb-section table tbody tr",
+                "pattern": "ncaa-streams-{n}.html",
+                "default": {"subdomain": "601", "path": "ncaa.m3u8", "txt": "domainsz29.txt"},
+            },
+        ],
     },
     "nhl.html": {
         "pattern": "nhl-streams-{n}.html",
@@ -54,7 +66,8 @@ STREAM_OVERRIDES = {
 
 SPORT_LABELS = {
     "soccer": "Soccer", "mlb": "MLB", "nba": "NBA", "nfl": "NFL",
-    "nhl": "NHL", "fighting": "Fighting", "motorsports": "Motorsports"
+    "ncaa": "NCAA Football", "nhl": "NHL", "fighting": "Fighting",
+    "motorsports": "Motorsports"
 }
 
 def extract_stream_info(html_path):
@@ -95,10 +108,12 @@ def extract_stream_info(html_path):
     if len(all_streams) > 1:
         result["alts"] = all_streams[1:]
     return result
-def get_events_from_schedule(schedule_path):
+DEFAULT_SELECTOR = "table#eventsTable tbody tr"
+
+def get_events_from_schedule(schedule_path, selector=DEFAULT_SELECTOR):
     with open(schedule_path, encoding="utf-8") as f:
         soup = BeautifulSoup(f, "html.parser")
-    rows = soup.select("table#eventsTable tbody tr")
+    rows = soup.select(selector)
     events = []
     for row in rows:
         tds = row.find_all("td")
@@ -121,48 +136,56 @@ def build_streams_list():
         if not os.path.exists(schedule_path):
             print(f"  WARNING: {schedule_file} not found, skipping.")
             continue
-        events = get_events_from_schedule(schedule_path)
-        sport_key = schedule_file.replace(".html", "")
-        print(f"  {schedule_file}: {len(events)} events found")
 
-        for i, event in enumerate(events, 1):
-            info = None
+        # One page can carry more than one sport (nfl.html also holds NCAA)
+        for section in config.get("sections") or [{}]:
+            sport_key = section.get("sport", schedule_file.replace(".html", ""))
+            selector = section.get("selector", DEFAULT_SELECTOR)
+            pattern = section.get("pattern", config.get("pattern"))
+            default = section.get("default", config["default"])
+            slug_map = section.get("slug_map", config.get("slug_map"))
 
-            if event["name"] in STREAM_OVERRIDES:
-                info = STREAM_OVERRIDES[event["name"]].copy()
-                print(f"    [{i}] {event['name']} -> OVERRIDE")
+            events = get_events_from_schedule(schedule_path, selector)
+            print(f"  {schedule_file} [{sport_key}]: {len(events)} events found")
 
-            if info is None and "slug_map" in config:
-                for slug, slug_info in config["slug_map"].items():
-                    if slug in event["url"]:
-                        if "file" in slug_info:
-                            slug_file_path = os.path.join(BASE_DIR, slug_info["file"])
-                            info = extract_stream_info(slug_file_path)
-                            if info:
-                                print(f"    [{i}] {event['name']} -> slug:{slug} ({slug_info['file']})")
+            for i, event in enumerate(events, 1):
+                info = None
+
+                if event["name"] in STREAM_OVERRIDES:
+                    info = STREAM_OVERRIDES[event["name"]].copy()
+                    print(f"    [{i}] {event['name']} -> OVERRIDE")
+
+                if info is None and slug_map:
+                    for slug, slug_info in slug_map.items():
+                        if slug in event["url"]:
+                            if "file" in slug_info:
+                                slug_file_path = os.path.join(BASE_DIR, slug_info["file"])
+                                info = extract_stream_info(slug_file_path)
+                                if info:
+                                    print(f"    [{i}] {event['name']} -> slug:{slug} ({slug_info['file']})")
+                                else:
+                                    print(f"    [{i}] {event['name']} -> slug:{slug} (file not found, falling through)")
                             else:
-                                print(f"    [{i}] {event['name']} -> slug:{slug} (file not found, falling through)")
-                        else:
-                            info = slug_info.copy()
-                            print(f"    [{i}] {event['name']} -> slug:{slug}")
-                        break
+                                info = slug_info.copy()
+                                print(f"    [{i}] {event['name']} -> slug:{slug}")
+                            break
 
-            if info is None and config.get("pattern"):
-                match = re.search(r'-(\d+)/?$', event["url"].rstrip("/"))
-                n = match.group(1) if match else str(i)
-                stream_filename = config["pattern"].replace("{n}", n)
-                stream_path = os.path.join(BASE_DIR, stream_filename)
-                info = extract_stream_info(stream_path)
-                if info:
-                    print(f"    [{i}] {event['name']} -> {stream_filename}")
+                if info is None and pattern:
+                    match = re.search(r'-(\d+)/?$', event["url"].rstrip("/"))
+                    n = match.group(1) if match else str(i)
+                    stream_filename = pattern.replace("{n}", n)
+                    stream_path = os.path.join(BASE_DIR, stream_filename)
+                    info = extract_stream_info(stream_path)
+                    if info:
+                        print(f"    [{i}] {event['name']} -> {stream_filename}")
 
-            if info is None:
-                info = config["default"].copy()
-                print(f"    [{i}] {event['name']} -> DEFAULT")
+                if info is None:
+                    info = default.copy()
+                    print(f"    [{i}] {event['name']} -> DEFAULT")
 
-            entry = {"label": event["name"], "sport": sport_key}
-            entry.update(info)
-            all_streams.append(entry)
+                entry = {"label": event["name"], "sport": sport_key}
+                entry.update(info)
+                all_streams.append(entry)
 
     return all_streams
 

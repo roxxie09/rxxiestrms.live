@@ -142,7 +142,7 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item"><a class="nav-link nav-link-soccer" href="https://roxiestreams.info/soccer">Soccer WC 2026</a></li>
+                    <li class="nav-item"><a class="nav-link nav-link-soccer" href="https://roxiestreams.info/soccer">Soccer</a></li>
                     <li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/mlb">MLB</a></li>
                     <li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/nba">NBA</a></li>
                     <li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/nfl">NFL</a></li>
@@ -218,7 +218,7 @@ const STREAMS = [
     { label: 'Vancouver Whitecaps vs St. Louis City', sport: 'soccer', subdomain: 'admin2', path: 'oldham.m3u8', txt: 'domainsz74.txt' },
     { label: 'Atlas vs Atlante', sport: 'soccer', subdomain: 'admin2', path: 'oldham.m3u8', txt: 'domainsz74.txt' },
     // ── MLB ──
-    { label: 'San Francisco Giants vs New York Mets', sport: 'mlb', subdomain: 'tedesco', path: 'mlb.m3u8', txt: 'domainsz74.txt' },
+    { label: 'San Francisco Giants vs New York Mets', sport: 'mlb', subdomain: 'admin2', path: 'mlb.m3u8', txt: 'domainsz74.txt' },
     { label: 'Chicago Cubs vs Miami Marlins', sport: 'mlb', subdomain: 'admin2', path: 'mlb2.m3u8', txt: 'domainsz74.txt' },
     { label: 'Atlanta Braves vs Philadelphia Phillies', sport: 'mlb', subdomain: '601', path: 'mlb.m3u8', txt: 'domainsz29.txt' },
     { label: 'Detroit Tigers vs Cleveland Guardians', sport: 'mlb', subdomain: 'admin2', path: 'mlb4.m3u8', txt: 'domainsz74.txt' },
@@ -250,8 +250,9 @@ const STREAMS = [
 ];
 
 const SPORT_LABELS = {
-    soccer: '⚽ Soccer (WC 2026)', mlb: '⚾ MLB', nba: '🏀 NBA',
-    nfl: '🏈 NFL', nhl: '🏒 NHL', fighting: '🥊 Fighting', motorsports: '🏎 Motorsports'
+    soccer: '⚽ Soccer', mlb: '⚾ MLB', nba: '🏀 NBA',
+    nfl: '🏈 NFL', ncaa: '🎓 NCAA Football',
+    nhl: '🏒 NHL', fighting: '🥊 Fighting', motorsports: '🏎 Motorsports'
 };
 
 let domains = {};
@@ -285,7 +286,7 @@ function buildStreamOptions() {
         if (!groups[s.sport]) groups[s.sport] = [];
         groups[s.sport].push({ label: s.label, index: i });
     });
-    const sportOrder = ['soccer','mlb','nba','nfl','nhl','fighting','motorsports'];
+    const sportOrder = ['soccer','mlb','nba','nfl','ncaa','nhl','fighting','motorsports'];
     let html = '<option value="">— Select a stream —</option>';
     sportOrder.forEach(sport => {
         if (!groups[sport]) return;
