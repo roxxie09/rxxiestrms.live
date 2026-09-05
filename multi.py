@@ -18,6 +18,10 @@ SCHEDULE_STREAM_MAP = {
         "pattern": "nba-streams-{n}.html",
         "default": {"subdomain": "daffodil", "path": "nba.m3u8", "txt": "domainsz29.txt"},
     },
+    "nfl.html": {
+        "pattern": "nfl-streams-{n}.html",
+        "default": {"subdomain": "601", "path": "nfl.m3u8", "txt": "domainsz29.txt"},
+    },
     "nhl.html": {
         "pattern": "nhl-streams-{n}.html",
         "default": {"subdomain": "601", "path": "nhl.m3u8", "txt": "domainsz29.txt"},
@@ -49,7 +53,7 @@ STREAM_OVERRIDES = {
 }
 
 SPORT_LABELS = {
-    "soccer": "Soccer", "mlb": "MLB", "nba": "NBA",
+    "soccer": "Soccer", "mlb": "MLB", "nba": "NBA", "nfl": "NFL",
     "nhl": "NHL", "fighting": "Fighting", "motorsports": "Motorsports"
 }
 
@@ -63,13 +67,7 @@ def extract_stream_info(html_path):
     txt = re.search(r"fetch\(['\"](.+?\.txt)['\"]", content)
     txt_file = txt.group(1) if txt else "domainsz29.txt"
 
-    # Collect all m3u8 streams from buttons with labels
-    button_streams = re.findall(
-        r"<button[^>]*>([^<]+)</button>[^<]*(?:onclick=[^>]*)?.*?getRandomStream\(['\"](.+?\.m3u8)['\"],\s*['\"](.+?)['\"]",
-        content, re.DOTALL
-    )
-
-    # Better pattern: find onclick getRandomStream calls with nearby button text
+    # Find onclick getRandomStream calls with their button text
     all_streams = []
     buttons = re.findall(
         r'<button[^>]+onclick=["\']showPlayer\(\'clappr\',\s*getRandomStream\(\'(.+?\.m3u8)\',\s*\'(.+?)\'[^"\']*\)["\'][^>]*>([^<]+)</button>',
@@ -200,14 +198,16 @@ def update_multiview(streams_js):
 
     start = content.find(start_marker)
     if start == -1:
-        print("  WARNING: STREAMS start marker not found in multiview.html")
-        return
+        raise SystemExit("ERROR: STREAMS start marker not found in multiview.html")
 
     end = content.find(end_marker, start)
     if end == -1:
-        print("  WARNING: STREAMS end marker not found in multiview.html")
-        return
+        raise SystemExit("ERROR: STREAMS end marker not found in multiview.html")
     end += len(end_marker)
+
+    # Keep the block in the same line endings as the rest of the file
+    if "\r\n" in content:
+        streams_js = streams_js.replace("\n", "\r\n")
 
     new_content = content[:start] + streams_js + content[end:]
 

@@ -1,17 +1,25 @@
-name: Deploy to VPS
+name: Build and deploy
 
 on:
   push:
     branches:
       - main
 
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
+# Never let two deploys stomp on each other
+concurrency:
+  group: deploy-main
+  cancel-in-progress: false
 
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      sha: ${{ steps.commit.outputs.sha }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+        with:
+          ref: main
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -25,25 +33,77 @@ jobs:
         run: python multi.py
 
       - name: Commit updated multiview.html
+        id: commit
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add multiview.html
-          git diff --staged --quiet || git commit -m "Auto-update multiview.html [skip ci]"
-          git push
+          if git diff --staged --quiet; then
+            echo "multiview.html unchanged"
+          else
+            git commit -m "Auto-update multiview.html [skip ci]"
+            git push origin HEAD:main
+          fi
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
+  # ---------------- roxiestreams.info  (rxxie, 185.132.53.186) ----------------
+  deploy-info:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
       - name: Set up SSH
-        uses: webfactory/ssh-agent@v0.5.3
+        uses: webfactory/ssh-agent@v0.9.0
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEYR }}
 
-      - name: Deploy to VPS
+      - name: Deploy to .info VPS
+        env:
+          SERVER_IP: "185.132.53.186"
+          TARGET_SHA: ${{ needs.build.outputs.sha }}
         run: |
-          ssh -o StrictHostKeyChecking=no root@185.132.53.186 << 'EOF'
+          ssh -o StrictHostKeyChecking=no root@$SERVER_IP "TARGET_SHA='$TARGET_SHA' bash -s" << 'EOF'
+          set -e
           cd ~/roxxiestrms
-          git reset --hard
+          git fetch --all
+          git reset --hard "$TARGET_SHA"
           git clean -fd
-          git pull origin main
-          rsync -avz --delete ./ /var/www/html/roxxiestrms/
-          systemctl restart nginx
+          rsync -avz --delete \
+            --exclude '.git' --exclude '.github' --exclude '.gitignore' \
+            ./ /var/www/html/roxxiestrms/
+          chown -R www-data:www-data /var/www/html/roxxiestrms
+          find /var/www/html/roxxiestrms -type f -exec chmod 644 {} +
+          find /var/www/html/roxxiestrms -type d -exec chmod 755 {} +
+          nginx -t && systemctl reload nginx
+          echo "✅ .info deploy complete ($TARGET_SHA)"
+          EOF
+
+  # ---------------- roxiestreams.su  (grownturnip, 185.132.53.80) -------------
+  deploy-su:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEYSU }}
+
+      - name: Deploy to .su VPS
+        env:
+          SERVER_IP: "185.132.53.80"
+          TARGET_SHA: ${{ needs.build.outputs.sha }}
+        run: |
+          ssh -o StrictHostKeyChecking=no root@$SERVER_IP "TARGET_SHA='$TARGET_SHA' bash -s" << 'EOF'
+          set -e
+          cd /var/www/html/roxxiestrms || { echo "Dir not found"; exit 1; }
+          git fetch --all
+          git reset --hard "$TARGET_SHA"
+          git clean -fd
+          # .su serves itself, so absolute .info links have to become relative
+          find . -name '*.html' -not -path './.git/*' -exec sed -i 's|https://roxiestreams\.info/|/|g' {} +
+          find . -name '*.html' -not -path './.git/*' -exec sed -i 's|https://roxiestreams\.info$|.|g' {} +
+          chown -R www-data:www-data /var/www/html/roxxiestrms
+          find /var/www/html/roxxiestrms -type f -exec chmod 644 {} +
+          find /var/www/html/roxxiestrms -type d -exec chmod 755 {} +
+          nginx -t && systemctl reload nginx
+          echo "✅ .su deploy complete ($TARGET_SHA)"
           EOF
