@@ -70,6 +70,68 @@ SPORT_LABELS = {
     "motorsports": "Motorsports"
 }
 
+# getRandomStream('path.m3u8', 'subdomain')  -- subdomain optional
+RANDOM_CALL_RE = re.compile(
+    r"""getRandomStream\(\s*['"]([^'"]+?\.m3u8[^'"]*)['"]\s*(?:,\s*['"]([^'"]+?)['"])?\s*\)"""
+)
+# a full hardcoded URL: showPlayer('clappr', 'https://sub.domain.tld/path.m3u8')
+DIRECT_URL_RE = re.compile(r"""['"](https?://[^'"\s]+?\.m3u8[^'"\s]*)['"]""")
+# page-level fallback subdomain
+FN_DEFAULT_SUB_RE = re.compile(
+    r"""function\s+getRandomStream\([^)]*subdomain\s*=\s*['"]([^'"]+)['"]"""
+)
+VAR_SUB_RE = re.compile(r"""var\s+subdomain\s*=\s*['"]([^'"]+)['"]""")
+
+_domain_cache = None
+
+def load_domain_lists():
+    """Map every domain in the repo's domains*.txt files to its filename."""
+    global _domain_cache
+    if _domain_cache is None:
+        _domain_cache = {}
+        for fname in sorted(os.listdir(BASE_DIR)):
+            if not (fname.startswith("domains") and fname.endswith(".txt")):
+                continue
+            try:
+                with open(os.path.join(BASE_DIR, fname), encoding="utf-8") as f:
+                    for line in f:
+                        d = line.strip()
+                        if d:
+                            _domain_cache.setdefault(d, fname)
+            except OSError:
+                continue
+    return _domain_cache
+
+def split_hardcoded_url(url):
+    """Turn https://sub.example.com/x.m3u8 into rotating parts when we
+    recognise the host, so the stream survives a domain rotation."""
+    m = re.match(r"https?://([^/]+)/(.+)$", url)
+    if not m:
+        return None
+    host, path = m.group(1), m.group(2)
+    for domain, txt_file in load_domain_lists().items():
+        if host.endswith("." + domain):
+            subdomain = host[: -len(domain) - 1]
+            if subdomain:
+                return {"subdomain": subdomain, "path": path, "txt": txt_file}
+    return None
+
+def parse_onclick(onclick, txt_file, page_subdomain):
+    """Return stream parts for one button, or None if it isn't an m3u8 source."""
+    m = RANDOM_CALL_RE.search(onclick)
+    if m:
+        return {
+            "path": m.group(1),
+            "subdomain": m.group(2) or page_subdomain,
+            "txt": txt_file,
+        }
+    m = DIRECT_URL_RE.search(onclick)
+    if m:
+        url = m.group(1)
+        parts = split_hardcoded_url(url)
+        return parts if parts else {"hardcoded": url}
+    return None
+
 def extract_stream_info(html_path):
     if not os.path.exists(html_path):
         return None
@@ -80,34 +142,46 @@ def extract_stream_info(html_path):
     txt = re.search(r"fetch\(['\"](.+?\.txt)['\"]", content)
     txt_file = txt.group(1) if txt else "domainsz29.txt"
 
-    # Find onclick getRandomStream calls with their button text
+    sub = FN_DEFAULT_SUB_RE.search(content) or VAR_SUB_RE.search(content)
+    page_subdomain = sub.group(1) if sub else "admin2"
+
+    # Every stream button on the page, in document order
+    soup = BeautifulSoup(content, "html.parser")
     all_streams = []
-    buttons = re.findall(
-        r'<button[^>]+onclick=["\']showPlayer\(\'clappr\',\s*getRandomStream\(\'(.+?\.m3u8)\',\s*\'(.+?)\'[^"\']*\)["\'][^>]*>([^<]+)</button>',
-        content
-    )
-    for path, subdomain, label in buttons:
-        label = label.strip()
-        all_streams.append({"label": label, "path": path, "subdomain": subdomain, "txt": txt_file})
+    for btn in soup.find_all("button", onclick=True):
+        onclick = btn.get("onclick", "")
+        if "showPlayer" not in onclick and "getRandomStream" not in onclick:
+            continue
+        info = parse_onclick(onclick, txt_file, page_subdomain)
+        if not info:
+            continue
+        label = btn.get_text(strip=True) or f"Stream {len(all_streams) + 1}"
+        entry = {"label": label}
+        entry.update(info)
+        all_streams.append(entry)
 
     if not all_streams:
-        # Fall back to playStream5 then playStream1 then inline
-        stream5 = re.search(r"function playStream5\(\)[\s\S]*?getRandomStream\(['\"](.+?\.m3u8)['\"],\s*['\"](.+?)['\"]", content)
-        if stream5:
-            return {"path": stream5.group(1), "subdomain": stream5.group(2), "txt": txt_file}
-        stream1 = re.search(r"function playStream1\(\)[\s\S]*?getRandomStream\(['\"](.+?\.m3u8)['\"],\s*['\"](.+?)['\"]", content)
-        if stream1:
-            return {"path": stream1.group(1), "subdomain": stream1.group(2), "txt": txt_file}
-        inline = re.search(r"getRandomStream\(['\"](.+?\.m3u8)['\"],\s*['\"](.+?)['\"]", content)
-        if inline:
-            return {"path": inline.group(1), "subdomain": inline.group(2), "txt": txt_file}
+        # No buttons matched -- fall back to whatever the page auto-plays.
+        # Scan every match, since the getRandomStream() function *definition*
+        # appears before any real call and would otherwise shadow it.
+        for pattern in (
+            r"function playStream5\(\)[\s\S]*?(getRandomStream\([^)]*\))",
+            r"function playStream1\(\)[\s\S]*?(getRandomStream\([^)]*\))",
+            r"(getRandomStream\([^)]*\))",
+            r"showPlayer\(\s*['\"]clappr['\"]\s*,\s*(['\"]https?://[^'\"]+?\.m3u8[^'\"]*['\"])",
+        ):
+            for m in re.finditer(pattern, content):
+                info = parse_onclick(m.group(1), txt_file, page_subdomain)
+                if info:
+                    return info
         return None
 
-    # Return first as default, rest as alternates
-    result = {"path": all_streams[0]["path"], "subdomain": all_streams[0]["subdomain"], "txt": txt_file}
+    result = dict(all_streams[0])
+    result.pop("label", None)
     if len(all_streams) > 1:
         result["alts"] = all_streams[1:]
     return result
+
 DEFAULT_SELECTOR = "table#eventsTable tbody tr"
 
 def get_events_from_schedule(schedule_path, selector=DEFAULT_SELECTOR):
@@ -189,6 +263,19 @@ def build_streams_list():
 
     return all_streams
 
+def js_str(value):
+    return str(value).replace("\\", "\\\\").replace("'", "\\'")
+
+def source_fields(src):
+    """Render the source half of an entry: either a hardcoded URL or parts."""
+    if "hardcoded" in src:
+        return "hardcoded: '" + js_str(src["hardcoded"]) + "'"
+    return (
+        "subdomain: '" + js_str(src["subdomain"]) + "', "
+        "path: '" + js_str(src["path"]) + "', "
+        "txt: '" + js_str(src["txt"]) + "'"
+    )
+
 def streams_to_js(streams):
     lines = ["const STREAMS = ["]
     current_sport = None
@@ -198,17 +285,19 @@ def streams_to_js(streams):
             label = SPORT_LABELS.get(sport, sport.upper())
             lines.append(f"    // \u2500\u2500 {label} \u2500\u2500")
             current_sport = sport
-        name = s["label"].replace("'", "\\'")
-        if "hardcoded" in s:
-            lines.append("    { label: '" + name + "', sport: '" + sport + "', hardcoded: '" + s["hardcoded"] + "' },")
-        else:
-            alts_js = ""
-            if "alts" in s:
-                alts_parts = []
-                for alt in s["alts"]:
-                    alts_parts.append("{ label: '" + alt["label"].replace("'", "\\'") + "', subdomain: '" + alt["subdomain"] + "', path: '" + alt["path"] + "', txt: '" + alt["txt"] + "' }")
-                alts_js = ", alts: [" + ", ".join(alts_parts) + "]"
-            lines.append("    { label: '" + name + "', sport: '" + sport + "', subdomain: '" + s["subdomain"] + "', path: '" + s["path"] + "', txt: '" + s["txt"] + "'" + alts_js + " },")
+
+        alts_js = ""
+        if s.get("alts"):
+            alts_parts = [
+                "{ label: '" + js_str(alt["label"]) + "', " + source_fields(alt) + " }"
+                for alt in s["alts"]
+            ]
+            alts_js = ", alts: [" + ", ".join(alts_parts) + "]"
+
+        lines.append(
+            "    { label: '" + js_str(s["label"]) + "', sport: '" + sport + "', "
+            + source_fields(s) + alts_js + " },"
+        )
     lines.append("];")
     return "\n".join(lines)
 
