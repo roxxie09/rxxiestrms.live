@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -55,8 +56,13 @@ def parse_cli_date(value: str) -> datetime:
     raise ValueError("Use YYYY-MM-DD, MM-DD-YYYY, or MM-DD-YY.")
 
 
+def strip_ranking(value: str) -> str:
+    """Remove a leading ESPN ranking, for example '5 Texas' -> 'Texas'."""
+    return re.sub(r"^\s*\d+\s+", "", value).strip()
+
+
 def get_team_name(team_cell) -> str:
-    """Get a team name and omit ESPN's separate @ / v home-team marker."""
+    """Get a team name without ESPN's @ / v marker or ranking number."""
     at_marker = team_cell.select_one("span.at")
     if at_marker is not None:
         at_marker.decompose()
@@ -64,9 +70,9 @@ def get_team_name(team_cell) -> str:
     link = team_cell.select_one("a[href*='/nfl/team/_/name/']")
     if link is not None:
         slug = link.get("href", "").rstrip("/").split("/")[-1]
-        return NFL_TEAM_SLUG_MAP.get(slug, link.get_text(" ", strip=True))
+        return NFL_TEAM_SLUG_MAP.get(slug, strip_ranking(link.get_text(" ", strip=True)))
 
-    return team_cell.get_text(" ", strip=True).lstrip("@").lstrip("v").strip()
+    return strip_ranking(team_cell.get_text(" ", strip=True).lstrip("@").lstrip("v").strip())
 
 
 def convert_et_to_pt(time_str: str, game_date: datetime) -> str:
@@ -106,8 +112,59 @@ def find_schedule_table(soup: BeautifulSoup, target_date: datetime):
     return None
 
 
-def fetch_games_for_date(source_html_path: Path, target_date: datetime) -> list[dict]:
-    """Extract games from either nfl.txt or nfl2.txt for the requested date."""
+def get_broadcast_names(row) -> list[str]:
+    """Return every visible broadcast/network listed in the ESPN TV cell."""
+    broadcast_cell = row.select_one("td.broadcast__col")
+    if broadcast_cell is None:
+        return []
+
+    names = []
+    for node in broadcast_cell.select(".network-name, img[alt]"):
+        value = node.get("alt") if node.name == "img" else node.get_text(" ", strip=True)
+        value = " ".join((value or "").split())
+        if value and value not in names:
+            names.append(value)
+
+    if names:
+        return names
+
+    fallback = " ".join(broadcast_cell.get_text(" ", strip=True).split())
+    return [fallback] if fallback else []
+
+
+def is_plus_only_broadcast(broadcasts: list[str]) -> bool:
+    """Exclude games carried only on ESPN+, SEC+, or SEC Network+."""
+    if not broadcasts:
+        return False
+
+    for network in broadcasts:
+        compact = network.upper().replace(" ", "")
+        if "ESPN+" not in compact and "SECNETWORK+" not in compact and "SECN+" not in compact and compact != "SEC+":
+            return False
+
+    return True
+
+
+def reusable_broadcast_key(broadcasts: list[str]) -> str | None:
+    """Use any non-plus network as a reusable stream identity.
+
+    A listing such as 'ABC, Disney+' returns ABC, so it shares ABC's stream.
+    ESPN+/SEC+ variants do not qualify as reusable identities.
+    """
+    for network in broadcasts:
+        compact = network.upper().replace(" ", "")
+        if "ESPN+" in compact or "SECNETWORK+" in compact or "SECN+" in compact or compact == "SEC+":
+            continue
+        return " ".join(network.upper().split())
+    return None
+
+
+def fetch_games_for_date(
+    source_html_path: Path,
+    target_date: datetime,
+    exclude_plus_only_games: bool = False,
+) -> list[dict]:
+    """Extract games from NFL or CFB source HTML for the requested date."""
     with source_html_path.open(encoding="utf-8") as file:
         soup = BeautifulSoup(file, "html.parser")
 
@@ -123,6 +180,10 @@ def fetch_games_for_date(source_html_path: Path, target_date: datetime) -> list[
     for row in tbody.find_all("tr", recursive=False):
         cols = row.find_all("td", recursive=False)
         if len(cols) < 3:
+            continue
+
+        broadcasts = get_broadcast_names(row)
+        if exclude_plus_only_games and is_plus_only_broadcast(broadcasts):
             continue
 
         away_team = get_team_name(cols[0])
@@ -144,20 +205,42 @@ def fetch_games_for_date(source_html_path: Path, target_date: datetime) -> list[
                     f"{target_date.strftime('%B')} {target_date.day}, "
                     f"{target_date.year} {pacific_time}"
                 ),
+                "broadcasts": broadcasts,
             }
         )
 
     return games
 
 
+def assign_ncaa_stream_numbers(cfb_games: list[dict]) -> None:
+    """Reuse one NCAA link for each repeated non-plus channel."""
+    stream_number_by_broadcast: dict[str, int] = {}
+    next_stream_number = 1
+
+    for game in cfb_games:
+        broadcast_key = reusable_broadcast_key(game.get("broadcasts", []))
+
+        if broadcast_key is not None and broadcast_key in stream_number_by_broadcast:
+            game["stream_number"] = stream_number_by_broadcast[broadcast_key]
+            continue
+
+        game["stream_number"] = next_stream_number
+
+        if broadcast_key is not None:
+            stream_number_by_broadcast[broadcast_key] = next_stream_number
+
+        next_stream_number += 1
+
+
 def append_game_rows(soup: BeautifulSoup, tbody, games: list[dict], stream_prefix: str) -> None:
-    for index, game in enumerate(games, start=1):
+    for default_index, game in enumerate(games, start=1):
+        stream_number = game.get("stream_number", default_index)
         row = soup.new_tag("tr")
 
         event_cell = soup.new_tag("td")
         event_link = soup.new_tag(
             "a",
-            href=f"https://roxiestreams.info/{stream_prefix}-streams-{index}",
+            href=f"https://roxiestreams.info/{stream_prefix}-streams-{stream_number}",
         )
         event_link.string = game["event"]
         event_cell.append(event_link)
@@ -196,7 +279,7 @@ def build_cfb_section(soup: BeautifulSoup, cfb_games: list[dict]):
     table.append(thead)
 
     tbody = soup.new_tag("tbody")
-    append_game_rows(soup, tbody, cfb_games, "cfb")
+    append_game_rows(soup, tbody, cfb_games, "ncaa")
     table.append(tbody)
 
     return container
@@ -227,8 +310,9 @@ def update_games_in_html(
     if old_cfb_section is not None:
         old_cfb_section.decompose()
 
-    # Only create the CFB heading/table when nfl2.txt produced games.
+    # CFB games publish as ncaa-streams-N URLs.
     if cfb_games:
+        assign_ncaa_stream_numbers(cfb_games)
         nfl_table.insert_after(build_cfb_section(soup, cfb_games))
 
     with output_html_path.open("w", encoding="utf-8") as file:
@@ -264,7 +348,11 @@ def main() -> None:
         sys.exit(1)
 
     nfl_games = fetch_games_for_date(nfl_source_path, target_date)
-    cfb_games = fetch_games_for_date(cfb_source_path, target_date)
+    cfb_games = fetch_games_for_date(
+        cfb_source_path,
+        target_date,
+        exclude_plus_only_games=True,
+    )
 
     update_games_in_html(output_html_path, nfl_games, cfb_games)
 
