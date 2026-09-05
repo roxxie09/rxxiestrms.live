@@ -172,9 +172,8 @@
 <div class="fullplayer">
 <div id="playerContainer"></div>
 <div class="streamchanger">
-<button class="streambutton" onclick="showPlayer('clappr', getRandomStream('tnt4.m3u8', 'admin2'))">Stream 1 (TNT)</button>
-<button class="streambutton" onclick="showPlayer('clappr', getRandomStream('abbiecadabrii.m3u8', 'admin2'))">Stream 2 (Para)</button>
-<button class="streambutton" onclick="showPlayer('clappr', getRandomStream('hub.m3u8', 'tedesco'))">Stream 3 (FP)</button>
+<button class="streambutton" onclick="showPlayer('clappr', getRandomStream('abbiecadabrii.m3u8', 'admin2'))">Stream 1 (Para)</button>
+<button class="streambutton" onclick="showPlayer('clappr', getRandomStream('tnt.m3u8', 'admin2'))">Stream 2 (TNT)</button>
 </button>
 </div>
 <div class="embedchat">
@@ -206,7 +205,7 @@ fetch('domainsz74.txt')
   .then(data => {
     domains = data.trim().split('\n').filter(d => d.trim());
     // Auto-load initial stream after domains load
-    setTimeout(() => showPlayer('clappr', getRandomStream('tnt4.m3u8')), 500);
+    setTimeout(() => showPlayer('clappr', getRandomStream('abbiecadabrii.m3u8')), 500);
   })
   .catch(() => {
     console.error('Failed to load domainsz74.txt');
