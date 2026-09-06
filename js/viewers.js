@@ -2,11 +2,18 @@
    Drop one <script src="js/viewers.js" defer></script> into a stream page.
    It finds the chat header itself -- no other markup changes needed. */
 (function () {
-  // Absolute on purpose: .info and .su both call this one service, so the
-  // number shown is the combined total across both domains.
-  // The .su deploy only rewrites *.html, so this URL is left alone here.
-  var ENDPOINT = 'https://roxiestreams.info/api/viewers';
+  // Both sites call ONE service, so the number is the combined total.
+  // The second entry is a fallback: .su's nginx relays /api/viewers to
+  // rxxie, so a viewer who cannot reach .info directly still lands in the
+  // same pool. Order matters -- the first reachable one wins and sticks.
+  // The .su deploy only rewrites *.html, so these URLs are left alone.
+  var ENDPOINTS = [
+    'https://roxiestreams.info/api/viewers',
+    'https://roxiestreams.su/api/viewers'
+  ];
   var PING_MS = 20000;
+  var TIMEOUT_MS = 6000;
+  var epIdx = 0;   // index of the endpoint currently believed good
 
   // /ncaa-streams-7 -> ncaa-streams-7
   function pageKey() {
@@ -86,10 +93,34 @@
     el.classList.add('ready');
   }
 
+  function fetchWithTimeout(url) {
+    if (typeof AbortController === 'undefined') {
+      return fetch(url, { cache: 'no-store' });
+    }
+    var ctrl = new AbortController();
+    var timer = setTimeout(function () { ctrl.abort(); }, TIMEOUT_MS);
+    return fetch(url, { cache: 'no-store', signal: ctrl.signal })
+      .then(function (r) { clearTimeout(timer); return r; },
+            function (e) { clearTimeout(timer); throw e; });
+  }
+
+  // Try the preferred endpoint, then each other one in turn. Whichever
+  // answers becomes the preferred one for the rest of the session.
+  function request(query, attempt) {
+    attempt = attempt || 0;
+    if (attempt >= ENDPOINTS.length) return Promise.reject(new Error('all endpoints failed'));
+    var which = (epIdx + attempt) % ENDPOINTS.length;
+    return fetchWithTimeout(ENDPOINTS[which] + query)
+      .then(function (r) {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.json();
+      })
+      .then(function (d) { epIdx = which; return d; })
+      .catch(function () { return request(query, attempt + 1); });
+  }
+
   function ping() {
-    fetch(ENDPOINT + '?page=' + encodeURIComponent(PAGE) + '&id=' + encodeURIComponent(ID),
-          { cache: 'no-store' })
-      .then(function (r) { return r.json(); })
+    request('?page=' + encodeURIComponent(PAGE) + '&id=' + encodeURIComponent(ID))
       .then(function (d) { if (typeof d.count === 'number') render(d.count); })
       .catch(function () { /* counter is cosmetic -- never break the page */ });
   }
@@ -106,7 +137,7 @@
 
     // Drop off promptly instead of waiting for the 45s timeout
     window.addEventListener('pagehide', function () {
-      var url = ENDPOINT + '?page=' + encodeURIComponent(PAGE)
+      var url = ENDPOINTS[epIdx] + '?page=' + encodeURIComponent(PAGE)
               + '&id=' + encodeURIComponent(ID) + '&leave=1';
       if (navigator.sendBeacon) navigator.sendBeacon(url);
     });
