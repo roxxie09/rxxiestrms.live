@@ -40,10 +40,10 @@
 
   function injectStyles() {
     var css = ''
-      + '.viewer-count{display:inline-flex;align-items:center;gap:4px;'
+      + '.viewer-count{display:none;align-items:center;gap:4px;'
       + 'font-size:10px;font-weight:bold;color:#ff4d4d;letter-spacing:.3px;'
-      + 'text-transform:uppercase;opacity:0;transition:opacity .3s;}'
-      + '.viewer-count.ready{opacity:1;}'
+      + 'text-transform:uppercase;}'
+      + '.viewer-count.ready{display:inline-flex;}'
       + '.viewer-count svg{width:11px;height:11px;fill:#ff4d4d;flex-shrink:0;}'
       + '.chat-header-left{display:flex;align-items:center;gap:8px;}';
     var s = document.createElement('style');
