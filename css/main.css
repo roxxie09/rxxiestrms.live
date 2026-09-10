@@ -45,3 +45,53 @@ a.card-text:hover {
 .card-header-tabs .nav-link.active {
     border-bottom-color: #00000000!important;
 }
+/* Animated Alert Bar & Domain Highlight */
+@keyframes pulseRedGold {
+    0% {
+        border-color: #ff3333;
+        box-shadow: 0 0 8px rgba(255, 51, 51, 0.4);
+    }
+    50% {
+        border-color: #ffd700;
+        box-shadow: 0 0 14px rgba(255, 215, 0, 0.6);
+    }
+    100% {
+        border-color: #ff3333;
+        box-shadow: 0 0 8px rgba(255, 51, 51, 0.4);
+    }
+}
+
+.alert-discord-red {
+    background-color: #111111;
+    color: #ffffff;
+    border: 2px solid #ff3333;
+    font-family: 'Kanit', sans-serif;
+    font-weight: 600;
+    animation: pulseRedGold 4s infinite ease-in-out;
+}
+
+.alert-discord-red a {
+    color: #ff3333;
+    text-decoration: underline;
+    font-weight: bold;
+}
+
+.alert-discord-red a:hover {
+    color: #ff6666;
+}
+
+.alert-discord-red a.domain-highlight {
+    color: #ffd700;
+    background-color: rgba(255, 215, 0, 0.15);
+    padding: 2px 7px;
+    border-radius: 4px;
+    text-decoration: none;
+    border: 1px solid rgba(255, 215, 0, 0.4);
+    transition: all 0.2s ease-in-out;
+}
+
+.alert-discord-red a.domain-highlight:hover {
+    color: #ffffff;
+    background-color: rgba(255, 215, 0, 0.35);
+    border-color: #ffd700;
+}
