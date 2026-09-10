@@ -48,6 +48,8 @@ a.card-text:hover {
 /* Animated Alert Bar & Domain Highlight */
 /* Pulsating Alert Box */
 @keyframes pulseRedGold {
+/* Pulsating Alert Box */
+@keyframes pulseRedGold {
     0% {
         border-color: #ff3333;
         box-shadow: 0 0 8px rgba(255, 51, 51, 0.4);
@@ -79,15 +81,4 @@ a.card-text:hover {
 
 .alert-discord-red a:hover {
     color: #ff6666;
-}
-
-/* Plain gold link styling for the domain line */
-.alert-discord-red a.domain-link {
-    color: #ffd700;
-    text-decoration: underline;
-    font-weight: bold;
-}
-
-.alert-discord-red a.domain-link:hover {
-    color: #ffea70;
 }
