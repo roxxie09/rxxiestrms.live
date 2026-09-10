@@ -46,6 +46,7 @@ a.card-text:hover {
     border-bottom-color: #00000000!important;
 }
 /* Animated Alert Bar & Domain Highlight */
+/* Pulsating Alert Box */
 @keyframes pulseRedGold {
     0% {
         border-color: #ff3333;
@@ -80,18 +81,13 @@ a.card-text:hover {
     color: #ff6666;
 }
 
-.alert-discord-red a.domain-highlight {
+/* Plain gold link styling for the domain line */
+.alert-discord-red a.domain-link {
     color: #ffd700;
-    background-color: rgba(255, 215, 0, 0.15);
-    padding: 2px 7px;
-    border-radius: 4px;
-    text-decoration: none;
-    border: 1px solid rgba(255, 215, 0, 0.4);
-    transition: all 0.2s ease-in-out;
+    text-decoration: underline;
+    font-weight: bold;
 }
 
-.alert-discord-red a.domain-highlight:hover {
-    color: #ffffff;
-    background-color: rgba(255, 215, 0, 0.35);
-    border-color: #ffd700;
+.alert-discord-red a.domain-link:hover {
+    color: #ffea70;
 }
