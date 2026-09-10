@@ -11,8 +11,8 @@ for filename in os.listdir(folder):
         with open(filepath, 'r', encoding='utf-8') as file:
             content = file.read()
 
-        # Replace all instances of "Stream Request (NEW DISCORD)" with "Stream Request (Discord)"
-        updated_content = content.replace("Stream Request (NEW DISCORD)", "Stream Request (Discord)")
+        # Replace all instances of "umQC45SubZ" with "HWZCUwA7Pg"
+        updated_content = content.replace("umQC45SubZ", "HWZCUwA7Pg")
 
         # Write the changes back to the file
         with open(filepath, 'w', encoding='utf-8') as file:
