@@ -194,7 +194,7 @@ const STREAMS = [
     { label: 'Coritiba vs Athletico-PR', sport: 'soccer', subdomain: 'admin2', path: 'prem.m3u8', txt: 'domainsz74.txt' },
     { label: 'Cusco vs Melgar', sport: 'soccer', subdomain: 'admin2', path: 'mls2.m3u8', txt: 'domainsz74.txt' },
     { label: 'Boca Juniors vs Central Cordoba', sport: 'soccer', subdomain: 'admin', path: 'afaplay3es.m3u8', txt: 'domainsz74.txt', alts: [{ label: 'Stream 2', subdomain: 'admin', path: 'afaplay3en.m3u8', txt: 'domainsz74.txt' }, { label: 'Stream 3 (DE)', subdomain: 'admin2', path: 'sportdigital.m3u8', txt: 'domainsz74.txt' }] },
-    { label: 'Necaxa vs Puebla', sport: 'soccer', subdomain: 'admin2', path: 'foot.m3u8', txt: 'domainsz74.txt' },
+    { label: 'Necaxa vs Puebla', sport: 'soccer', subdomain: 'admin2', path: 'foxmx.m3u8', txt: 'domainsz74.txt' },
     { label: 'Tijuana vs Querétaro', sport: 'soccer', subdomain: 'tedesco', path: 'beines.m3u8', txt: 'domainsz74.txt' },
     { label: 'Atlante vs Pachuca', sport: 'soccer', subdomain: 'tedesco', path: 'santos.m3u8', txt: 'domainsz74.txt' },
     // ── MLB ──
@@ -214,15 +214,20 @@ const STREAMS = [
     { label: 'Texas Rangers vs Arizona Diamondbacks', sport: 'mlb', subdomain: 'admin2', path: 'mlb14.m3u8', txt: 'domainsz74.txt' },
     { label: 'San Diego Padres vs San Francisco Giants', sport: 'mlb', subdomain: 'tedesco', path: 'mlb15.m3u8', txt: 'domainsz74.txt', alts: [{ label: 'Stream 1', subdomain: 'admin2', path: 'mlb15.m3u8', txt: 'domainsz74.txt' }] },
     // ── NCAA Football ──
-    { label: 'Villanova vs Louisville', sport: 'ncaa', subdomain: 'tedesco', path: 'ncaa.m3u8', txt: 'domainsz74.txt', alts: [{ label: 'Stream 2', subdomain: 'admin2', path: 'ncaa.m3u8', txt: 'domainsz74.txt' }] },
-    { label: 'Norfolk State vs Virginia', sport: 'ncaa', subdomain: 'tedesco', path: 'ncaa2.m3u8', txt: 'domainsz74.txt' },
-    { label: 'Richmond vs NC State', sport: 'ncaa', subdomain: 'admin2', path: 'ncaa3.m3u8', txt: 'domainsz74.txt' },
-    { label: 'Rutgers vs Boston College', sport: 'ncaa', subdomain: 'admin2', path: 'ncaa4.m3u8', txt: 'domainsz74.txt' },
+    { label: 'Villanova vs Louisville', sport: 'ncaa', subdomain: 'tedesco', path: 'ncaa.m3u8', txt: 'domainsz74.txt' },
+    { label: 'Richmond vs NC State', sport: 'ncaa', subdomain: 'tedesco', path: 'ncaa3.m3u8', txt: 'domainsz74.txt' },
+    { label: 'Rutgers vs Boston College', sport: 'ncaa', subdomain: 'tedesco', path: 'ncaa4.m3u8', txt: 'domainsz74.txt' },
     { label: 'Missouri vs Kansas', sport: 'ncaa', subdomain: 'admin2', path: 'ncaa5.m3u8', txt: 'domainsz74.txt' },
     // ── NHL ──
     { label: 'NHL Draft 2026', sport: 'nhl', subdomain: 'admin2', path: 'nhl.m3u8', txt: 'domainsz74.txt', alts: [{ label: 'Stream 2', subdomain: 'tedesco', path: 'nhl.m3u8', txt: 'domainsz74.txt' }] },
     // ── Fighting ──
-    { label: 'WWE Smackdown', sport: 'fighting', subdomain: 'admin2', path: 'wwe.m3u8', txt: 'domainsz74.txt' },
+    { label: 'WWE Smackdown', sport: 'fighting', subdomain: 'admin2', path: 'wwe.m3u8', txt: 'domainsz74.txt', alts: [{ label: 'Stream 2', subdomain: 'tedesco', path: 'wwe.m3u8', txt: 'domainsz74.txt' }] },
+    { label: 'ONE Samurai 3', sport: 'fighting', subdomain: 'admin2', path: 'ppv.m3u8', txt: 'domainsz74.txt' },
+    { label: 'Gamebred FC x RCC HARD 21', sport: 'fighting', subdomain: 'admin2', path: 'ppv2.m3u8', txt: 'domainsz74.txt' },
+    { label: 'UFC Noche: Silva vs. Delgado', sport: 'fighting', subdomain: 'admin2', path: 'tnt.m3u8', txt: 'domainsz74.txt', alts: [{ label: 'Stream 2 (Para)', subdomain: 'admin2', path: 'abbiecadabrii.m3u8', txt: 'domainsz74.txt' }] },
+    { label: 'Misfits: McCann vs. Big Stacks', sport: 'fighting', subdomain: 'admin2', path: 'ppv3.m3u8', txt: 'domainsz74.txt', alts: [{ label: 'Stream 2', subdomain: 'tedesco', path: 'ppv.m3u8', txt: 'domainsz74.txt' }] },
+    { label: 'Ryan Garcia vs Conor Benn (ZUFFA)', sport: 'fighting', subdomain: 'admin2', path: 'ppv3.m3u8', txt: 'domainsz74.txt', alts: [{ label: 'Stream 2', subdomain: 'tedesco', path: 'ppv.m3u8', txt: 'domainsz74.txt' }] },
+    { label: 'Dana White\'s Contender Series', sport: 'fighting', subdomain: 'admin2', path: 'ppv.m3u8', txt: 'domainsz74.txt' },
     // ── Motorsports ──
     { label: 'World 100 - Race', sport: 'motorsports', subdomain: 'admin2', path: 'flo.m3u8', txt: 'domainsz74.txt' },
     { label: 'Interstate High Limit Racing - Race', sport: 'motorsports', subdomain: 'admin2', path: 'flo2.m3u8', txt: 'domainsz74.txt' },
