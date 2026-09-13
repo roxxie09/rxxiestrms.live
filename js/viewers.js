@@ -11,7 +11,7 @@
     'https://roxiestreams.info/api/viewers',
     'https://roxiestreams.su/api/viewers'
   ];
-  var PING_MS = 20000;
+  var PING_MS = 60000;
   var TIMEOUT_MS = 6000;
   var epIdx = 0;   // index of the endpoint currently believed good
 
