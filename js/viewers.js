@@ -120,6 +120,10 @@
   }
 
   function ping() {
+    // A tab left open in the background still fires its timer, which is how
+    // a page ends up "holding" viewers who walked away hours ago. Skip the
+    // heartbeat while hidden; the visibilitychange handler rejoins on return.
+    if (document.hidden) return;
     request('?page=' + encodeURIComponent(PAGE) + '&id=' + encodeURIComponent(ID))
       .then(function (d) { if (typeof d.count === 'number') render(d.count); })
       .catch(function () { /* counter is cosmetic -- never break the page */ });
