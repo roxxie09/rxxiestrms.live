@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta name="robots" content="noindex,nofollow">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Live Player - Peacock</title>
+  <script>
+    (function () {
+      function def(name, fn) {
+        if (!Map.prototype[name]) {
+          Object.defineProperty(Map.prototype, name, {
+            value: fn, writable: true, configurable: true, enumerable: false
+          });
+        }
+      }
+      def('getOrInsert', function (key, d) {
+        if (!this.has(key)) this.set(key, d);
+        return this.get(key);
+      });
+      def('getOrInsertComputed', function (key, cb) {
+        if (!this.has(key)) this.set(key, cb(key));
+        return this.get(key);
+      });
+    })();
+  </script>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shaka-player@latest/dist/controls.css">
+  <script src="https://cdn.jsdelivr.net/npm/shaka-player@latest/dist/shaka-player.ui.js"></script>
+  <style>
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      background: #000;
+      overflow: hidden;
+    }
+    #video-container {
+      width: 100%;
+      height: 100%;
+      position: fixed;
+      inset: 0;
+      background: #000;
+    }
+    video {
+      width: 100%;
+      height: 100%;
+    }
+    [data-shaka-player-container] {
+      width: 100% !important;
+      height: 100% !important;
+      background: #000;
+    }
+  </style>
+</head>
+<body>
+  <div id="video-container" data-shaka-player-container>
+    <video id="video" data-shaka-player autoplay playsinline></video>
+  </div>
+  <script>
+    async function init() {
+      const video = document.getElementById('video');
+      const container = document.getElementById('video-container');
+      const player = new shaka.Player(video);
+      const ui = new shaka.ui.Overlay(player, container, video);
+      
+      // Decryption parameter configuration
+      player.configure({
+        drm: {
+          clearKeys: {
+            "002230bb95d6cd744f159287aa050fb7": "8ca0c651a9b8386ed5868ef6c8aa1079"
+          }
+        }
+      });
+      
+      // Load manifest utilizing full token queries
+      await player.load("https://g003-sle-us-cmaf-prd-cf.cdn.peacocktv.com/v~1-0-0_e~1790638677_f~0_g~1_s~114081b5-4975-4d1b-a8b9-e6d6d6b23d07_u~b3d49e616f91c51145b33e24c81f2cc82b9eb5e648efefaa69533427fc0646d005f2a922479179dca8a1259073154f86_k~A_l~78_x~0122ba5372a747158be9c1042145b5d2/co01/pcksle2/Content/CMAF_CTR-4s-v2/Live/channel(5023996-725854-491bd8a4a5e)/master_2min.mpd?t=v1&c3.ri=6ab99ac5_Q1ZYMDg_0_Q0xPVURGUk9OVA_435c3d8fd932:0&c3.ri=6ab99ac5_Q1ZYMDg_0_Q0xPVURGUk9OVA_435c3d8fd932:0");
+    }
+    init().catch(console.error);
+  </script>
+</body>
+</html>
