@@ -180,17 +180,17 @@
     <script>
 const STREAMS = [
     // ── Soccer ──
-    { label: 'Azerbaijan vs Lithuania', sport: 'soccer', subdomain: 'admin2', path: 'f1.m3u8', txt: 'domainsz77.txt' },
-    { label: 'Kosovo vs Austria', sport: 'soccer', subdomain: 'admin2', path: 'f1.m3u8', txt: 'domainsz77.txt' },
-    { label: 'Malta vs Andorra', sport: 'soccer', subdomain: 'tedesco', path: 'fs2.m3u8', txt: 'domainsz77.txt' },
+    { label: 'Azerbaijan vs Lithuania', sport: 'soccer', subdomain: 'admin2', path: 'fs2.m3u8', txt: 'domainsz77.txt' },
+    { label: 'Kosovo vs Austria', sport: 'soccer', subdomain: 'admin2', path: 'fs2.m3u8', txt: 'domainsz77.txt' },
+    { label: 'Malta vs Andorra', sport: 'soccer', subdomain: 'admin2', path: 'fs2.m3u8', txt: 'domainsz77.txt', alts: [{ label: 'Stream 2', subdomain: 'admin2', path: 'fubo.m3u8', txt: 'domainsz77.txt' }] },
     { label: 'Wales vs Denamrk', sport: 'soccer', subdomain: 'tedesco', path: 'golazo.m3u8', txt: 'domainsz77.txt' },
     { label: 'Portugal vs Norway', sport: 'soccer', subdomain: 'admin2', path: 'gill.m3u8', txt: 'domainsz77.txt' },
     { label: 'Netherlands vs Serbia', sport: 'soccer', subdomain: 'admin2', path: 'ply.m3u8', txt: 'domainsz77.txt' },
-    { label: 'Greece vs Germany', sport: 'soccer', subdomain: 'tedesco', path: 'fs2.m3u8', txt: 'domainsz77.txt' },
-    { label: 'Trinidad And Tobago vs Curaçao', sport: 'soccer', subdomain: 'admin2', path: 'f1.m3u8', txt: 'domainsz77.txt' },
-    { label: 'Costa Rica vs Haiti', sport: 'soccer', subdomain: 'admin2', path: 'f1.m3u8', txt: 'domainsz77.txt' },
+    { label: 'Greece vs Germany', sport: 'soccer', subdomain: 'admin2', path: 'fs2.m3u8', txt: 'domainsz77.txt', alts: [{ label: 'Stream 2', subdomain: 'admin2', path: 'fubo.m3u8', txt: 'domainsz77.txt' }] },
+    { label: 'Trinidad And Tobago vs Curaçao', sport: 'soccer', subdomain: 'admin2', path: 'fs2.m3u8', txt: 'domainsz77.txt' },
+    { label: 'Costa Rica vs Haiti', sport: 'soccer', subdomain: 'admin2', path: 'fs2.m3u8', txt: 'domainsz77.txt' },
     { label: 'Chivas vs América', sport: 'soccer', subdomain: 'admin2', path: 'ncaa8.m3u8', txt: 'domainsz77.txt' },
-    { label: 'Nicaragua vs Dominican Republic', sport: 'soccer', subdomain: 'admin2', path: 'f1.m3u8', txt: 'domainsz77.txt' },
+    { label: 'Nicaragua vs Dominican Republic', sport: 'soccer', subdomain: 'admin2', path: 'fs2.m3u8', txt: 'domainsz77.txt' },
     // ── MLB ──
     { label: 'San Diego Padres vs Milwaukee Brewers', sport: 'mlb', subdomain: 'admin2', path: 'mlb.m3u8', txt: 'domainsz77.txt', alts: [{ label: 'Stream 2', subdomain: 'admin', path: 'mlb.m3u8', txt: 'domainsz77.txt' }] },
     { label: 'Atlanta Braves vs Los Angeles Dodgers', sport: 'mlb', subdomain: 'admin2', path: 'mlb2.m3u8', txt: 'domainsz77.txt', alts: [{ label: 'Stream 2', subdomain: 'admin2', path: 'ncaa9.m3u8', txt: 'domainsz77.txt' }] },
@@ -221,10 +221,10 @@ const STREAMS = [
     { label: 'WWE NXT', sport: 'fighting', subdomain: 'admin2', path: 'wwe.m3u8', txt: 'domainsz77.txt', alts: [{ label: 'Stream 2', subdomain: 'tedesco', path: 'wwe.m3u8', txt: 'domainsz77.txt' }] },
     { label: 'WWE Smackdown', sport: 'fighting', subdomain: 'admin2', path: 'wwe.m3u8', txt: 'domainsz77.txt', alts: [{ label: 'Stream 2', subdomain: 'tedesco', path: 'wwe.m3u8', txt: 'domainsz77.txt' }] },
     // ── Motorsports ──
-    { label: 'Formula 1 - Malaysian Grand Prix', sport: 'motorsports', subdomain: 'admin2', path: 'f1.m3u8', txt: 'domainsz77.txt', alts: [{ label: 'Stream 2', subdomain: 'tedesco', path: 'tsn.m3u8', txt: 'domainsz77.txt' }, { label: 'Stream 3 (F1TV)Stream 4 (IT)', subdomain: 'admin2', path: 'f1tv.m3u8', txt: 'domainsz77.txt' }] },
-    { label: 'MXGP - Race', sport: 'motorsports', subdomain: 'tedesco', path: 'mxgp.m3u8', txt: 'domainsz77.txt' },
-    { label: 'MXGP - Race 2', sport: 'motorsports', subdomain: 'tedesco', path: 'mxgp.m3u8', txt: 'domainsz77.txt' },
-    { label: 'MXGP - Race 3', sport: 'motorsports', subdomain: 'tedesco', path: 'mxgp.m3u8', txt: 'domainsz77.txt' },
+    { label: 'Formula 1 - Malaysian Grand Prix', sport: 'motorsports', subdomain: 'tedesco', path: 'tsn.m3u8', txt: 'domainsz77.txt', alts: [{ label: 'Stream 2', subdomain: 'admin2', path: 'f1.m3u8', txt: 'domainsz77.txt' }, { label: 'Stream 3 (F1TV)Stream 4 (IT)', subdomain: 'admin2', path: 'f1tv.m3u8', txt: 'domainsz77.txt' }] },
+    { label: 'MXGP - Race', sport: 'motorsports', subdomain: 'admin', path: 'mxgp.m3u8', txt: 'domainsz77.txt' },
+    { label: 'MXGP - Race 2', sport: 'motorsports', subdomain: 'admin', path: 'mxgp.m3u8', txt: 'domainsz77.txt' },
+    { label: 'MXGP - Race 3', sport: 'motorsports', subdomain: 'admin', path: 'mxgp.m3u8', txt: 'domainsz77.txt' },
     { label: 'NASCAR Cup Series - Race', sport: 'motorsports', subdomain: 'admin2', path: 'ncaa4.m3u8', txt: 'domainsz77.txt' },
 ];
 
