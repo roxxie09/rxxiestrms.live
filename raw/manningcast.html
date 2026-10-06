@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>ESPN / Disney+ Live Player (Direct)</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shaka-player@latest/dist/controls.css">
+  <script src="https://cdn.jsdelivr.net/npm/shaka-player@latest/dist/shaka-player.ui.js"></script>
+  <style>
+    html, body { margin: 0; width: 100%; height: 100%; background: #000; overflow: hidden; }
+    #video-container { width: 100%; height: 100%; position: fixed; inset: 0; background: #000; }
+    video { width: 100%; height: 100%; }
+    [data-shaka-player-container] { width: 100% !important; height: 100% !important; background: #000; }
+  </style>
+</head>
+<body>
+  <div id="video-container" data-shaka-player-container>
+    <video id="video" data-shaka-player autoplay playsinline></video>
+  </div>
+  <script>
+    async function init() {
+      shaka.polyfill.installAll();
+
+      const video = document.getElementById('video');
+      const container = document.getElementById('video-container');
+      const player = new shaka.Player(video);
+      const ui = new shaka.ui.Overlay(player, container, video);
+
+      // ClearKey pair extracted from the URL's Base64 'ck' parameter
+      player.configure({
+        drm: {
+          clearKeys: {
+            "be9e092590334c2cbca3d2c19bbf462d": "7d834b908f95d8231fc73bc52aa50300"
+          }
+        }
+      });
+
+      // Direct manifest URL
+      const manifestUrl = "https://linear-espn-ftc-na-central-1.media.dssott.com/dvt2=exp=1791334889~url=%2Flas1%2Fva01%2Fdisneyplus%2Fchannel%2Fd6115f15-959f-4e42-8cb5-7ab54b966c02-1790275587146%2F~psid=615a5623-7155-4912-9358-a108870d1538~aid=97fca259-7853-4d4c-8a20-8190b4640166~did=83413b43-2c0b-4a16-8a87-9b336c2eb37f~country=US~kid=k02~hmac=6194f5bdb1d15e76c3624f6ad3a80d5d2f1bc4cf29392a3a261611c8d2014075/las1/va01/disneyplus/channel/d6115f15-959f-4e42-8cb5-7ab54b966c02-1790275587146/ctr-all-hdri-sliding-alt1.m3u8?ab=7500&r=720&v=1&hash=eaeda167b381eb2edf7d16dbb57c656653f593cd";
+
+      await player.load(manifestUrl);
+    }
+    init().catch(console.error);
+  </script>
+</body>
+</html>
