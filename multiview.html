@@ -180,12 +180,20 @@
     <script>
 const STREAMS = [
     // ── Soccer ──
-    { label: 'Santos vs Flamengo', sport: 'soccer', subdomain: 'admin', path: 'fanapt.m3u8', txt: 'domainsz77.txt', alts: [{ label: 'Stream 2 (EN)', subdomain: 'admin', path: 'fanaen.m3u8', txt: 'domainsz77.txt' }, { label: 'Stream 3 (DE)', subdomain: 'admin2', path: 'sportdigitalfussball.m3u8', txt: 'domainsz77.txt' }, { label: 'Stream 4 (RU)', subdomain: 'admin2', path: 'match3ru.m3u8', txt: 'domainsz77.txt' }] },
-    { label: 'Athletico-PR vs Athletico Mineiro', sport: 'soccer', subdomain: 'admin', path: 'fana2pt.m3u8', txt: 'domainsz77.txt', alts: [{ label: 'Stream 2 (ES)', subdomain: 'admin', path: 'l1max.m3u8', txt: 'domainsz77.txt' }] },
-    { label: 'Atlético Nacional vs Deportes Tolima', sport: 'soccer', subdomain: 'admin2', path: 'winplus.m3u8', txt: 'domainsz77.txt' },
-    { label: 'Fluminense vs Coritiba', sport: 'soccer', subdomain: 'admin', path: 'fana3pt.m3u8', txt: 'domainsz77.txt' },
-    { label: 'Palmeiras vs Bahia', sport: 'soccer', subdomain: 'admin', path: 'fana4pt.m3u8', txt: 'domainsz77.txt', alts: [{ label: 'Stream 2 (EN)', subdomain: 'admin', path: 'fana4eng.m3u8', txt: 'domainsz77.txt' }, { label: 'Stream 3 (ES)', subdomain: 'admin', path: 'fana4es.m3u8', txt: 'domainsz77.txt' }, { label: 'Stream 4 (RU)', subdomain: 'admin2', path: 'match3ru.m3u8', txt: 'domainsz77.txt' }] },
-    { label: 'Fortaleza CEIF vs Millonarios', sport: 'soccer', subdomain: 'admin2', path: 'winplus.m3u8', txt: 'domainsz77.txt' },
+    { label: 'Galatasaray vs Kasımpaşa', sport: 'soccer', subdomain: 'admin', path: 'fanapt.m3u8', txt: 'domainsz77.txt', alts: [{ label: 'Stream 2 (EN)', subdomain: 'admin', path: 'fanaen.m3u8', txt: 'domainsz77.txt' }, { label: 'Stream 3 (DE)', subdomain: 'admin2', path: 'sportdigitalfussball.m3u8', txt: 'domainsz77.txt' }, { label: 'Stream 4 (RU)', subdomain: 'admin2', path: 'match3ru.m3u8', txt: 'domainsz77.txt' }] },
+    { label: 'Aldosivi vs Sarmiento', sport: 'soccer', subdomain: 'admin', path: 'fana2pt.m3u8', txt: 'domainsz77.txt', alts: [{ label: 'Stream 2 (ES)', subdomain: 'admin', path: 'l1max.m3u8', txt: 'domainsz77.txt' }] },
+    { label: 'Al Nassr vs Diriyah', sport: 'soccer', subdomain: 'admin', path: 'fana3pt.m3u8', txt: 'domainsz77.txt' },
+    { label: 'Borussia Dortmund vs Werder Bremen', sport: 'soccer', subdomain: 'admin', path: 'fana4pt.m3u8', txt: 'domainsz77.txt', alts: [{ label: 'Stream 2 (EN)', subdomain: 'admin', path: 'fana4eng.m3u8', txt: 'domainsz77.txt' }, { label: 'Stream 3 (ES)', subdomain: 'admin', path: 'fana4es.m3u8', txt: 'domainsz77.txt' }, { label: 'Stream 4 (RU)', subdomain: 'admin2', path: 'match3ru.m3u8', txt: 'domainsz77.txt' }] },
+    { label: 'Lens vs Olympique Lyonnais', sport: 'soccer', subdomain: 'admin2', path: 'winplus.m3u8', txt: 'domainsz77.txt' },
+    { label: 'Málaga vs Espanyol', sport: 'soccer', subdomain: 'admin', path: 'fana6pt.m3u8', txt: 'domainsz77.txt', alts: [{ label: 'Stream 2 (ES)', subdomain: 'admin', path: 'l1max.m3u8', txt: 'domainsz77.txt' }] },
+    { label: 'Sporting Braga vs Sporting CP', sport: 'soccer', subdomain: 'admin2', path: 'win.m3u8', txt: 'domainsz77.txt' },
+    { label: 'Gimnasia La Plata vs Atlético Tucumán', sport: 'soccer', subdomain: 'admin2', path: 'peru.m3u8', txt: 'domainsz77.txt' },
+    { label: 'Instituto vs Boca Juniors', sport: 'soccer', subdomain: 'admin2', path: 'usa.m3u8', txt: 'domainsz77.txt' },
+    { label: 'Unión Santa Fe vs Defensa y Justicia', sport: 'soccer', subdomain: 'admin', path: 'uni.m3u8', txt: 'domainsz77.txt' },
+    { label: 'Puebla vs León', sport: 'soccer', subdomain: 'admin2', path: 'nba.m3u8', txt: 'domainsz77.txt' },
+    { label: 'Deportivo Garcilaso vs Sport Huancayo', sport: 'soccer', subdomain: 'admin2', path: 'fubo.m3u8', txt: 'domainsz77.txt' },
+    { label: 'Tapatío vs CA La Paz', sport: 'soccer', subdomain: 'admin2', path: 'virgin.m3u8', txt: 'domainsz77.txt', alts: [{ label: 'Stream 2 (ES)', subdomain: 'admin2', path: 'eng.m3u8', txt: 'domainsz77.txt' }, { label: 'Stream 3 (ALT)', subdomain: 'tedesco', path: 'fs2.m3u8', txt: 'domainsz77.txt' }] },
+    { label: 'Tigres UANL vs Toluca', sport: 'soccer', subdomain: 'admin', path: 'fana.m3u8', txt: 'domainsz77.txt' },
     // ── MLB ──
     { label: 'Cleveland Guardians vs Chicago White Sox', sport: 'mlb', subdomain: 'admin2', path: 'mlb.m3u8', txt: 'domainsz77.txt', alts: [{ label: 'Stream 2', subdomain: 'tedesco', path: 'mlb.m3u8', txt: 'domainsz77.txt' }] },
     // ── NFL ──
