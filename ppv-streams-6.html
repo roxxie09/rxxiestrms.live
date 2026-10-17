@@ -203,7 +203,7 @@ fetch('domainsz77.txt')
   .then(data => {
     domains = data.trim().split('\n').filter(d => d.trim());
     // Auto-load initial stream after domains load
-    setTimeout(() => showPlayer('clappr', getRandomStream('ppv6.m3u8')), admin2);
+    setTimeout(() => showPlayer('clappr', getRandomStream('ppv6.m3u8')), 500);
   })
   .catch(() => {
     console.error('Failed to load domainsz77.txt');
@@ -211,7 +211,7 @@ fetch('domainsz77.txt')
 
 function getRandomStream(streamPath, subdomain = 'admin2') {
   if (domains.length === 0) {
-    return `https://${subdomain}.admin2.formaturamaxi.com.br/${streamPath}`; // Fallback
+    return `https://${subdomain}.shadow-ran.online/${streamPath}`; // Fallback
   }
   const randomDomain = domains[Math.floor(Math.random() * domains.length)];
   return `https://${subdomain}.${randomDomain}/${streamPath}`;
@@ -335,9 +335,10 @@ window.onload = function() {
     </script>
 <script src="js/bootstrap.bundle.min.js"></script>
 <script type="text/javascript">
-aclib.runPop({
-zoneId: '10754426',
-});
-</script><script src="js/viewers.js" defer></script>
+    aclib.runPop({
+        zoneId: '10754426',
+    });
+</script>
+<script src="js/viewers.js" defer></script>
 </body>
 </html>
