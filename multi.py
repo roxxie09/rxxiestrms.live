@@ -15,8 +15,23 @@ SCHEDULE_STREAM_MAP = {
         "default": {"subdomain": "601", "path": "mlb.m3u8", "txt": "domainsz29.txt"},
     },
     "nba.html": {
-        "pattern": "nba-streams-{n}.html",
+        # nba.py puts NBA games in #eventsTable if the page has one, otherwise
+        # in the first .schedule-table; WNBA games go in #wnba-section.
         "default": {"subdomain": "daffodil", "path": "nba.m3u8", "txt": "domainsz29.txt"},
+        "sections": [
+            {
+                "sport": "nba",
+                "selector": "table#eventsTable tbody tr, "
+                            "table.schedule-table:not(#wnba-section table) tbody tr",
+                "pattern": "nba-streams-{n}.html",
+            },
+            {
+                "sport": "wnba",
+                "selector": "#wnba-section table tbody tr",
+                "pattern": "wnba-streams-{n}.html",
+                "default": {"subdomain": "admin2", "path": "wnba.m3u8", "txt": "domainsz77.txt"},
+            },
+        ],
     },
     "nfl.html": {
         "default": {"subdomain": "601", "path": "nfl.m3u8", "txt": "domainsz29.txt"},

@@ -228,7 +228,7 @@ const STREAMS = [
 ];
 
 const SPORT_LABELS = {
-    soccer: '⚽ Soccer', mlb: '⚾ MLB', nba: '🏀 NBA',
+    soccer: '⚽ Soccer', mlb: '⚾ MLB', nba: '🏀 NBA', wnba: '🏀 WNBA',
     nfl: '🏈 NFL', ncaa: '🎓 NCAA Football',
     nhl: '🏒 NHL', fighting: '🥊 Fighting', motorsports: '🏎 Motorsports'
 };
@@ -264,7 +264,9 @@ function buildStreamOptions() {
         if (!groups[s.sport]) groups[s.sport] = [];
         groups[s.sport].push({ label: s.label, index: i });
     });
-    const sportOrder = ['soccer','mlb','nba','nfl','ncaa','nhl','fighting','motorsports'];
+    const sportOrder = ['soccer','mlb','nba','wnba','nfl','ncaa','nhl','fighting','motorsports'];
+    // a sport missing from the list above still shows (at the end) instead of vanishing
+    Object.keys(groups).forEach(sp => { if (!sportOrder.includes(sp)) sportOrder.push(sp); });
     let html = '<option value="">— Select a stream —</option>';
     sportOrder.forEach(sport => {
         if (!groups[sport]) return;
