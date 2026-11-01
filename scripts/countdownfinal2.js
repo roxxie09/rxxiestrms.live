@@ -1,18 +1,35 @@
-// PDT = -7, PST = -8. Change this in November when clocks fall back.
-const PST_OFFSET_HOURS = -7; // PDT = -7, PST = -8 in winter
+// Returns the Los Angeles UTC offset in minutes at a given moment
+// (-420 during daylight time, -480 during standard time)
+function getPacificOffsetMinutes(utcMs) {
+    var parts = new Intl.DateTimeFormat('en-US', {
+        timeZone: 'America/Los_Angeles',
+        hourCycle: 'h23',
+        year: 'numeric', month: '2-digit', day: '2-digit',
+        hour: '2-digit', minute: '2-digit', second: '2-digit'
+    }).formatToParts(new Date(utcMs));
 
+    var v = {};
+    parts.forEach(function(p) { v[p.type] = Number(p.value); });
+
+    var laWallClockAsUTC = Date.UTC(v.year, v.month - 1, v.day, v.hour, v.minute, v.second);
+    return (laWallClockAsUTC - utcMs) / 60000;
+}
+
+// Treats the date string as Pacific time, handling PDT/PST automatically
 function parseAsPST(dateStr) {
-    var d = new Date(dateStr);
-    // Build an ISO string with the explicit offset so no shifting is needed
-    var year = d.getFullYear();
-    var month = String(d.getMonth() + 1).padStart(2, '0');
-    var day = String(d.getDate()).padStart(2, '0');
-    var hours = String(d.getHours()).padStart(2, '0');
-    var minutes = String(d.getMinutes()).padStart(2, '0');
-    var offset = PST_OFFSET_HOURS >= 0
-        ? '+' + String(PST_OFFSET_HOURS).padStart(2, '0') + ':00'
-        : '-' + String(Math.abs(PST_OFFSET_HOURS)).padStart(2, '0') + ':00';
-    return new Date(`${year}-${month}-${day}T${hours}:${minutes}:00${offset}`);
+    var d = new Date(dateStr); // only used to read the numbers out of the string
+    var wallAsUTC = Date.UTC(d.getFullYear(), d.getMonth(), d.getDate(),
+                             d.getHours(), d.getMinutes());
+
+    // Guess the offset, then re-check it at the resulting moment.
+    // The second check catches events near a time change.
+    var offset = getPacificOffsetMinutes(wallAsUTC);
+    var utc = wallAsUTC - offset * 60000;
+    var checkOffset = getPacificOffsetMinutes(utc);
+    if (checkOffset !== offset) {
+        utc = wallAsUTC - checkOffset * 60000;
+    }
+    return new Date(utc);
 }
 function initializeCountdowns() {
     document.querySelectorAll('.countdown-timer').forEach(function(timerElement) {
