@@ -181,17 +181,18 @@
     <script>
 const STREAMS = [
     // ── Soccer ──
-    { label: 'Shakhtar Donetsk vs Sporting CP', sport: 'soccer', subdomain: 'tedesco', path: 'golazo.m3u8', txt: 'domainsz77.txt' },
-    { label: 'Galatasaray vs Stuttgart', sport: 'soccer', subdomain: 'tedesco', path: 'xtraes.m3u8', txt: 'domainsz77.txt' },
-    { label: 'Northampton Town vs Oldham Athletic', sport: 'soccer', subdomain: 'tedesco', path: 'dep.m3u8', txt: 'domainsz77.txt' },
-    { label: 'QPR vs Burnley', sport: 'soccer', subdomain: 'admin2', path: 'main.m3u8', txt: 'domainsz77.txt', alts: [{ label: 'Stream 2', subdomain: 'admin2', path: 'usa.m3u8', txt: 'domainsz77.txt' }] },
-    { label: 'Atlético Madrid vs Bayern München', sport: 'soccer', subdomain: 'admin2', path: 'beines.m3u8', txt: 'domainsz77.txt', alts: [{ label: 'Stream 2 (EN)', subdomain: 'admin2', path: 'bein.m3u8', txt: 'domainsz77.txt' }] },
-    { label: 'Barcelona vs Aston Villa', sport: 'soccer', subdomain: 'admin', path: 'fana.m3u8', txt: 'domainsz77.txt', alts: [{ label: 'Stream 2 (RU)', subdomain: 'admin2', path: 'match3ru.m3u8', txt: 'domainsz77.txt' }] },
-    { label: 'Bodø / Glimt vs Lille', sport: 'soccer', subdomain: 'admin2', path: 'peacock.m3u8', txt: 'domainsz77.txt', alts: [{ label: 'Stream 2', subdomain: 'admin2', path: 'main.m3u8', txt: 'domainsz77.txt' }, { label: 'Stream 3', subdomain: 'admin2', path: 'fubo.m3u8', txt: 'domainsz77.txt' }] },
-    { label: 'Feyenoord vs Inter Milan', sport: 'soccer', subdomain: 'tedesco', path: 'xtraes.m3u8', txt: 'domainsz77.txt' },
-    { label: 'LASK Linz vs Slovan Bratislava', sport: 'soccer', subdomain: 'admin2', path: 'golazo.m3u8', txt: 'domainsz77.txt' },
-    { label: 'Manchester United vs Roma', sport: 'soccer', subdomain: 'temp', path: 'afaplay.m3u8', txt: 'domainsz77.txt', alts: [{ label: 'Stream 2 (EN)', subdomain: 'temp', path: 'afaplayen.m3u8', txt: 'domainsz77.txt' }, { label: 'Stream 3 (DE)', subdomain: 'admin2', path: 'sportdigital.m3u8', txt: 'domainsz77.txt' }] },
-    { label: 'Villarreal vs PSG', sport: 'soccer', subdomain: 'admin', path: 'palm.m3u8', txt: 'domainsz77.txt' },
+    { label: 'Shakhtar Donetsk vs Sporting CP', sport: 'soccer', subdomain: 'admin2', path: 'tnt4.m3u8', txt: 'domainsz77.txt', alts: [{ label: 'Stream 2', subdomain: 'admin2', path: 'virgin.m3u8', txt: 'domainsz77.txt' }] },
+    { label: 'Galatasaray vs Stuttgart', sport: 'soccer', subdomain: 'tedesco', path: 'golazo.m3u8', txt: 'domainsz77.txt', alts: [{ label: 'Stream 2', subdomain: 'admin2', path: 'tnt2.m3u8', txt: 'domainsz77.txt' }, { label: 'Stream 3', subdomain: 'tedesco', path: 'now.m3u8', txt: 'domainsz77.txt' }] },
+    { label: 'Northampton Town vs Oldham Athletic', sport: 'soccer', subdomain: 'admin2', path: 'oldham.m3u8', txt: 'domainsz77.txt' },
+    { label: 'QPR vs Burnley', sport: 'soccer', subdomain: 'admin2', path: 'burnley.m3u8', txt: 'domainsz77.txt' },
+    { label: 'UEFA Goals Shows', sport: 'soccer', subdomain: 'admin2', path: 'tnt3.m3u8', txt: 'domainsz77.txt' },
+    { label: 'Atlético Madrid vs Bayern München', sport: 'soccer', subdomain: 'admin2', path: 'tnt2.m3u8', txt: 'domainsz77.txt', alts: [{ label: 'Stream 2', subdomain: 'admin2', path: 'one.m3u8', txt: 'domainsz77.txt' }] },
+    { label: 'Barcelona vs Aston Villa', sport: 'soccer', subdomain: 'admin2', path: 'tnt.m3u8', txt: 'domainsz77.txt', alts: [{ label: 'Stream 2', subdomain: 'admin2', path: 'virgin.m3u8', txt: 'domainsz77.txt' }] },
+    { label: 'Bodø / Glimt vs Lille', sport: 'soccer', subdomain: 'tedesco', path: 'cbssn.m3u8', txt: 'domainsz77.txt' },
+    { label: 'Feyenoord vs Inter Milan', sport: 'soccer', subdomain: 'tedesco', path: 'golazo.m3u8', txt: 'domainsz77.txt', alts: [{ label: 'Stream 2', subdomain: 'admin2', path: 'tnt2.m3u8', txt: 'domainsz77.txt' }, { label: 'Stream 3', subdomain: 'tedesco', path: 'now.m3u8', txt: 'domainsz77.txt' }] },
+    { label: 'LASK Linz vs Slovan Bratislava', sport: 'soccer', subdomain: 'admin2', path: 'slovan.m3u8', txt: 'domainsz77.txt' },
+    { label: 'Manchester United vs Roma', sport: 'soccer', subdomain: 'admin2', path: 'prem.m3u8', txt: 'domainsz77.txt', alts: [{ label: 'Stream 2', subdomain: 'tedesco', path: 'now.m3u8', txt: 'domainsz77.txt' }] },
+    { label: 'Villarreal vs PSG', sport: 'soccer', subdomain: 'admin2', path: 'tnt4.m3u8', txt: 'domainsz77.txt' },
     { label: 'Birmingham City vs Millwall', sport: 'soccer', subdomain: 'admin2', path: 'juve.m3u8', txt: 'domainsz77.txt' },
     { label: 'West Bromwich Albion vs Southampton', sport: 'soccer', subdomain: 'admin2', path: 'gremio.m3u8', txt: 'domainsz77.txt' },
     { label: 'Chapecoense vs Mirassol', sport: 'soccer', subdomain: 'admin2', path: 'espn2mx.m3u8', txt: 'domainsz77.txt' },
@@ -229,7 +230,7 @@ const STREAMS = [
     // ── Fighting ──
     { label: 'WWE NXT', sport: 'fighting', subdomain: 'admin2', path: 'wwe.m3u8', txt: 'domainsz77.txt', alts: [{ label: 'Stream 2', subdomain: 'tedesco', path: 'wwe.m3u8', txt: 'domainsz77.txt' }] },
     { label: 'AEW', sport: 'fighting', subdomain: 'admin2', path: 'aew.m3u8', txt: 'domainsz77.txt' },
-    { label: 'TNA', sport: 'fighting', subdomain: 'admin2', path: 'ppv.m3u8', txt: 'domainsz77.txt', alts: [{ label: 'Stream 2 (ES)', subdomain: 'admin2', path: 'aztecadeportes.m3u8', txt: 'domainsz77.txt' }, { label: 'Stream 3', subdomain: 'tedesco', path: 'ppvalt.m3u8', txt: 'domainsz77.txt' }] },
+    { label: 'TNA', sport: 'fighting', subdomain: 'admin2', path: 'cnn.m3u8', txt: 'domainsz77.txt', alts: [{ label: 'Stream 2 (California Midterms)', subdomain: 'admin', path: 'kcop.m3u8', txt: 'domainsz77.txt' }] },
     // ── Motorsports ──
     { label: 'NASCAR Cup Series - Race', sport: 'motorsports', subdomain: 'admin', path: 'nfl12.m3u8', txt: 'domainsz77.txt' },
     { label: 'Formula 1 - Mexican Grand Prix', sport: 'motorsports', subdomain: 'temp', path: 'main.m3u8', txt: 'domainsz77.txt', alts: [{ label: 'Stream 2 (ES)', subdomain: 'admin2', path: 'f1es.m3u8', txt: 'domainsz77.txt' }, { label: 'Stream 3', subdomain: 'temp', path: 'tsn.m3u8', txt: 'domainsz77.txt' }, { label: 'Stream 4 (IT)', subdomain: 'temp', path: 'skyit.m3u8', txt: 'domainsz77.txt' }] },
