@@ -172,9 +172,8 @@
 <div class="fullplayer">
 <div id="playerContainer"></div>
 <div class="streamchanger">
-<button class="streambutton" onclick="showPlayer('clappr', getRandomStream('main.m3u8', 'admin2'))">Stream 1</button>
-<button class="streambutton" onclick="showPlayer('clappr', getRandomStream('f1.m3u8', 'admin2'))">Stream 2</button>
-</button>
+<button class="streambutton" onclick="playIframePlayer('https://taifood-blog.asia/embed/f1/2026/brazil/qualifying')">Stream 1</button>
+<button class="streambutton" onclick="playIframePlayer('https://ehgembxe.cfd/jgbl20sk-6475')">Stream 2</button>
 </div>
 <div class="embedchat">
 <div class="chat-header">
@@ -182,7 +181,7 @@
 <button class="chat-toggle-btn" id="toggleChat">Switch to Chatango</button>
 </div>
 <div id="chatContent">
-<iframe src="https://www.youtube.com/live_chat?v=KRs-PvHx_gk&amp;embed_domain=roxiestreams.info&amp;dark_theme=1"></iframe>
+<iframe src="https://www.youtube.com/live_chat?v=K5tlSOUSRXY&amp;embed_domain=roxiestreams.info&amp;dark_theme=1"></iframe>
 </div>
 </div>
 </div>
@@ -197,7 +196,7 @@
 var clapprPlayer;
 var currentChat = 'yt';
 var domains = [];
-var subdomain = 'admin2'  // Edit this per HTML file
+var subdomain = 'tedesco';  // Edit this per HTML file
 
 // Load domains from txt file
 fetch('domainsz77.txt')
@@ -205,13 +204,14 @@ fetch('domainsz77.txt')
   .then(data => {
     domains = data.trim().split('\n').filter(d => d.trim());
     // Auto-load initial stream after domains load
-    setTimeout(() => showPlayer('clappr', getRandomStream('main.m3u8')), 500);
+    setTimeout(() => playIframePlayer('https://taifood-blog.asia/embed/f1/2026/brazil/qualifying'), 500);
   })
   .catch(() => {
     console.error('Failed to load domainsz77.txt');
+    playIframePlayer('https://taifood-blog.asia/embed/f1/2026/brazil/qualifying');
   });
 
-function getRandomStream(streamPath, subdomain = 'admin2') {
+function getRandomStream(streamPath, subdomain = 'tedesco') {
   if (domains.length === 0) {
     return `https://${subdomain}.shadow-ran.online/${streamPath}`; // Fallback
   }
@@ -315,7 +315,7 @@ window.onload = function() {
                     toggleBtn.innerText = 'Switch to YouTube';
                     currentChat = 'chatango';
                 } else {
-                    chatContent.innerHTML = '<iframe src="https://www.youtube.com/live_chat?v=KRs-PvHx_gk&amp;embed_domain=roxiestreams.info&amp;dark_theme=1"></iframe>';
+                    chatContent.innerHTML = '<iframe src="https://www.youtube.com/live_chat?v=K5tlSOUSRXY&amp;embed_domain=roxiestreams.info&amp;dark_theme=1"></iframe>';
                     toggleBtn.innerText = 'Switch to Chatango';
                     currentChat = 'yt';
                 }
