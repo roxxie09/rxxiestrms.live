@@ -118,7 +118,7 @@
     .pl-off { display: none !important; }
     #jw-wrap { position: fixed; inset: 0; background: #000; }
     #jw-wrap > div { width: 100%; height: 100%; }
-    .shaka-controls-button-panel .shaka-switch-player-button,
+    /* top-bar button: only shows if JW can't show its own button (JW error, free key) */
     #switch-back-btn {
       cursor: pointer;
       white-space: nowrap;
@@ -126,41 +126,13 @@
       border: 1px solid rgba(255, 255, 255, 0.5);
       background: rgba(255, 255, 255, 0.12);
       color: #fff;
-      font: 600 12px/1 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      padding: 6px 12px;
+      font: 600 13px/1 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
     }
-    .shaka-controls-button-panel .shaka-switch-player-button {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      align-self: center;
-      width: auto;
-      height: 30px;
-      padding: 0 12px;
-      margin: 0 8px;
-    }
-    #switch-back-btn { padding: 6px 12px; font-size: 13px; }
-    .shaka-controls-button-panel .shaka-switch-player-button:hover,
     #switch-back-btn:hover { background: rgba(255, 255, 255, 0.25); }
-    .shaka-controls-button-panel .shaka-switch-player-button:focus-visible,
     #switch-back-btn:focus-visible { outline: 2px solid #7fd4ff; outline-offset: 2px; }
-    .shaka-switch-player-button .sp-icon {
-      display: none;
-      width: 18px;
-      height: 18px;
-      fill: none;
-      stroke: currentColor;
-      stroke-width: 2;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-    }
-    /* Small players (narrow windows, small phones): icon only */
-    @media (hover: hover) and (max-width: 420px), (max-width: 350px) {
-      .shaka-controls-button-panel .shaka-switch-player-button { padding: 0 8px; margin: 0 4px; }
-      .shaka-switch-player-button .sp-icon { display: block; }
-      .shaka-switch-player-button .sp-text { display: none; }
-    }
-    /* Tiny players: Shaka's bar is already full, so hide it (it's there again in fullscreen) */
-    @media (hover: hover) and (max-width: 319px), (max-width: 259px) {
+    /* Tiny players: Shaka's bar is already full, so hide the icon (it's back in fullscreen) */
+    @media (hover: hover) and (max-width: 325px), (max-width: 264px) {
       .shaka-controls-button-panel .shaka-switch-player-button { display: none; }
     }
   </style>
@@ -333,20 +305,22 @@
     let jwLoader  = null;               // JW's script is only downloaded on the first switch
     let switchButtonOK = false;
 
-    // The "Switch players" button in Shaka's control bar
+    // The ⇄ icon, used in both players' control bars
+    function switchIcon(cls) {
+      return '<svg xmlns="http://www.w3.org/2000/svg" class="' + cls + '" viewBox="0 -960 960 960" aria-hidden="true">' +
+        '<path d="M280-160 80-360l200-200 56 57-103 103h287v80H233l103 103-56 57Zm400-240-56-57 103-103H440v-80h287L624-743l56-57 200 200-200 200Z"/></svg>';
+    }
+
+    // The button in Shaka's control bar
     try {
       class SwitchPlayersButton extends shaka.ui.Element {
         constructor(parent, controls) {
           super(parent, controls);
           const btn = document.createElement('button');
           btn.type = 'button';
-          btn.className = 'shaka-switch-player-button shaka-no-propagation';
-          btn.title = 'Switch players';
+          btn.className = 'shaka-switch-player-button shaka-tooltip shaka-no-propagation';
           btn.setAttribute('aria-label', 'Switch players');
-          btn.innerHTML =
-            '<svg class="sp-icon" viewBox="0 0 24 24" aria-hidden="true">' +
-            '<path d="M7 7h12M15 3l4 4-4 4M17 17H5M9 13l-4 4 4 4"/></svg>' +
-            '<span class="sp-text">Switch players</span>';
+          btn.innerHTML = switchIcon('shaka-ui-icon');
           this.parent.appendChild(btn);
           this.eventManager.listen(btn, 'click', (e) => { e.stopPropagation(); switchToJW(); });
         }
@@ -359,7 +333,7 @@
       console.warn('Switch players button unavailable:', err);
     }
 
-    // Put the button just left of the gear
+    // Put it just left of the gear
     function addSwitchButton(ui) {
       if (!switchButtonOK) return;
       try {
@@ -394,14 +368,33 @@
       return jwLoader;
     }
 
+    // The top-bar button, for when JW can't show its own
+    function showTopSwitch() {
+      if (mode === 'jw') switchBack.classList.remove('pl-off');
+    }
+
     function mountJW() {
+      switchBack.classList.add('pl-off');
       jwWrap.innerHTML = '<div id="' + JW_DIV + '"></div>';
       try {
         startJW();
       } catch (err) {
         console.error('JW Player failed to start:', err);
         switchToShaka();
+        return;
       }
+      const jw = jwplayer(JW_DIV);
+      jw.on('ready', () => {
+        try {
+          // same icon in JW's control bar, just left of its gear
+          jw.addButton(switchIcon('jw-svg-icon'), 'Switch players', () => setTimeout(switchToShaka), 'switch-players');
+        } catch (err) {}
+        // a free-edition JW key can't add buttons: use the top-bar one instead
+        if (!jwWrap.querySelector('[button="switch-players"]')) showTopSwitch();
+      });
+      // when JW can't play it hides its control bar, so show the top-bar one
+      jw.on('setupError', showTopSwitch);
+      jw.on('error', showTopSwitch);
     }
 
     function unmountJW() {
@@ -436,7 +429,6 @@
       // show JW
       container.classList.add('pl-off');
       jwWrap.classList.remove('pl-off');
-      switchBack.classList.remove('pl-off');
       switching = false;
       mountJW();
     }
