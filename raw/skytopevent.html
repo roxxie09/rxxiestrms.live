@@ -1,10 +1,18 @@
 <!DOCTYPE html>
+<!--
+  TEST PAGE for the "Switch players" button. Not for real use.
+  Before uploading, fill in the two spots marked PASTE (search for "PASTE"):
+    1) CONFIG    - copy it from your real tsn.html
+    2) startJW() - put your jwplayer("jwplayerDiv").setup({ ... }); from your JW page
+  Delete this file when you're done testing.
+-->
 <html lang="en">
 <head>
   <meta name="robots" content="noindex,nofollow">
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>Live Player - Universo West</title>
+  <title>Live Stream</title>
+
   <script>
     (function () {
       function def(name, fn) {
@@ -27,6 +35,7 @@
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shaka-player@latest/dist/controls.css">
   <script src="https://cdn.jsdelivr.net/npm/shaka-player@latest/dist/shaka-player.ui.js"></script>
+
   <style>
     html, body {
       margin: 0;
@@ -46,37 +55,429 @@
       width: 100%;
       height: 100%;
     }
-    [data-shaka-player-container] {
+    #video-container, .shaka-video-container {
       width: 100% !important;
       height: 100% !important;
       background: #000;
     }
+
+    #bar {
+      position: fixed;
+      top: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font: 13px/1 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      color: #fff;
+      background: rgba(0, 0, 0, 0.55);
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 999px;
+      padding: 6px;
+      opacity: 0.3;
+      transition: opacity 0.2s ease;
+      user-select: none;
+    }
+    #bar:hover { opacity: 1; }
+    #bar .label { letter-spacing: 0.02em; }
+    #reload-btn {
+      cursor: pointer;
+      border: 0;
+      border-radius: 999px;
+      padding: 6px 12px;
+      font: inherit;
+      font-weight: 600;
+      color: #000;
+      background: #fff;
+    }
+    #reload-btn:active { transform: translateY(1px); }
+    #reload-btn:focus-visible { outline: 2px solid #7fd4ff; outline-offset: 2px; }
+
+    #status {
+      position: fixed;
+      top: 56px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 9999;
+      max-width: 90vw;
+      text-align: center;
+      font: 12px/1.4 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      color: #ffe6c2;
+      background: rgba(120, 60, 0, 0.55);
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(255, 180, 100, 0.3);
+      border-radius: 10px;
+      padding: 8px 12px;
+      display: none;
+    }
+    #status.show { display: block; }
+    /* ===== Switch players ===== */
+    .pl-off { display: none !important; }
+    #jw-wrap { position: fixed; inset: 0; background: #000; }
+    #jw-wrap > div { width: 100%; height: 100%; }
+    /* top-bar button: only shows if JW can't show its own button (JW error, free key) */
+    #switch-back-btn {
+      cursor: pointer;
+      white-space: nowrap;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
+      padding: 6px 12px;
+      font: 600 13px/1 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    }
+    #switch-back-btn:hover { background: rgba(255, 255, 255, 0.25); }
+    #switch-back-btn:focus-visible { outline: 2px solid #7fd4ff; outline-offset: 2px; }
+    /* Tiny players: Shaka's bar is already full, so hide the icon (it's back in fullscreen) */
+    @media (hover: hover) and (max-width: 325px), (max-width: 264px) {
+      .shaka-controls-button-panel .shaka-switch-player-button { display: none; }
+    }
   </style>
 </head>
 <body>
-  <div id="video-container" data-shaka-player-container>
-    <video id="video" data-shaka-player autoplay playsinline></video>
+  <div id="bar">
+    <button id="switch-back-btn" type="button" class="pl-off">Switch players</button>
+    <button id="reload-btn" type="button">Reload</button>
   </div>
+  <div id="status"></div>
+
+  <div id="video-container">
+    <video id="video" autoplay playsinline></video>
+  </div>
+  <div id="jw-wrap" class="pl-off"></div>
+
   <script>
-    async function init() {
-      const video = document.getElementById('video');
-      const container = document.getElementById('video-container');
-      const player = new shaka.Player(video);
+    // ==== PASTE 1 of 2: replace this CONFIG with the one from your real tsn.html ====
+    const CONFIG = {
+      manifest: "https://otte.live.fly.ww.aiv-cdn.net/iad-nitro/live/clients/dash/enc/gjsukewpxp/out/v1/ef14aacf858248839b9867eec5caf563/cenc.mpd",
+      clearKeys: {
+        "368bd4ebe301406897324bc777650411": "69d27c2c2b7de927d67aacc973259901"
+      }
+    };
+
+    // ===== Switch players: the JW Player version of this stream =====
+    const JW_LIBRARY = "https://content.jwplatform.com/libraries/IDzF9Zmk.js";
+    function startJW() {
+      // ==== PASTE 2 of 2: replace this setup call with the one from your JW page (keep the id "jwplayerDiv") ====
+    jwplayer("jwplayerDiv").setup({
+      file: "https://otte.live.fly.ww.aiv-cdn.net/iad-nitro/live/clients/dash/enc/gjsukewpxp/out/v1/ef14aacf858248839b9867eec5caf563/cenc.mpd",
+      type: "dash",
+      width: "100%",
+      height: "100%",
+      autostart: true,
+      title: "FOX 507 (ROXIE)",
+      drm: {
+        clearkey: {
+          keyId: "368bd4ebe301406897324bc777650411",
+          key: "69d27c2c2b7de927d67aacc973259901"
+        }
+      }
+      });
+    }
+
+    const RETRY = {
+      baseDelay: 1000,
+      backoffFactor: 1.5,
+      maxDelay: 15000,
+      maxNetworkAttempts: null
+    };
+
+    const video     = document.getElementById('video');
+    const container = document.getElementById('video-container');
+    const statusEl  = document.getElementById('status');
+    const reloadBtn = document.getElementById('reload-btn');
+
+    let player      = null;
+    let loading     = false;
+    let stopped     = false;
+    let attempt     = 0;
+    let retryTimer  = null;
+
+    function setStatus(msg) {
+      if (!msg) { statusEl.className = ''; statusEl.textContent = ''; return; }
+      statusEl.textContent = msg;
+      statusEl.className = 'show';
+    }
+
+    function describe(err) {
+      if (!err) return 'unknown error';
+      if (err.code === 1001 && err.data) return 'HTTP ' + err.data[1];
+      if (err.category === 1) return 'network error (' + err.code + ')';
+      if (err.category === 6) return 'DRM/key error (' + err.code + ')';
+      return 'error ' + err.code;
+    }
+    function isRetriable(err) {
+      if (!err) return true;
+      return err.category === 1 || err.category === 4;
+    }
+
+    async function buildPlayer() {
+      player = new shaka.Player();
+      await player.attach(video);
       const ui = new shaka.ui.Overlay(player, container, video);
-      
-      // Decryption parameter configuration
+      addSwitchButton(ui);   // Switch players
+
+      const retryParameters = {
+        maxAttempts: 6,
+        baseDelay: 800,
+        backoffFactor: 1.5,
+        fuzzFactor: 0.5,
+        timeout: 30000,
+        connectionTimeout: 10000,
+        stallTimeout: 5000
+      };
+
       player.configure({
-        drm: {
-          clearKeys: {
-            "069f3495380f3d25a8c03477067f7d1b": "7d9dbf8134535e1665e914fb7134ce47"
+        drm: { clearKeys: CONFIG.clearKeys },
+        manifest: { retryParameters },
+        streaming: {
+          retryParameters,
+          failureCallback: (error) => {
+            console.warn('Streaming failure:', describe(error), error);
+            if (isRetriable(error)) {
+              setStatus('Stream hiccup (' + describe(error) + ') — recovering…');
+              player.retryStreaming();
+            }
           }
         }
       });
-      
-      // Load manifest utilizing full token queries
-      await player.load("https://g001-live-us-cmaf-prd-ak.pcdn03.cssott.com/Content/CMAF_OL2-CTR-4s/Live/channel(universo-west)/master.mpd?audio=all&subtitle=all&forcedNarrative=true");
+
+      player.addEventListener('error', (event) => {
+        const err = event.detail;
+        console.error('Shaka error:', describe(err), err);
+        if (loading || stopped) return;
+        if (isRetriable(err)) handleFailure(describe(err), true);
+        else setStatus('Stopped: ' + describe(err));
+      });
     }
-    init().catch(console.error);
+
+    function handleFailure(label, retriable) {
+      if (mode !== 'shaka') { loading = false; return; }   // Switch players
+      loading = false;
+      if (!retriable) { stopped = true; setStatus('Stopped: ' + label + ' — tap Reload.'); return; }
+      attempt++;
+      if (RETRY.maxNetworkAttempts && attempt > RETRY.maxNetworkAttempts) {
+        stopped = true;
+        setStatus('Gave up after ' + (attempt - 1) + ' tries (' + label + '). Tap Reload.');
+        return;
+      }
+      const delay = Math.min(RETRY.baseDelay * Math.pow(RETRY.backoffFactor, attempt - 1), RETRY.maxDelay);
+      setStatus('Stream not ready (' + label + ') — retrying in ' + Math.round(delay / 1000) + 's (try ' + attempt + ')…');
+      retryTimer = setTimeout(loadStream, delay);
+    }
+
+    async function loadStream() {
+      if (mode !== 'shaka') return;   // Switch players
+      if (loading) return;
+      if (!CONFIG.manifest) { setStatus('No manifest URL set — fill in CONFIG.manifest.'); return; }
+      loading = true;
+      clearTimeout(retryTimer);
+      try {
+        await player.load(CONFIG.manifest, null, 'application/dash+xml');
+        attempt = 0;
+        stopped = false;
+        setStatus(null);   // playing — clear any banner
+      } catch (err) {
+        console.warn('Load failed:', describe(err), err);
+        handleFailure(describe(err), isRetriable(err));
+      } finally {
+        loading = false;
+      }
+    }
+
+    reloadBtn.addEventListener('click', () => {
+      if (mode === 'jw') { reloadJW(); return; }   // Switch players
+      clearTimeout(retryTimer);
+      attempt = 0;
+      stopped = false;
+      loadStream();
+    });
+
+    // ===== Switch players (Shaka <-> JW) =====
+    const JW_DIV     = 'jwplayerDiv';   // must match the id in startJW()
+    const jwWrap     = document.getElementById('jw-wrap');
+    const switchBack = document.getElementById('switch-back-btn');
+    let mode      = 'shaka';            // which player is showing: 'shaka' or 'jw'
+    let switching = false;
+    let jwLoader  = null;               // JW's script is only downloaded on the first switch
+    let jwReady   = false;              // JW has finished setting up
+    let sound     = { muted: false, volume: 1 };   // mute + volume, carried between the players
+    let switchButtonOK = false;
+
+    // The ⇄ icon, used in both players' control bars
+    function switchIcon(cls) {
+      return '<svg xmlns="http://www.w3.org/2000/svg" class="' + cls + '" viewBox="0 -960 960 960" aria-hidden="true">' +
+        '<path d="M280-160 80-360l200-200 56 57-103 103h287v80H233l103 103-56 57Zm400-240-56-57 103-103H440v-80h287L624-743l56-57 200 200-200 200Z"/></svg>';
+    }
+
+    // The button in Shaka's control bar
+    try {
+      class SwitchPlayersButton extends shaka.ui.Element {
+        constructor(parent, controls) {
+          super(parent, controls);
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'shaka-switch-player-button shaka-tooltip shaka-no-propagation';
+          btn.setAttribute('aria-label', 'Switch players');
+          btn.innerHTML = switchIcon('shaka-ui-icon');
+          this.parent.appendChild(btn);
+          this.eventManager.listen(btn, 'click', (e) => { e.stopPropagation(); switchToJW(); });
+        }
+      }
+      shaka.ui.Controls.registerElement('switch_player', {
+        create: (parent, controls) => new SwitchPlayersButton(parent, controls)
+      });
+      switchButtonOK = true;
+    } catch (err) {
+      console.warn('Switch players button unavailable:', err);
+    }
+
+    // Put it just left of the gear
+    function addSwitchButton(ui) {
+      if (!switchButtonOK) return;
+      try {
+        const items = ui.getConfiguration().controlPanelElements.slice();
+        if (items.includes('switch_player')) return;
+        const gear = items.indexOf('overflow_menu');
+        items.splice(gear < 0 ? items.length : gear, 0, 'switch_player');
+        ui.configure({ controlPanelElements: items });
+      } catch (err) {
+        console.warn('Could not add the Switch players button:', err);
+      }
+    }
+
+    // Show a message for a few seconds
+    function flash(msg) {
+      setStatus(msg);
+      setTimeout(() => { if (statusEl.textContent === msg) setStatus(null); }, 5000);
+    }
+
+    function loadJW() {
+      if (window.jwplayer) return Promise.resolve();
+      if (!jwLoader) {
+        jwLoader = new Promise((resolve, reject) => {
+          const s = document.createElement('script');
+          const timer = setTimeout(() => reject(new Error('JW library timed out')), 15000);
+          s.onload  = () => { clearTimeout(timer); window.jwplayer ? resolve() : reject(new Error('jwplayer missing')); };
+          s.onerror = () => { clearTimeout(timer); reject(new Error('JW library failed to load')); };
+          s.src = JW_LIBRARY;
+          document.head.appendChild(s);
+        }).catch((err) => { jwLoader = null; throw err; });   // a later click can try again
+      }
+      return jwLoader;
+    }
+
+    // Mute and volume carry over when you switch players
+    function soundToJW(jw) {
+      try {
+        jw.setVolume(Math.round(sound.volume * 100));
+        jw.setMute(sound.muted);
+      } catch (err) {}
+    }
+
+    function soundFromJW() {
+      if (!jwReady) return;             // JW never got going: keep what we had
+      try {
+        const jw = jwplayer(JW_DIV);
+        const v = Number(jw.getVolume());
+        sound = { muted: !!jw.getMute(), volume: isFinite(v) ? Math.min(1, Math.max(0, v / 100)) : sound.volume };
+      } catch (err) {}
+    }
+
+    // The top-bar button, for when JW can't show its own
+    function showTopSwitch() {
+      if (mode === 'jw') switchBack.classList.remove('pl-off');
+    }
+
+    function mountJW() {
+      jwReady = false;
+      switchBack.classList.add('pl-off');
+      jwWrap.innerHTML = '<div id="' + JW_DIV + '"></div>';
+      try {
+        startJW();
+      } catch (err) {
+        console.error('JW Player failed to start:', err);
+        switchToShaka();
+        return;
+      }
+      const jw = jwplayer(JW_DIV);
+      jw.on('ready', () => {
+        jwReady = true;
+        soundToJW(jw);                  // same mute/volume as before the switch
+        try {
+          // same icon in JW's control bar, just left of its gear
+          jw.addButton(switchIcon('jw-svg-icon'), 'Switch players', () => setTimeout(switchToShaka), 'switch-players');
+        } catch (err) {}
+        // a free-edition JW key can't add buttons: use the top-bar one instead
+        if (!jwWrap.querySelector('[button="switch-players"]')) showTopSwitch();
+      });
+      // when JW can't play it hides its control bar, so show the top-bar one
+      jw.on('setupError', showTopSwitch);
+      jw.on('error', showTopSwitch);
+    }
+
+    function unmountJW() {
+      soundFromJW();                    // remember JW's mute/volume
+      try { if (window.jwplayer) jwplayer(JW_DIV).remove(); } catch (err) {}
+      jwReady = false;
+      jwWrap.innerHTML = '';
+    }
+
+    function reloadJW() { unmountJW(); mountJW(); }
+
+    async function switchToJW() {
+      if (mode !== 'shaka' || switching) return;
+      switching = true;
+      if (!window.jwplayer) setStatus('Loading the other player…');
+      try {
+        await loadJW();                 // if JW can't load, Shaka keeps playing
+      } catch (err) {
+        console.warn(err);
+        switching = false;
+        flash("Couldn't load the other player. Staying on this one.");
+        return;
+      }
+      // stop Shaka (and remember its mute/volume)
+      mode = 'jw';
+      sound = { muted: video.muted, volume: video.volume };
+      stopped = true;
+      clearTimeout(retryTimer);
+      if (document.fullscreenElement || document.webkitFullscreenElement) {
+        try { await (document.exitFullscreen || document.webkitExitFullscreen).call(document); } catch (err) {}
+      }
+      try { await player.unload(); } catch (err) {}
+      loading = false;
+      setStatus(null);
+      // show JW
+      container.classList.add('pl-off');
+      jwWrap.classList.remove('pl-off');
+      switching = false;
+      mountJW();
+    }
+
+    function switchToShaka() {
+      if (mode !== 'jw') return;
+      unmountJW();
+      try { video.volume = sound.volume; video.muted = sound.muted; } catch (err) {}
+      jwWrap.classList.add('pl-off');
+      switchBack.classList.add('pl-off');
+      container.classList.remove('pl-off');
+      mode = 'shaka';
+      attempt = 0;
+      stopped = false;
+      setStatus(null);
+      loadStream();
+    }
+
+    switchBack.addEventListener('click', switchToShaka);
+
+    (async () => {
+      await buildPlayer();
+      loadStream();
+    })();
   </script>
 </body>
 </html>
