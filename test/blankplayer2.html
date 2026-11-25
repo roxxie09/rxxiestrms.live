@@ -1,4 +1,11 @@
 <!DOCTYPE html>
+<!--
+  TEST PAGE for the "Switch players" button. Not for real use.
+  Before uploading, fill in the two spots marked PASTE (search for "PASTE"):
+    1) CONFIG    - copy it from your real tsn.html
+    2) startJW() - put your jwplayer("jwplayerDiv").setup({ ... }); from your JW page
+  Delete this file when you're done testing.
+-->
 <html lang="en">
 <head>
   <meta name="robots" content="noindex,nofollow">
@@ -107,25 +114,89 @@
       display: none;
     }
     #status.show { display: block; }
+    /* ===== Switch players ===== */
+    .pl-off { display: none !important; }
+    #jw-wrap { position: fixed; inset: 0; background: #000; }
+    #jw-wrap > div { width: 100%; height: 100%; }
+    .shaka-controls-button-panel .shaka-switch-player-button,
+    #switch-back-btn {
+      cursor: pointer;
+      white-space: nowrap;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
+      font: 600 12px/1 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    }
+    .shaka-controls-button-panel .shaka-switch-player-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      align-self: center;
+      width: auto;
+      height: 30px;
+      padding: 0 12px;
+      margin: 0 8px;
+    }
+    #switch-back-btn { padding: 6px 12px; font-size: 13px; }
+    .shaka-controls-button-panel .shaka-switch-player-button:hover,
+    #switch-back-btn:hover { background: rgba(255, 255, 255, 0.25); }
+    .shaka-controls-button-panel .shaka-switch-player-button:focus-visible,
+    #switch-back-btn:focus-visible { outline: 2px solid #7fd4ff; outline-offset: 2px; }
+    .shaka-switch-player-button .sp-icon {
+      display: none;
+      width: 18px;
+      height: 18px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    /* Small players (narrow windows, small phones): icon only */
+    @media (hover: hover) and (max-width: 420px), (max-width: 350px) {
+      .shaka-controls-button-panel .shaka-switch-player-button { padding: 0 8px; margin: 0 4px; }
+      .shaka-switch-player-button .sp-icon { display: block; }
+      .shaka-switch-player-button .sp-text { display: none; }
+    }
+    /* Tiny players: Shaka's bar is already full, so hide it (it's there again in fullscreen) */
+    @media (hover: hover) and (max-width: 319px), (max-width: 259px) {
+      .shaka-controls-button-panel .shaka-switch-player-button { display: none; }
+    }
   </style>
 </head>
 <body>
-<div id="bar">
-  <button id="reload-btn" type="button">Reload</button>
-</div>
+  <div id="bar">
+    <button id="switch-back-btn" type="button" class="pl-off">Switch players</button>
+    <button id="reload-btn" type="button">Reload</button>
+  </div>
   <div id="status"></div>
 
   <div id="video-container">
     <video id="video" autoplay playsinline></video>
   </div>
+  <div id="jw-wrap" class="pl-off"></div>
 
   <script>
+    // ==== PASTE 1 of 2: replace this CONFIG with the one from your real tsn.html ====
     const CONFIG = {
-      manifest: "https://otte.live.fly.ww.aiv-cdn.net/iad-nitro/live/clients/dash/enc/gjsukewpxp/out/v1/ef14aacf858248839b9867eec5caf563/cenc.mpd",
+      manifest: "https://stream.video.9c9media.com/MTc4MjYyMjQwN18wMmY3M2I4MGMyMWQ5MmIyZTJmYWQ1MDQ2OTNlYWQ1MmFiMDk3YWZmNmJmY2EyOGZiYmFjOTY2Y2MwYTc3ZjJj/d/tsn/tsn1a/manifest.mpd?filter=fe&pnkh=MTc4MjYyMjQwN18wMmY3M2I4MGMyMWQ5MmIyZTJmYWQ1MDQ2OTNlYWQ1MmFiMDk3YWZmNmJmY2EyOGZiYmFjOTY2Y2MwYTc3ZjJj&hdr10=false&mca=true&stt=true&mcv=false&u=li&mta=false&dolbyvision=false",
       clearKeys: {
-        "368bd4ebe301406897324bc777650411": "69d27c2c2b7de927d67aacc973259901"
+        "dd8f0f8a8e6f46749bdb89b20a32f040": "c5f8ae230c6738b980cb52764a41278c",
+        "c4dec6d4670a58189a471643270c6a9a": "c5f8ae230c6738b980cb52764a41278c",
+        "9e6d96f450965c6bb80081290ba06605": "c5f8ae230c6738b980cb52764a41278c"
       }
     };
+
+    // ===== Switch players: the JW Player version of this stream =====
+    const JW_LIBRARY = "https://content.jwplatform.com/libraries/IDzF9Zmk.js";
+    function startJW() {
+      // ==== PASTE 2 of 2: replace this setup call with the one from your JW page (keep the id "jwplayerDiv") ====
+      jwplayer("jwplayerDiv").setup({
+        width: "100%",
+        height: "100%"
+      });
+    }
 
     const RETRY = {
       baseDelay: 1000,
@@ -166,7 +237,8 @@
     async function buildPlayer() {
       player = new shaka.Player();
       await player.attach(video);
-      new shaka.ui.Overlay(player, container, video);
+      const ui = new shaka.ui.Overlay(player, container, video);
+      addSwitchButton(ui);   // Switch players
 
       const retryParameters = {
         maxAttempts: 6,
@@ -203,6 +275,7 @@
     }
 
     function handleFailure(label, retriable) {
+      if (mode !== 'shaka') { loading = false; return; }   // Switch players
       loading = false;
       if (!retriable) { stopped = true; setStatus('Stopped: ' + label + ' — tap Reload.'); return; }
       attempt++;
@@ -217,6 +290,7 @@
     }
 
     async function loadStream() {
+      if (mode !== 'shaka') return;   // Switch players
       if (loading) return;
       if (!CONFIG.manifest) { setStatus('No manifest URL set — fill in CONFIG.manifest.'); return; }
       loading = true;
@@ -235,11 +309,144 @@
     }
 
     reloadBtn.addEventListener('click', () => {
+      if (mode === 'jw') { reloadJW(); return; }   // Switch players
       clearTimeout(retryTimer);
       attempt = 0;
       stopped = false;
       loadStream();
     });
+
+    // ===== Switch players (Shaka <-> JW) =====
+    const JW_DIV     = 'jwplayerDiv';   // must match the id in startJW()
+    const jwWrap     = document.getElementById('jw-wrap');
+    const switchBack = document.getElementById('switch-back-btn');
+    let mode      = 'shaka';            // which player is showing: 'shaka' or 'jw'
+    let switching = false;
+    let jwLoader  = null;               // JW's script is only downloaded on the first switch
+    let switchButtonOK = false;
+
+    // The "Switch players" button in Shaka's control bar
+    try {
+      class SwitchPlayersButton extends shaka.ui.Element {
+        constructor(parent, controls) {
+          super(parent, controls);
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'shaka-switch-player-button shaka-no-propagation';
+          btn.title = 'Switch players';
+          btn.setAttribute('aria-label', 'Switch players');
+          btn.innerHTML =
+            '<svg class="sp-icon" viewBox="0 0 24 24" aria-hidden="true">' +
+            '<path d="M7 7h12M15 3l4 4-4 4M17 17H5M9 13l-4 4 4 4"/></svg>' +
+            '<span class="sp-text">Switch players</span>';
+          this.parent.appendChild(btn);
+          this.eventManager.listen(btn, 'click', (e) => { e.stopPropagation(); switchToJW(); });
+        }
+      }
+      shaka.ui.Controls.registerElement('switch_player', {
+        create: (parent, controls) => new SwitchPlayersButton(parent, controls)
+      });
+      switchButtonOK = true;
+    } catch (err) {
+      console.warn('Switch players button unavailable:', err);
+    }
+
+    // Put the button just left of the gear
+    function addSwitchButton(ui) {
+      if (!switchButtonOK) return;
+      try {
+        const items = ui.getConfiguration().controlPanelElements.slice();
+        if (items.includes('switch_player')) return;
+        const gear = items.indexOf('overflow_menu');
+        items.splice(gear < 0 ? items.length : gear, 0, 'switch_player');
+        ui.configure({ controlPanelElements: items });
+      } catch (err) {
+        console.warn('Could not add the Switch players button:', err);
+      }
+    }
+
+    // Show a message for a few seconds
+    function flash(msg) {
+      setStatus(msg);
+      setTimeout(() => { if (statusEl.textContent === msg) setStatus(null); }, 5000);
+    }
+
+    function loadJW() {
+      if (window.jwplayer) return Promise.resolve();
+      if (!jwLoader) {
+        jwLoader = new Promise((resolve, reject) => {
+          const s = document.createElement('script');
+          const timer = setTimeout(() => reject(new Error('JW library timed out')), 15000);
+          s.onload  = () => { clearTimeout(timer); window.jwplayer ? resolve() : reject(new Error('jwplayer missing')); };
+          s.onerror = () => { clearTimeout(timer); reject(new Error('JW library failed to load')); };
+          s.src = JW_LIBRARY;
+          document.head.appendChild(s);
+        }).catch((err) => { jwLoader = null; throw err; });   // a later click can try again
+      }
+      return jwLoader;
+    }
+
+    function mountJW() {
+      jwWrap.innerHTML = '<div id="' + JW_DIV + '"></div>';
+      try {
+        startJW();
+      } catch (err) {
+        console.error('JW Player failed to start:', err);
+        switchToShaka();
+      }
+    }
+
+    function unmountJW() {
+      try { if (window.jwplayer) jwplayer(JW_DIV).remove(); } catch (err) {}
+      jwWrap.innerHTML = '';
+    }
+
+    function reloadJW() { unmountJW(); mountJW(); }
+
+    async function switchToJW() {
+      if (mode !== 'shaka' || switching) return;
+      switching = true;
+      if (!window.jwplayer) setStatus('Loading the other player…');
+      try {
+        await loadJW();                 // if JW can't load, Shaka keeps playing
+      } catch (err) {
+        console.warn(err);
+        switching = false;
+        flash("Couldn't load the other player. Staying on this one.");
+        return;
+      }
+      // stop Shaka
+      mode = 'jw';
+      stopped = true;
+      clearTimeout(retryTimer);
+      if (document.fullscreenElement || document.webkitFullscreenElement) {
+        try { await (document.exitFullscreen || document.webkitExitFullscreen).call(document); } catch (err) {}
+      }
+      try { await player.unload(); } catch (err) {}
+      loading = false;
+      setStatus(null);
+      // show JW
+      container.classList.add('pl-off');
+      jwWrap.classList.remove('pl-off');
+      switchBack.classList.remove('pl-off');
+      switching = false;
+      mountJW();
+    }
+
+    function switchToShaka() {
+      if (mode !== 'jw') return;
+      unmountJW();
+      jwWrap.classList.add('pl-off');
+      switchBack.classList.add('pl-off');
+      container.classList.remove('pl-off');
+      mode = 'shaka';
+      attempt = 0;
+      stopped = false;
+      setStatus(null);
+      loadStream();
+    }
+
+    switchBack.addEventListener('click', switchToShaka);
 
     (async () => {
       await buildPlayer();
