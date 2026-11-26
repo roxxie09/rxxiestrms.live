@@ -336,7 +336,7 @@ MultiView
 
 <div class="streamchanger">
 
-<button class="streambutton" onclick="playIframePlayer('https://dembed.st/premiumtv/daddy.php?id=1136')">Stream 1</button>
+<button class="streambutton" onclick="playIframePlayer('https://thedaddy.li/stream/stream-1136.php')">Stream 1</button>
 
 </div>
 
@@ -390,12 +390,12 @@ fetch('domainsz77.txt')
 .then(data => {
 domains = data.trim().split('\n').filter(d => d.trim());
 // Auto-load initial iframe stream after domains load
-setTimeout(() => playIframePlayer('https://dembed.st/premiumtv/daddy.php?id=1136'), 500);
+setTimeout(() => playIframePlayer('https://thedaddy.li/stream/stream-1136.php'), 500);
 })
 .catch(() => {
 console.error('Failed to load domainsz77.txt');
 // Fallback to load the iframe even if the text file fails
-setTimeout(() => playIframePlayer('https://dembed.st/premiumtv/daddy.php?id=1136'), 500);
+setTimeout(() => playIframePlayer('https://thedaddy.li/stream/stream-1136.php'), 500);
 });
 
 function getRandomStream(streamPath, subdomain = 'admin2') {
