@@ -118,7 +118,10 @@
     .pl-off { display: none !important; }
     #jw-wrap { position: fixed; inset: 0; background: #000; }
     #jw-wrap > div { width: 100%; height: 100%; }
-    /* top-bar button: only shows if JW can't show its own button (JW error, free key) */
+    /* The top bar is hidden: Reload and Switch players are icons in the players' control bars.
+       It only comes back when those can't be reached (JW error, free JW key, tiny players). */
+    #bar { display: none; }
+    #bar.sp-show { display: flex; }
     #switch-back-btn {
       cursor: pointer;
       white-space: nowrap;
@@ -131,9 +134,11 @@
     }
     #switch-back-btn:hover { background: rgba(255, 255, 255, 0.25); }
     #switch-back-btn:focus-visible { outline: 2px solid #7fd4ff; outline-offset: 2px; }
-    /* Tiny players: Shaka's bar is already full, so hide the icon (it's back in fullscreen) */
-    @media (hover: hover) and (max-width: 325px), (max-width: 264px) {
-      .shaka-controls-button-panel .shaka-switch-player-button { display: none; }
+    /* Tiny players: Shaka's bar is already full, so hide the two icons and use the top bar instead */
+    @media (hover: hover) and (max-width: 372px), (max-width: 312px) {
+      .shaka-controls-button-panel .shaka-switch-player-button,
+      .shaka-controls-button-panel .shaka-reload-stream-button { display: none; }
+      #bar { display: flex; }
     }
   </style>
 </head>
@@ -301,52 +306,64 @@
     const JW_DIV     = 'jwplayerDiv';   // must match the id in startJW()
     const jwWrap     = document.getElementById('jw-wrap');
     const switchBack = document.getElementById('switch-back-btn');
+    const topBar     = document.getElementById('bar');
     let mode      = 'shaka';            // which player is showing: 'shaka' or 'jw'
     let switching = false;
     let jwLoader  = null;               // JW's script is only downloaded on the first switch
     let jwReady   = false;              // JW has finished setting up
     let sound     = { muted: false, volume: 1 };   // mute + volume, carried between the players
-    let switchButtonOK = false;
+    let iconsOK   = false;
 
-    // The ⇄ icon, used in both players' control bars
-    function switchIcon(cls) {
+    // Icons for both players' control bars: switch players, reload
+    const ICONS = {
+      swap:   'M280-160 80-360l200-200 56 57-103 103h287v80H233l103 103-56 57Zm400-240-56-57 103-103H440v-80h287L624-743l56-57 200 200-200 200Z',
+      reload: 'M480-160q-134 0-227-93t-93-227q0-134 93-227t227-93q69 0 132 28.5T720-690v-110h80v280H520v-80h168q-32-56-87.5-88T480-720q-100 0-170 70t-70 170q0 100 70 170t170 70q77 0 139-44t87-116h84q-28 106-114 173t-196 67Z'
+    };
+    function icon(name, cls) {
       return '<svg xmlns="http://www.w3.org/2000/svg" class="' + cls + '" viewBox="0 -960 960 960" aria-hidden="true">' +
-        '<path d="M280-160 80-360l200-200 56 57-103 103h287v80H233l103 103-56 57Zm400-240-56-57 103-103H440v-80h287L624-743l56-57 200 200-200 200Z"/></svg>';
+        '<path d="' + ICONS[name] + '"/></svg>';
     }
 
-    // The button in Shaka's control bar
+    // ↻ runs your Reload button's code (the button itself stays hidden in the top bar)
+    function reloadStream() { reloadBtn.click(); }
+
+    // The two buttons in Shaka's control bar
     try {
-      class SwitchPlayersButton extends shaka.ui.Element {
-        constructor(parent, controls) {
-          super(parent, controls);
-          const btn = document.createElement('button');
-          btn.type = 'button';
-          btn.className = 'shaka-switch-player-button shaka-tooltip shaka-no-propagation';
-          btn.setAttribute('aria-label', 'Switch players');
-          btn.innerHTML = switchIcon('shaka-ui-icon');
-          this.parent.appendChild(btn);
-          this.eventManager.listen(btn, 'click', (e) => { e.stopPropagation(); switchToJW(); });
+      const shakaIcon = (id, label, iconName, onClick) => {
+        class IconButton extends shaka.ui.Element {
+          constructor(parent, controls) {
+            super(parent, controls);
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'shaka-' + id + '-button shaka-tooltip shaka-no-propagation';
+            btn.setAttribute('aria-label', label);
+            btn.innerHTML = icon(iconName, 'shaka-ui-icon');
+            this.parent.appendChild(btn);
+            this.eventManager.listen(btn, 'click', (e) => { e.stopPropagation(); onClick(); });
+          }
         }
-      }
-      shaka.ui.Controls.registerElement('switch_player', {
-        create: (parent, controls) => new SwitchPlayersButton(parent, controls)
-      });
-      switchButtonOK = true;
+        shaka.ui.Controls.registerElement(id.replace(/-/g, '_'), {
+          create: (parent, controls) => new IconButton(parent, controls)
+        });
+      };
+      shakaIcon('switch-player', 'Switch players', 'swap', () => switchToJW());
+      shakaIcon('reload-stream', 'Reload', 'reload', reloadStream);
+      iconsOK = true;
     } catch (err) {
-      console.warn('Switch players button unavailable:', err);
+      console.warn('Player icons unavailable:', err);
     }
 
-    // Put it just left of the gear
+    // Put them just left of the gear: switch, reload, gear
     function addSwitchButton(ui) {
-      if (!switchButtonOK) return;
+      if (!iconsOK) return;
       try {
-        const items = ui.getConfiguration().controlPanelElements.slice();
-        if (items.includes('switch_player')) return;
+        const items = ui.getConfiguration().controlPanelElements
+          .filter((x) => x !== 'switch_player' && x !== 'reload_stream');
         const gear = items.indexOf('overflow_menu');
-        items.splice(gear < 0 ? items.length : gear, 0, 'switch_player');
+        items.splice(gear < 0 ? items.length : gear, 0, 'switch_player', 'reload_stream');
         ui.configure({ controlPanelElements: items });
       } catch (err) {
-        console.warn('Could not add the Switch players button:', err);
+        console.warn('Could not add the player icons:', err);
       }
     }
 
@@ -388,14 +405,21 @@
       } catch (err) {}
     }
 
-    // The top-bar button, for when JW can't show its own
+    // The top bar (Switch players + Reload), for when JW can't show its own icons
     function showTopSwitch() {
-      if (mode === 'jw') switchBack.classList.remove('pl-off');
+      if (mode !== 'jw') return;
+      switchBack.classList.remove('pl-off');
+      topBar.classList.add('sp-show');
+    }
+
+    function hideTopSwitch() {
+      switchBack.classList.add('pl-off');
+      topBar.classList.remove('sp-show');
     }
 
     function mountJW() {
       jwReady = false;
-      switchBack.classList.add('pl-off');
+      hideTopSwitch();
       jwWrap.innerHTML = '<div id="' + JW_DIV + '"></div>';
       try {
         startJW();
@@ -409,13 +433,15 @@
         jwReady = true;
         soundToJW(jw);                  // same mute/volume as before the switch
         try {
-          // same icon in JW's control bar, just left of its gear
-          jw.addButton(switchIcon('jw-svg-icon'), 'Switch players', () => setTimeout(switchToShaka), 'switch-players');
+          // same icons in JW's bar, left of its gear. JW puts each new button in
+          // front of the previous one, so reload goes in first to end up as swap, reload, gear
+          jw.addButton(icon('reload', 'jw-svg-icon'), 'Reload', () => setTimeout(reloadStream), 'reload-stream');
+          jw.addButton(icon('swap', 'jw-svg-icon'), 'Switch players', () => setTimeout(switchToShaka), 'switch-players');
         } catch (err) {}
-        // a free-edition JW key can't add buttons: use the top-bar one instead
+        // a free-edition JW key can't add buttons: use the top bar instead
         if (!jwWrap.querySelector('[button="switch-players"]')) showTopSwitch();
       });
-      // when JW can't play it hides its control bar, so show the top-bar one
+      // when JW can't play it hides its control bar, so show the top bar
       jw.on('setupError', showTopSwitch);
       jw.on('error', showTopSwitch);
     }
@@ -464,7 +490,7 @@
       unmountJW();
       try { video.volume = sound.volume; video.muted = sound.muted; } catch (err) {}
       jwWrap.classList.add('pl-off');
-      switchBack.classList.add('pl-off');
+      hideTopSwitch();
       container.classList.remove('pl-off');
       mode = 'shaka';
       attempt = 0;
