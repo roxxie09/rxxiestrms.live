@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html data-bs-theme="dark" lang="en">
+<head>
+<script id="aclib" src="//acscdn.com/script/aclib.js" type="text/javascript"></script>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>24/7 Channels - Roxiestreams</title>
+<meta content="Free 24/7 channels on Roxiestreams" name="description"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400&display=swap" rel="stylesheet"/>
+<link href="/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+<link href="/css/main2.css" rel="stylesheet" type="text/css"/>
+<link href="/imgs/iconn.png" rel="shortcut icon" type="image/png"/>
+<script disable-devtool-auto="" src="https://cdn.jsdelivr.net/npm/disable-devtool/disable-devtool.min.js"></script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-EQ3BHVQGMN"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-EQ3BHVQGMN');
+</script>
+<style>
+  .navbar-brand {
+    color: pink;
+    font-size: 1.3rem;
+    text-decoration: none;
+    margin-top: -3px;
+    font-family: 'Kanit', sans-serif;
+    font-weight: bold;
+  }
+  .navbar-brand:hover { text-decoration: underline; }
+  .navbar-nav .nav-link { padding-left: 5px; padding-right: 5px; }
+
+  /* ---- 24/7 hub ---- */
+  .hub { max-width: 820px; margin: 28px auto 0; }
+  .hub-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
+  .hub-head h1 { margin: 0; font-family: 'Kanit', sans-serif; font-size: 1.7rem; color: pink; }
+  #hubSearch { max-width: 260px; }
+  .ch-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+  .ch {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    background: #161616;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    color: #fff;
+    text-decoration: none;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .ch:hover, .ch:focus-visible { background: #1b2230; border-color: rgba(77, 163, 255, 0.55); color: #fff; outline: none; }
+  .ch-icon { flex: 0 0 44px; width: 44px; height: 44px; border-radius: 8px; object-fit: contain; background: #0d0d0d; }
+  .ch-badge { display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.15rem; color: #fff; }
+  .ch-name { flex: 1; min-width: 0; font-size: 1.05rem; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .ch-link {
+    flex: 0 0 auto;
+    padding: 6px 14px;
+    border-radius: 999px;
+    color: #4da3ff;
+    font-weight: 600;
+    background: rgba(77, 163, 255, 0.12);
+    border: 1px solid rgba(77, 163, 255, 0.5);
+    white-space: nowrap;
+    transition: background 0.15s, color 0.15s, box-shadow 0.15s;
+  }
+  .ch:hover .ch-link, .ch:focus-visible .ch-link {
+    color: #fff;
+    background: #2f80ff;
+    border-color: #2f80ff;
+    box-shadow: 0 0 0 3px rgba(47, 128, 255, 0.28);
+  }
+  .hub-msg { color: #9a9a9a; padding: 18px 4px; margin: 0; }
+  .hub-msg:empty { display: none; }
+  @media (max-width: 576px) {
+    .hub { margin-top: 16px; }
+    .hub-head { flex-direction: column; align-items: stretch; }
+    #hubSearch { max-width: none; }
+    .ch { gap: 10px; padding: 9px 10px; }
+    .ch-link { padding: 5px 11px; }
+  }
+</style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg bg-black">
+<div class="container-fluid">
+<a class="navbar-brand" href="https://roxiestreams.info/">RoxieStreams</a>
+<button aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler" data-bs-target="#navbarSupportedContent" data-bs-toggle="collapse" type="button">
+<span class="navbar-toggler-icon"></span>
+</button>
+<div class="collapse navbar-collapse" id="navbarSupportedContent">
+<ul class="navbar-nav me-auto mb-2 mb-lg-0"><li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/soccer">Soccer</a></li>
+<li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/mlb">MLB</a></li>
+<li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/nba">NBA</a></li>
+<li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/nfl">NFL</a></li>
+<li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/nhl">NHL</a></li>
+<li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/fighting">Fighting</a></li>
+<li class="nav-item"><a class="nav-link" href="https://roxiestreams.info/motorsports">Motorsports</a></li>
+<li class="nav-item"><a class="nav-link" href="https://discord.gg/DT9g7K3ZSM">Stream Request (Discord)</a></li>
+</ul><ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+<li class="nav-item">
+<a class="nav-link d-flex align-items-center gap-1" href="https://roxiestreams.info/multiview">
+<svg fill="currentColor" height="16" viewbox="0 0 16 16" width="16" xmlns="http://www.w3.org/2000/svg">
+<path d="M0 1.5A1.5 1.5 0 0 1 1.5 0h13A1.5 1.5 0 0 1 16 1.5v13a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 14.5v-13zM1.5 1a.5.5 0 0 0-.5.5V7h6V1H1.5zM7 8H1v6.5a.5.5 0 0 0 .5.5H7V8zm1 0v7h6.5a.5.5 0 0 0 .5-.5V8H8zm0-1h7V1.5a.5.5 0 0 0-.5-.5H8v6z"></path>
+</svg>
+        MultiView
+    </a>
+</li>
+</ul>
+</div>
+</div>
+</nav>
+<main class="container hub text-white">
+<div class="hub-head">
+<h1>24/7 Channels</h1>
+<input aria-label="Search channels" autocomplete="off" class="form-control" id="hubSearch" placeholder="Search channels" type="search"/>
+</div>
+<ul class="ch-list" id="chList"></ul>
+<p class="hub-msg" id="hubMsg">Loading channels…</p>
+</main>
+<footer class="container-fluid d-flex flex-column flex-lg-row justify-content-lg-between align-items-center py-2 border-top mt-5">
+<ul class="nav justify-content-center justify-content-lg-start mb-2 mb-lg-0">
+<li class="nav-item"><a class="nav-link px-2 text-body-secondary" href="https://discord.gg/DT9g7K3ZSM">Stream Request (Discord)</a></li>
+</ul>
+<p class="mb-0 text-body-secondary text-center text-lg-start">Roxiestreams © 2026</p>
+</footer>
+<script>
+  // ===== 24/7 hub settings (edit these) =====
+  // Nicer names. Channels not listed here show their file name (tsn -> TSN, peacock -> Peacock).
+  var NAMES = {
+    skytopevent: 'Sky Sport Top Event'
+  };
+  // /raw/ pages to leave off the list. Files whose names start with _ are always left off.
+  var HIDE = ['hls', 'switch-test'];
+  // Logos: put <name>.png in /imgs/channels/ (for example /imgs/channels/tsn.png).
+  // To use a different file for a channel, list it here. Channels with no logo get a letter.
+  var ICONS = {
+    // tsn: '/imgs/channels/tsn-logo.svg'
+  };
+
+  // ===== the list (no need to edit below) =====
+  (function () {
+    var list = document.getElementById('chList');
+    var msg = document.getElementById('hubMsg');
+    var search = document.getElementById('hubSearch');
+
+    function niceName(n) {
+      if (NAMES[n]) return NAMES[n];
+      if (/^[a-z]{2,4}$/i.test(n)) return n.toUpperCase();
+      return n.replace(/[-_]+/g, ' ').replace(/\b\w/g, function (c) { return c.toUpperCase(); });
+    }
+
+    function badgeColor(n) {
+      var h = 0;
+      for (var i = 0; i < n.length; i++) h = (h * 31 + n.charCodeAt(i)) % 360;
+      return 'hsl(' + h + ', 45%, 32%)';
+    }
+
+    function makeRow(n) {
+      var li = document.createElement('li');
+      var a = document.createElement('a');
+      a.className = 'ch';
+      a.href = '/247/' + n;
+      a.dataset.search = (niceName(n) + ' ' + n).toLowerCase();
+
+      var img = document.createElement('img');
+      img.className = 'ch-icon';
+      img.alt = '';
+      img.loading = 'lazy';
+      img.src = ICONS[n] || '/imgs/channels/' + n + '.png';
+      img.onerror = function () {
+        var b = document.createElement('span');
+        b.className = 'ch-icon ch-badge';
+        b.setAttribute('aria-hidden', 'true');
+        b.textContent = niceName(n).charAt(0).toUpperCase();
+        b.style.background = badgeColor(n);
+        img.replaceWith(b);
+      };
+
+      var name = document.createElement('span');
+      name.className = 'ch-name';
+      name.textContent = niceName(n);
+
+      var go = document.createElement('span');
+      go.className = 'ch-link';
+      go.textContent = 'Watch ▸';
+
+      a.append(img, name, go);
+      li.appendChild(a);
+      return li;
+    }
+
+    function applySearch() {
+      var q = search.value.trim().toLowerCase();
+      var shown = 0;
+      list.querySelectorAll('li').forEach(function (li) {
+        var hit = !q || li.firstChild.dataset.search.indexOf(q) !== -1;
+        li.hidden = !hit;
+        if (hit) shown++;
+      });
+      if (list.children.length) msg.textContent = shown ? '' : 'No channels match "' + search.value.trim() + '".';
+    }
+
+    // The channel list comes straight from the /raw/ folder
+    fetch('/raw/', { cache: 'no-store' })
+      .then(function (r) {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.json();
+      })
+      .then(function (files) {
+        var names = files
+          .filter(function (f) { return f.type === 'file' && /\.html$/i.test(f.name); })
+          .map(function (f) { return f.name.replace(/\.html$/i, ''); })
+          .filter(function (n) {
+            return /^[A-Za-z0-9-][A-Za-z0-9_-]*$/.test(n) && HIDE.indexOf(n) === -1;
+          })
+          .sort(function (a, b) { return niceName(a).localeCompare(niceName(b)); });
+        names.forEach(function (n) { list.appendChild(makeRow(n)); });
+        msg.textContent = names.length ? '' : 'No channels yet.';
+        applySearch();
+      })
+      .catch(function () {
+        msg.textContent = "Couldn't load the channel list. Try refreshing the page.";
+      });
+
+    search.addEventListener('input', applySearch);
+  })();
+
+  // Block right-click and the usual DevTools shortcuts
+  document.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && ['I', 'C', 'J'].includes(e.key))) e.preventDefault();
+  });
+</script>
+<script src="/js/bootstrap.bundle.min.js"></script>
+<script type="text/javascript">
+aclib.runPop({
+zoneId: '10754426',
+});
+</script><script src="/js/viewers.js" defer></script>
+</body>
+</html>
