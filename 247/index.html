@@ -51,8 +51,9 @@
     transition: background 0.15s, border-color 0.15s;
   }
   .ch:hover, .ch:focus-visible { background: #1b2230; border-color: rgba(77, 163, 255, 0.55); color: #fff; outline: none; }
-  .ch-icon { flex: 0 0 44px; width: 44px; height: 44px; border-radius: 8px; object-fit: contain; background: #0d0d0d; }
-  .ch-badge { display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.15rem; color: #fff; }
+  .ch-icon { box-sizing: border-box; flex: 0 0 120px; width: 120px; height: 68px; padding: 4px 6px; border-radius: 8px;
+    object-fit: contain; background: #0d0d0d; }
+  .ch-badge { display: flex; align-items: center; justify-content: center; padding: 0; font-weight: 700; font-size: 1.6rem; color: #fff; }
   .ch-name { flex: 1; min-width: 0; font-size: 1.05rem; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .ch-link {
     flex: 0 0 auto;
@@ -78,6 +79,8 @@
     .hub-head { flex-direction: column; align-items: stretch; }
     #hubSearch { max-width: none; }
     .ch { gap: 10px; padding: 9px 10px; }
+    .ch-icon { flex-basis: 88px; width: 88px; height: 50px; padding: 3px 4px; }
+    .ch-badge { padding: 0; font-size: 1.3rem; }
     .ch-link { padding: 5px 11px; }
   }
 </style>
