@@ -127,14 +127,18 @@
 </footer>
 <script>
   // ===== 24/7 hub settings (edit these) =====
+  // Names and hiding are easiest in the EPG logo dashboard (/epg-admin/ on roxiestreams.info):
+  // a name set there wins over NAMES here, and channels hidden there are left off too.
   // Nicer names. Channels not listed here show their file name (tsn -> TSN, peacock -> Peacock).
   var NAMES = {
     skytopevent: 'Sky Sport Top Event'
   };
   // /raw/ pages to leave off the list. Files whose names start with _ are always left off.
   var HIDE = ['hls', 'switch-test'];
-  // Logos: put <name>.png in /imgs/channels/ (for example /imgs/channels/tsn.png).
-  // To use a different file for a channel, list it here. Channels with no logo get a letter.
+  // Logos come from the EPG logo dashboard (/epg-admin/ on roxiestreams.info).
+  // Your own file wins over those: put <name>.png in /imgs/channels/ on roxiestreams.info
+  // (the other domains get a copy within the hour). To point a channel at any other image,
+  // list it here (this wins over everything). Channels with no logo get a letter.
   var ICONS = {
     // tsn: '/imgs/channels/tsn-logo.svg'
   };
@@ -144,9 +148,12 @@
     var list = document.getElementById('chList');
     var msg = document.getElementById('hubMsg');
     var search = document.getElementById('hubSearch');
+    var AUTO = null;   // logos.json from the EPG logo dashboard (null if it isn't set up here)
 
     function niceName(n) {
+      if (AUTO && AUTO.names && typeof AUTO.names[n] === 'string') return AUTO.names[n];
       if (NAMES[n]) return NAMES[n];
+      if (AUTO && AUTO.titles && typeof AUTO.titles[n] === 'string') return AUTO.titles[n];
       if (/^[a-z]{2,4}$/i.test(n)) return n.toUpperCase();
       return n.replace(/[-_]+/g, ' ').replace(/\b\w/g, function (c) { return c.toUpperCase(); });
     }
@@ -157,6 +164,44 @@
       return 'hsl(' + h + ', 45%, 32%)';
     }
 
+    function makeBadge(n) {
+      var b = document.createElement('span');
+      b.className = 'ch-icon ch-badge';
+      b.setAttribute('aria-hidden', 'true');
+      b.textContent = niceName(n).charAt(0).toUpperCase();
+      b.style.background = badgeColor(n);
+      return b;
+    }
+
+    // Where to look for a channel's logo, best first
+    function logoSources(n) {
+      var list = [];
+      if (ICONS[n]) list.push(ICONS[n]);
+      if (AUTO) {
+        if (AUTO.logos && typeof AUTO.logos[n] === 'string') list.push(AUTO.logos[n]);
+      } else {
+        list.push('/imgs/channels/' + n + '.png');
+      }
+      return list;
+    }
+
+    function makeIcon(n) {
+      var srcs = logoSources(n);
+      if (!srcs.length) return makeBadge(n);
+      var i = 0;
+      var img = document.createElement('img');
+      img.className = 'ch-icon';
+      img.alt = '';
+      img.loading = 'lazy';
+      img.src = srcs[0];
+      img.onerror = function () {
+        i++;
+        if (i < srcs.length) img.src = srcs[i];
+        else img.replaceWith(makeBadge(n));
+      };
+      return img;
+    }
+
     function makeRow(n) {
       var li = document.createElement('li');
       var a = document.createElement('a');
@@ -164,19 +209,7 @@
       a.href = '/247/' + n;
       a.dataset.search = (niceName(n) + ' ' + n).toLowerCase();
 
-      var img = document.createElement('img');
-      img.className = 'ch-icon';
-      img.alt = '';
-      img.loading = 'lazy';
-      img.src = ICONS[n] || '/imgs/channels/' + n + '.png';
-      img.onerror = function () {
-        var b = document.createElement('span');
-        b.className = 'ch-icon ch-badge';
-        b.setAttribute('aria-hidden', 'true');
-        b.textContent = niceName(n).charAt(0).toUpperCase();
-        b.style.background = badgeColor(n);
-        img.replaceWith(b);
-      };
+      var img = makeIcon(n);
 
       var name = document.createElement('span');
       name.className = 'ch-name';
@@ -202,6 +235,11 @@
       if (list.children.length) msg.textContent = shown ? '' : 'No channels match "' + search.value.trim() + '".';
     }
 
+    // Logos and names published by the EPG logo dashboard (fine if it's missing)
+    var autoReq = fetch('/imgs/channels/auto/logos.json', { cache: 'no-store' })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .catch(function () { return null; });
+
     // The channel list comes straight from the /raw/ folder
     fetch('/raw/', { cache: 'no-store' })
       .then(function (r) {
@@ -209,11 +247,18 @@
         return r.json();
       })
       .then(function (files) {
+        return autoReq.then(function (auto) {
+          if (auto && typeof auto === 'object' && auto.logos && typeof auto.logos === 'object') AUTO = auto;
+          return files;
+        });
+      })
+      .then(function (files) {
         var names = files
           .filter(function (f) { return f.type === 'file' && /\.html$/i.test(f.name); })
           .map(function (f) { return f.name.replace(/\.html$/i, ''); })
           .filter(function (n) {
-            return /^[A-Za-z0-9-][A-Za-z0-9_-]*$/.test(n) && HIDE.indexOf(n) === -1;
+            var hiddenInDashboard = AUTO && Array.isArray(AUTO.hidden) && AUTO.hidden.indexOf(n) !== -1;
+            return /^[A-Za-z0-9-][A-Za-z0-9_-]*$/.test(n) && HIDE.indexOf(n) === -1 && !hiddenInDashboard;
           })
           .sort(function (a, b) { return niceName(a).localeCompare(niceName(b)); });
         names.forEach(function (n) { list.appendChild(makeRow(n)); });
