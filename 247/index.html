@@ -54,7 +54,10 @@
   .ch-icon { box-sizing: border-box; flex: 0 0 120px; width: 120px; height: 68px; padding: 4px 6px; border-radius: 8px;
     object-fit: contain; background: #0d0d0d; }
   .ch-badge { display: flex; align-items: center; justify-content: center; padding: 0; font-weight: 700; font-size: 1.6rem; color: #fff; }
-  .ch-name { flex: 1; min-width: 0; font-size: 1.05rem; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .ch-text { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+  .ch-name { font-size: 1.05rem; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .ch-now { color: #9a9a9a; font-size: 0.85rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .ch-now b { color: #cfcfcf; font-weight: 600; }
   .ch-link {
     flex: 0 0 auto;
     padding: 6px 14px;
@@ -82,6 +85,7 @@
     .ch-icon { flex-basis: 88px; width: 88px; height: 50px; padding: 3px 4px; }
     .ch-badge { padding: 0; font-size: 1.3rem; }
     .ch-link { padding: 5px 11px; }
+    .ch-now { font-size: 0.8rem; }
   }
 </style>
 </head>
@@ -142,6 +146,7 @@
   // Your own file wins over those: put <name>.png in /imgs/channels/ on roxiestreams.info
   // (the other domains get a copy within the hour). To point a channel at any other image,
   // list it here (this wins over everything). Channels with no logo get a letter.
+  // What's on now and next comes from the dashboard too (its EPG part).
   var ICONS = {
     // tsn: '/imgs/channels/tsn-logo.svg'
   };
@@ -152,6 +157,7 @@
     var msg = document.getElementById('hubMsg');
     var search = document.getElementById('hubSearch');
     var AUTO = null;   // logos.json from the EPG logo dashboard (null if it isn't set up here)
+    var EPG = null;    // epg.json: what's on, per channel: [start, stop, title, sub-title]
 
     function niceName(n) {
       if (AUTO && AUTO.names && typeof AUTO.names[n] === 'string') return AUTO.names[n];
@@ -210,21 +216,66 @@
       var a = document.createElement('a');
       a.className = 'ch';
       a.href = '/247/' + n;
+      a.dataset.name = n;
       a.dataset.search = (niceName(n) + ' ' + n).toLowerCase();
 
       var img = makeIcon(n);
 
+      var text = document.createElement('span');
+      text.className = 'ch-text';
       var name = document.createElement('span');
       name.className = 'ch-name';
       name.textContent = niceName(n);
+      var on = document.createElement('span');
+      on.className = 'ch-now';
+      on.hidden = true;
+      text.append(name, on);
 
       var go = document.createElement('span');
       go.className = 'ch-link';
       go.textContent = 'Watch ▸';
 
-      a.append(img, name, go);
+      a.append(img, text, go);
       li.appendChild(a);
       return li;
+    }
+
+    // What's on now and next, from epg.json
+    function clock(t) {
+      return new Date(t * 1000).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+    }
+    function showName(s) {
+      return s[2] + (typeof s[3] === 'string' && s[3] ? ': ' + s[3] : '');
+    }
+    function fillNow(el, n) {
+      var shows = EPG && Array.isArray(EPG[n]) ? EPG[n] : [];
+      var t = Date.now() / 1000, cur = null, next = null;
+      shows.forEach(function (s) {
+        if (!Array.isArray(s) || typeof s[0] !== 'number' || typeof s[1] !== 'number' || typeof s[2] !== 'string') return;
+        if (s[0] <= t && t < s[1]) cur = s;
+        else if (s[0] > t && (!next || s[0] < next[0])) next = s;
+      });
+      el.textContent = '';
+      if (cur) {
+        var b = document.createElement('b');
+        b.textContent = 'Now: ';
+        el.append(b, showName(cur));
+      }
+      if (next) el.append((cur ? ' · ' : '') + 'Next ' + clock(next[0]) + ' ' + showName(next));
+      el.title = el.textContent;
+      el.hidden = !cur && !next;
+    }
+    function updateNow() {
+      list.querySelectorAll('a.ch').forEach(function (a) { fillNow(a.querySelector('.ch-now'), a.dataset.name); });
+    }
+    function loadEpg() {
+      return fetch('/imgs/channels/auto/epg.json', { cache: 'no-store' })
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .catch(function () { return null; })
+        .then(function (j) {
+          if (j && typeof j === 'object' && j.epg && typeof j.epg === 'object') EPG = j.epg;
+          updateNow();
+        });
     }
 
     function applySearch() {
@@ -267,6 +318,9 @@
         names.forEach(function (n) { list.appendChild(makeRow(n)); });
         msg.textContent = names.length ? '' : 'No channels yet.';
         applySearch();
+        loadEpg();
+        setInterval(updateNow, 30 * 1000);
+        setInterval(loadEpg, 10 * 60 * 1000);
       })
       .catch(function () {
         msg.textContent = "Couldn't load the channel list. Try refreshing the page.";
