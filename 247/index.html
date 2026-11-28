@@ -119,6 +119,12 @@
   .tg-cell.none.sel, .tg-cell.none:focus-visible { background: #1b2230; border-color: #4da3ff; color: #cfcfcf; }
   .tg-mark { margin-right: 6px; font-size: 0.68rem; font-weight: 700; color: pink; }
   .tg-cell.sel .tg-mark { color: #fff; }
+  .tg.dragging, .tg.dragging * { cursor: grabbing !important; user-select: none; }
+  .tg-cell.hit { border-color: pink; box-shadow: inset 0 0 0 1px pink; }
+  .tg-row.byshow .tg-cell:not(.hit) { opacity: 0.4; }
+  .tg-auto { position: fixed; z-index: 50; width: 26px; height: 26px; margin: -13px 0 0 -13px; border-radius: 50%;
+    border: 2px solid pink; background: rgba(13, 13, 13, 0.85); pointer-events: none; }
+  .tg-auto::after { content: ""; position: absolute; left: 9px; top: 9px; width: 4px; height: 4px; border-radius: 50%; background: pink; }
   .tg-now { position: absolute; top: 34px; bottom: 0; z-index: 2; width: 2px; margin-left: -1px; background: pink; opacity: 0.75; pointer-events: none; }
   .tg-now::before { content: ""; position: absolute; top: -4px; left: -3px; width: 8px; height: 8px; border-radius: 50%; background: pink; }
 
@@ -178,7 +184,7 @@
 <main class="container hub text-white">
 <div class="hub-head">
 <h1>24/7 Channels</h1>
-<input aria-label="Search channels" autocomplete="off" class="form-control" id="hubSearch" placeholder="Search channels" type="search"/>
+<input aria-label="Search channels and shows" autocomplete="off" class="form-control" id="hubSearch" placeholder="Search channels and shows" type="search"/>
 </div>
 <section aria-live="polite" class="tg-info" hidden id="tgInfo"></section>
 <div class="tg" hidden id="tg">
@@ -189,6 +195,7 @@
 </div>
 </div>
 <p class="hub-msg" id="hubMsg">Loading channels…</p>
+<div class="tg-auto" hidden id="tgAuto"></div>
 </main>
 <footer class="container-fluid d-flex flex-column flex-lg-row justify-content-lg-between align-items-center py-2 border-top mt-5">
 <ul class="nav justify-content-center justify-content-lg-start mb-2 mb-lg-0">
@@ -476,18 +483,60 @@
       }
     }, { passive: true });
 
-    function applySearch() {
-      var q = search.value.trim().toLowerCase(), hits = 0, t = nowSec();
-      list.querySelectorAll('li.tg-row').forEach(function (li) {
-        var n = li.dataset.name, hay = (niceName(n) + ' ' + n).toLowerCase();
-        if (q && hay.indexOf(q) === -1) {      // what's on in the next few hours counts too
-          showsOf(n).forEach(function (s) { if (s[1] > t && s[0] < t + 3 * 3600) hay += ' ' + s[2].toLowerCase(); });
-        }
-        var hit = !q || hay.indexOf(q) !== -1;
-        li.hidden = !hit;
-        if (hit) hits++;
+    // ---- search: each word typed starts a word of the channel's name or of a show (any order),
+    // like the dashboard: 'sky top', 'main e', 'leafs', 'hockey live'
+    var GENERIC = ['sport', 'sports', 'channel', 'tv', 'network', 'the', 'and'];
+    function wordsOf(s) {
+      var out = [];
+      String(s).toLowerCase().normalize('NFKD').replace(/[\u0300-\u036f]/g, '').split(/[^\p{L}\p{N}]+/u).forEach(function (w) {
+        if (w) out.push.apply(out, w.match(/\p{N}+|\p{L}+/gu) || []);
       });
-      if (list.children.length) msg.textContent = hits ? '' : 'No channels match "' + search.value.trim() + '".';
+      return out;
+    }
+    function typedMatch(typed, words) {
+      var used = [], hit = 0;
+      var ok = typed.every(function (w) {
+        var i = words.findIndex(function (x, k) {
+          return used.indexOf(k) === -1 && (x.indexOf(w) === 0 || (w.length > 3 && w.slice(-1) === 's' && x === w.slice(0, -1)));
+        });
+        if (i === -1) return GENERIC.indexOf(w) !== -1;
+        used.push(i);
+        hit++;
+        return true;
+      });
+      return ok && hit > 0;
+    }
+    function showWords(s) {
+      if (!s._w) s._w = wordsOf([s[2], str(s, 3), tagsOf(s).join(' '), str(s, 4)].join(' '));
+      return s._w;
+    }
+    var lastQuery = '';
+    function applySearch() {
+      var q = search.value.trim(), typed = wordsOf(q), rows = 0, first = null, t = nowSec();
+      list.querySelectorAll('li.tg-row').forEach(function (li) {
+        var n = li.dataset.name;
+        var byName = !q || (niceName(n) + ' ' + n).toLowerCase().indexOf(q.toLowerCase()) !== -1 ||
+          (typed.length && typedMatch(typed, wordsOf(niceName(n) + ' ' + n)));
+        var shows = 0;
+        li.querySelectorAll('.tg-cell:not(.none)').forEach(function (b) {
+          var s = q && typed.length ? findShow(n, +b.dataset.start) : null;
+          var hit = !!s && s[1] > t && typedMatch(typed, showWords(s));
+          b.classList.toggle('hit', hit);
+          if (hit) {
+            shows++;
+            if (first === null || s[0] < first) first = s[0];
+          }
+        });
+        li.hidden = !(byName || shows);
+        li.classList.toggle('byshow', !byName && shows > 0);
+        if (!li.hidden) rows++;
+      });
+      if (list.children.length) msg.textContent = rows ? '' : 'No channels or shows match "' + q + '".';
+      if (q !== lastQuery && first !== null) {     // bring the first show found into view
+        var x = px(Math.max(first, T0)), w = grid.clientWidth - inner.querySelector('.tg-corner').offsetWidth;
+        if (x < grid.scrollLeft || x > grid.scrollLeft + w - 60) grid.scrollLeft = Math.max(0, x - 20);
+      }
+      lastQuery = q;
     }
 
     function render() {
@@ -539,6 +588,81 @@
       });
       grid.addEventListener('mouseleave', function () { if (sel) showInfo(sel.name, sel.start); });
     }
+    // ---- mouse: drag the guide to move around it; a middle click scrolls it (like Windows: click, then point
+    // where to go; or hold it and move); touch screens already scroll it with a finger
+    var drag = null, dragged = false, auto = null;
+    var autoMark = document.getElementById('tgAuto');
+    grid.addEventListener('pointerdown', function (e) {
+      if (e.pointerType !== 'mouse') return;
+      if (auto) {                       // any click ends middle-click scrolling
+        stopAuto();
+        e.preventDefault();
+        if (e.button === 0) dragged = true;      // ...and isn't a click on what's under it
+        return;
+      }
+      if (e.button === 1 && !e.target.closest('a')) {      // a middle click on a link still opens it in a new tab
+        e.preventDefault();
+        auto = { x: e.clientX, y: e.clientY, mx: e.clientX, my: e.clientY, moved: false };
+        autoMark.style.left = e.clientX + 'px';
+        autoMark.style.top = e.clientY + 'px';
+        autoMark.hidden = false;
+        requestAnimationFrame(autoStep);
+        return;
+      }
+      if (e.button !== 0) return;
+      e.preventDefault();               // no text selection or link dragging; clicks still work
+      drag = { x: e.clientX, y: e.clientY, sl: grid.scrollLeft, st: grid.scrollTop, id: e.pointerId, moved: false };
+    });
+    window.addEventListener('pointermove', function (e) {
+      if (auto) {
+        auto.mx = e.clientX;
+        auto.my = e.clientY;
+        if (Math.abs(e.clientX - auto.x) + Math.abs(e.clientY - auto.y) > 12) auto.moved = true;
+      }
+      if (!drag || e.pointerId !== drag.id) return;
+      var dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+      if (!drag.moved && Math.abs(dx) + Math.abs(dy) < 6) return;
+      if (!drag.moved) {
+        drag.moved = true;
+        grid.classList.add('dragging');
+      }
+      grid.scrollLeft = drag.sl - dx;
+      grid.scrollTop = drag.st - dy;
+    });
+    function endDrag(e) {
+      if (auto && e.button === 1 && auto.moved) stopAuto();     // held down and moved: stops when let go
+      if (!drag || e.pointerId !== drag.id) return;
+      if (drag.moved) {
+        dragged = true;                 // the click that ends a drag isn't a click
+        setTimeout(function () { dragged = false; }, 0);
+      }
+      drag = null;
+      grid.classList.remove('dragging');
+    }
+    window.addEventListener('pointerup', endDrag);
+    window.addEventListener('pointercancel', function (e) { if (drag && e.pointerId === drag.id) { drag = null; grid.classList.remove('dragging'); } });
+    grid.addEventListener('click', function (e) {
+      if (dragged) {
+        e.preventDefault();
+        e.stopPropagation();
+        dragged = false;
+      }
+    }, true);
+    grid.addEventListener('dragstart', function (e) { e.preventDefault(); });
+    function autoStep() {
+      if (!auto) return;
+      var dx = auto.mx - auto.x, dy = auto.my - auto.y, dead = 12;
+      if (Math.abs(dx) > dead) grid.scrollLeft += (dx - (dx > 0 ? dead : -dead)) / 5;
+      if (Math.abs(dy) > dead) grid.scrollTop += (dy - (dy > 0 ? dead : -dead)) / 5;
+      requestAnimationFrame(autoStep);
+    }
+    function stopAuto() {
+      auto = null;
+      autoMark.hidden = true;
+    }
+    window.addEventListener('keydown', function (e) { if (e.key === 'Escape' && auto) stopAuto(); });
+    window.addEventListener('blur', function () { if (auto) stopAuto(); });
+
     clockBtn.addEventListener('click', function () { grid.scrollLeft = Math.max(0, px(Math.floor(nowSec() / 1800) * 1800)); });
     if (phone && phone.addEventListener) phone.addEventListener('change', function () { if (CHANNELS.length) render(); });
 
